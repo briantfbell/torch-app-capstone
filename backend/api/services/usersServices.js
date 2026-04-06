@@ -1,218 +1,98 @@
 const db = require('../../db/knex');
-const endItemModel = require('../models/endItemsModels');
+const usersModels = require('../models/usersModels');
 
-exports.getAllEndItem = async query => {
-  return await endItemModel.getAllEndItem(query);
+exports.getAllUsers = async query => {
+  return await usersModels.getAllUsers(query);
 };
 
-exports.getEndItemById = async id => {
-  const endItem = await endItemModel.getEndItemById(id);
+exports.getUserById = async id => {
+  const user = await usersModels.getUserById(id);
 
-  if (!endItem) {
-    const error = new Error('End item does not exist.');
+  if (!user) {
+    const error = new Error('User does not exist.');
     error.status = 404;
     throw error;
   }
 
-  return endItem;
+  return user;
 };
 
-exports.createEndItem = async (
+exports.updateUser = async (
   userId,
   {
-    title,
-    summary,
-    mgrs,
-    lat_long,
-    recommendations,
-    priority,
-    classification,
-    categories = [],
+    username,
+    name_first,
+    name_last,
+    email,
+    password,
+    phone,
+    rank,
+    uic,
+    role,
+    DoDID,
   },
 ) => {
-  if (
-    !title ||
-    !summary ||
-    !mgrs ||
-    !lat_long ||
-    !recommendations ||
-    !priority ||
-    !classification
-  ) {
-    const error = new Error('All fields are required.');
-    error.status = 400;
-    throw error;
-  }
+  const existingUser = await usersModels.getUserById(userId);
 
-  const cleanedCategories = [...new Set(categories.filter(Boolean))];
-
-  if (!cleanedCategories.length) {
-    const error = new Error('At least one category is required.');
-    error.status = 400;
-    throw error;
-  }
-
-  return await db.transaction(async trx => {
-    const EndItem = await endItemModel.createEndItem(trx, {
-      title,
-      summary,
-      mgrs,
-      lat_long,
-      recommendations,
-      priority,
-      classification,
-      submitted_by: userId,
-    });
-
-    const existingCategories = await categoriesModel.getCategoriesByNames(
-      cleanedCategories,
-      trx,
-    );
-
-    const existingNames = existingCategories.map(category => category.category);
-
-    const missingNames = cleanedCategories.filter(
-      categoryName => !existingNames.includes(categoryName),
-    );
-
-    let newCategories = [];
-
-    if (missingNames.length) {
-      newCategories = await categoriesModel.createCategories(trx, missingNames);
-    }
-
-    const allCategories = [...existingCategories, ...newCategories];
-
-    await endItemModel.createEndItemCategories(
-      trx,
-      allCategories.map(category => ({
-        EndItem_id: EndItem.id,
-        category_id: category.id,
-      })),
-    );
-
-    return { ...EndItem, categories: cleanedCategories };
-  });
-};
-
-exports.updateEndItem = async (
-  EndItemId,
-  user,
-  {
-    title,
-    summary,
-    mgrs,
-    lat_long,
-    recommendations,
-    priority,
-    categories = [],
-  },
-) => {
-  const existingEndItem = await endItemModel.getEndItemById(EndItemId);
-
-  if (!existingEndItem) {
-    const error = new Error('EndItem does not exist.');
+  if (!existingUser) {
+    const error = new Error('User does not exist.');
     error.status = 404;
     throw error;
   }
 
-  const isAdmin = user.role === 'admin';
-  const isOwner = existingEndItem.submitted_by === user.id;
+  const noUserChanges =
+    existingUser.username === username &&
+    existingUser.name_first === name_first &&
+    existingUser.name_last === name_last &&
+    existingUser.email === email &&
+    existingUser.password === password &&
+    existingUser.phone === phone &&
+    existingUser.rank === rank &&
+    existingUser.uic === uic &&
+    existingUser.role === role &&
+    existingUser.DoDID === DoDID;
 
-  if (!isAdmin && !isOwner) {
-    const error = new Error('You can only edit your own EndItem.');
-    error.status = 403;
-    throw error;
-  }
-
-  const cleanedCategories = [...new Set(categories.filter(Boolean))];
-
-  if (!cleanedCategories.length) {
-    const error = new Error('At least one category is required.');
-    error.status = 400;
-    throw error;
-  }
-
-  const matchedCategories =
-    await categoriesModel.getCategoriesByNames(cleanedCategories);
-
-  if (matchedCategories.length !== cleanedCategories.length) {
-    const error = new Error('One or more categories are not valid.');
-    error.status = 404;
-    throw error;
-  }
-
-  const existingCategoryRows =
-    await endItemModel.getEndItemCategories(EndItemId);
-
-  const existingCategories = existingCategoryRows
-    .map(row => row.category)
-    .sort();
-
-  const nextCategories = [...cleanedCategories].sort();
-
-  const noEndItemChanges =
-    existingEndItem.title === title &&
-    existingEndItem.summary === summary &&
-    existingEndItem.mgrs === mgrs &&
-    existingEndItem.lat_long === lat_long &&
-    existingEndItem.recommendations === recommendations &&
-    existingEndItem.priority === priority;
-
-  const noCategoryChanges =
-    JSON.stringify(existingCategories) === JSON.stringify(nextCategories);
-
-  if (noEndItemChanges && noCategoryChanges) {
+  if (noUserChanges) {
     const error = new Error('No changes detected.');
     error.status = 400;
     throw error;
   }
 
-  const updatedEndItem = await db.transaction(async trx => {
-    const EndItem = await endItemModel.updateEndItem(trx, EndItemId, {
-      title,
-      summary,
-      mgrs,
-      lat_long,
-      recommendations,
-      priority,
-    });
-
-    await endItemModel.deleteEndItemCategories(trx, EndItemId);
-
-    await endItemModel.createEndItemCategories(
-      trx,
-      matchedCategories.map(category => ({
-        EndItem_id: Number(EndItemId),
-        category_id: category.id,
-      })),
-    );
-
-    return EndItem;
+  const updatedUser = await usersModels.updateUser(userId, {
+    username,
+    name_first,
+    name_last,
+    email,
+    password,
+    phone,
+    rank,
+    uic,
+    role,
+    DoDID,
   });
 
-  return updatedEndItem;
+  return updatedUser;
 };
 
-exports.deleteEndItem = async (id, user) => {
-  const existingEndItem = await endItemModel.getEndItemById(id);
+exports.deleteUser = async (id, user) => {
+  const existingUser = await usersModels.getUserById(id);
 
-  if (!existingEndItem) {
-    const error = new Error('EndItem does not exist.');
+  if (!existingUser) {
+    const error = new Error('user does not exist.');
     error.status = 404;
     throw error;
   }
 
   const isAdmin = user.role === 'admin';
-  const isOwner = existingEndItem.submitted_by === user.id;
+  const isOwner = existingUser.submitted_by === user.id;
 
   if (!isAdmin && !isOwner) {
-    const error = new Error('You can only delete your own EndItem.');
+    const error = new Error('You can only delete your own user.');
     error.status = 403;
     throw error;
   }
 
-  const [deletedEndItem] = await endItemModel.deleteEndItem(id);
+  const [deletedUser] = await usersModels.deleteUser(id);
 
-  return deletedEndItem;
+  return deletedUser;
 };

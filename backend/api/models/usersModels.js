@@ -2,88 +2,50 @@ const db = require('../../db/knex');
 const { applyQueryFilters } = require('../helpers/applyQueryFilters');
 
 const baseQuery = () =>
-  db('reports')
-    .join('report_categories', 'reports.id', 'report_categories.report_id')
-    .join('categories', 'report_categories.category_id', 'categories.id')
-    .join('users', 'reports.submitted_by', 'users.id');
-
-const joinAllTables = query => {
-  return query
+  db('users')
+    .join('ranks', 'users.rank', 'ranks.rank')
+    .join('uic', 'users.uic_id', 'uic.uic')
     .select(
-      'reports.id',
-      'reports.title',
-      'reports.mgrs',
-      'reports.lat_long',
-      'reports.priority',
-      'reports.summary',
-      'reports.recommendations',
-      'reports.submitted_by',
-      'users.email as submitted_by_email',
-      'reports.created_at',
-      'reports.classification',
-    )
-    .select(db.raw('ARRAY_AGG(categories.category) as categories'))
-    .groupBy(
-      'reports.id',
-      'reports.title',
-      'reports.mgrs',
-      'reports.lat_long',
-      'reports.priority',
-      'reports.summary',
-      'reports.recommendations',
-      'reports.submitted_by',
+      'users.id',
+      'users.username',
+      'users.name_first',
+      'users.name_last',
       'users.email',
-      'reports.created_at',
-      'reports.classification',
+      'users.phone',
+      'users.created_at',
+      'users.updated_at',
+      'ranks.rank',
+      'uic.uic',
     );
+
+// TO DO: if users end up with multiple roles
+
+// const groupRoles = query => {
+//   return query
+//     .select('users.*')
+//     .select(db.raw('ARRAY_AGG(roles.role) as roles'))
+//     .groupBy('users.id');
+// };
+
+exports.getAllUsers = async query => {
+  const users = await applyQueryFilters(baseQuery(), query);
+
+  return [users];
 };
 
-exports.getAllReports = async query => {
-  const reports = await applyQueryFilters(joinAllTables(baseQuery()), query);
-
-  return [reports];
+exports.getUserById = async id => {
+  return await baseQuery().where('users.id', id).first();
 };
 
-exports.getReportById = async id => {
-  return await joinAllTables(baseQuery()).where('reports.id', id).first();
-};
-
-exports.getReportsByCategory = async category => {
-  return await joinAllTables(baseQuery()).whereRaw(
-    'LOWER(categories.category) = LOWER(?)',
-    [category],
-  );
-};
-
-exports.createReport = async (trx, reportData) => {
-  const [report] = await trx('reports').insert(reportData).returning('*');
-  return report;
-};
-
-exports.updateReport = async (trx, reportId, reportData) => {
-  const [report] = await trx('reports')
-    .where('id', reportId)
-    .update(reportData)
+exports.updateUser = async (userId, userUpdates) => {
+  const [user] = await db('users')
+    .where('id', userId)
+    .update(userUpdates)
     .returning('*');
 
-  return report;
+  return user;
 };
 
-exports.getReportCategories = async reportId => {
-  return await db('report_categories')
-    .join('categories', 'report_categories.category_id', 'categories.id')
-    .where('report_categories.report_id', reportId)
-    .select('categories.category');
-};
-
-exports.deleteReportCategories = async (trx, reportId) => {
-  return await trx('report_categories').where('report_id', reportId).del();
-};
-
-exports.createReportCategories = async (trx, categoryLinks) => {
-  return await trx('report_categories').insert(categoryLinks);
-};
-
-exports.deleteReport = async id => {
-  return await db('reports').where('id', id).del().returning('*');
+exports.deleteUser = async id => {
+  return await db('users').where('id', id).del().returning('*');
 };
