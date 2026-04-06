@@ -1,12 +1,12 @@
 const db = require('../../db/knex');
-const endItemModel = require('../models/endItemsModels');
+const endItemsModels = require('../models/endItemsModels');
 
-exports.getAllEndItem = async query => {
-  return await endItemModel.getAllEndItem(query);
+exports.getAllEndItems = async query => {
+  return await endItemsModels.getAllEndItem(query);
 };
 
 exports.getEndItemById = async id => {
-  const endItem = await endItemModel.getEndItemById(id);
+  const endItem = await endItemsModels.getEndItemById(id);
 
   if (!endItem) {
     const error = new Error('End item does not exist.');
@@ -53,7 +53,7 @@ exports.createEndItem = async (
   }
 
   return await db.transaction(async trx => {
-    const EndItem = await endItemModel.createEndItem(trx, {
+    const EndItem = await endItemsModels.createEndItem(trx, {
       title,
       summary,
       mgrs,
@@ -83,7 +83,7 @@ exports.createEndItem = async (
 
     const allCategories = [...existingCategories, ...newCategories];
 
-    await endItemModel.createEndItemCategories(
+    await endItemsModels.createEndItemCategories(
       trx,
       allCategories.map(category => ({
         EndItem_id: EndItem.id,
@@ -108,7 +108,7 @@ exports.updateEndItem = async (
     categories = [],
   },
 ) => {
-  const existingEndItem = await endItemModel.getEndItemById(EndItemId);
+  const existingEndItem = await endItemsModels.getEndItemById(EndItemId);
 
   if (!existingEndItem) {
     const error = new Error('EndItem does not exist.');
@@ -124,30 +124,6 @@ exports.updateEndItem = async (
     error.status = 403;
     throw error;
   }
-
-  const cleanedCategories = [...new Set(categories.filter(Boolean))];
-
-  if (!cleanedCategories.length) {
-    const error = new Error('At least one category is required.');
-    error.status = 400;
-    throw error;
-  }
-
-  const matchedCategories =
-    await categoriesModel.getCategoriesByNames(cleanedCategories);
-
-  if (matchedCategories.length !== cleanedCategories.length) {
-    const error = new Error('One or more categories are not valid.');
-    error.status = 404;
-    throw error;
-  }
-
-  const existingCategoryRows =
-    await endItemModel.getEndItemCategories(EndItemId);
-
-  const existingCategories = existingCategoryRows
-    .map(row => row.category)
-    .sort();
 
   const nextCategories = [...cleanedCategories].sort();
 
@@ -169,7 +145,7 @@ exports.updateEndItem = async (
   }
 
   const updatedEndItem = await db.transaction(async trx => {
-    const EndItem = await endItemModel.updateEndItem(trx, EndItemId, {
+    const EndItem = await endItemsModels.updateEndItem(trx, EndItemId, {
       title,
       summary,
       mgrs,
@@ -178,9 +154,9 @@ exports.updateEndItem = async (
       priority,
     });
 
-    await endItemModel.deleteEndItemCategories(trx, EndItemId);
+    await endItemsModels.deleteEndItemCategories(trx, EndItemId);
 
-    await endItemModel.createEndItemCategories(
+    await endItemsModels.createEndItemCategories(
       trx,
       matchedCategories.map(category => ({
         EndItem_id: Number(EndItemId),
@@ -195,7 +171,7 @@ exports.updateEndItem = async (
 };
 
 exports.deleteEndItem = async (id, user) => {
-  const existingEndItem = await endItemModel.getEndItemById(id);
+  const existingEndItem = await endItemsModels.getEndItemById(id);
 
   if (!existingEndItem) {
     const error = new Error('EndItem does not exist.');
@@ -212,7 +188,7 @@ exports.deleteEndItem = async (id, user) => {
     throw error;
   }
 
-  const [deletedEndItem] = await endItemModel.deleteEndItem(id);
+  const [deletedEndItem] = await endItemsModels.deleteEndItem(id);
 
   return deletedEndItem;
 };

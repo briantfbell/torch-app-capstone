@@ -1,9 +1,9 @@
-const endItemsService = require('../services/endItemsServices');
+const endItemsServices = require('../services/endItemsServices');
 
 exports.getAllEndItems = async (req, res) => {
   try {
     const { query } = req;
-    const data = await endItemsService.getAllEndItems(query);
+    const data = await endItemsServices.getAllEndItems(query);
 
     res.status(200).json(data);
   } catch (err) {
@@ -16,7 +16,7 @@ exports.getAllEndItems = async (req, res) => {
 exports.getEndItemById = async (req, res) => {
   try {
     const { id } = req.params;
-    const endItem = await endItemsService.getEndItemById(id);
+    const endItem = await endItemsServices.getEndItemById(id);
 
     res.status(200).json(endItem);
   } catch (err) {
@@ -29,7 +29,7 @@ exports.getEndItemById = async (req, res) => {
 exports.getEndItemsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
-    const endItems = await endItemsService.getEndItemsByCategory(category);
+    const endItems = await endItemsServices.getEndItemsByCategory(category);
 
     res.status(200).json(endItems);
   } catch (err) {
@@ -42,7 +42,7 @@ exports.getEndItemsByCategory = async (req, res) => {
 exports.createEndItem = async (req, res) => {
   try {
     const { id: userId } = req.user;
-    const newEndItem = await endItemsService.createEndItem(userId, req.body);
+    const newEndItem = await endItemsServices.createEndItem(userId, req.body);
 
     res.status(201).json({
       newEndItem: newEndItem,
@@ -57,7 +57,7 @@ exports.createEndItem = async (req, res) => {
 
 exports.updateEndItem = async (req, res) => {
   try {
-    const updatedEndItem = await endItemsService.updateEndItem(
+    const updatedEndItem = await endItemsServices.updateEndItem(
       req.params.id,
       req.user,
       req.body,
@@ -75,7 +75,7 @@ exports.updateEndItem = async (req, res) => {
 
 exports.deleteEndItem = async (req, res) => {
   try {
-    const deletedEndItem = await endItemsService.deleteEndItem(
+    const deletedEndItem = await endItemsServices.deleteEndItem(
       req.params.id,
       req.user,
     );
