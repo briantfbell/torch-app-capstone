@@ -29,14 +29,14 @@ export default function RegisterForm({onSubmit, error}){
         })
 
         //When change happens, clear error
-        setError('');
+        setLocalError('');
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-
+        console.log(form)
         //Validate all filled
         const {confirmPass, ...rest} = form;
-        if(Object.values(rest).some(v => !v)){
+        if(Object.values(rest).some((v) => !v)){
             return setLocalError('All fields are required!')
         }
 
@@ -67,7 +67,7 @@ export default function RegisterForm({onSubmit, error}){
             <div className='mainRegisterForm'>
                 <input onChange={handleChange} name='username' type='text' placeholder="Username"/>
                 <input onChange={handleChange} name='password' type='password' placeholder="Password"/>
-                <input onChange={handleChange} name='confirmPassword' type='password' placeholder="Confirm Password"/>
+                <input onChange={handleChange} name='confirmPass' type='password' placeholder="Confirm Password"/>
                 {/* etc info, TODO: refactor for visualization */}
                 <input 
                     onChange={handleChange}
@@ -106,7 +106,7 @@ export default function RegisterForm({onSubmit, error}){
                 />
                 <input 
                     onChange={handleChange}
-                    name='UIC'
+                    name='uic'
                     placeholder="Unit UIC"
                 />
             </div>
