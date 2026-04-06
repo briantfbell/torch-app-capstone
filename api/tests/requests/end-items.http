@@ -1,0 +1,3 @@
+# GET /end-items?section_id= returns all end items for a section
+
+# GET /end-items/:id returns a single end item with its BOM line items

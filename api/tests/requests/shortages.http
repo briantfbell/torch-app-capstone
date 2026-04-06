@@ -1,0 +1,1 @@
+# GET /shortages?section_id= returns all non-zero variance records for a section

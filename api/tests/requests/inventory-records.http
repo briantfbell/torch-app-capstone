@@ -1,0 +1,3 @@
+# GET /inventory-records?end_item_id= returns all saved records for an end item
+
+# POST /inventory-records inserts inventory records and calculates variance and status automatically
