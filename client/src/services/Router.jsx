@@ -5,6 +5,7 @@ import EquipmentPage from "../pages/EquipmentPage.jsx";
 import SHRViewPage from "../pages/SHRViewPage.jsx";
 import ShortageTrackerPage from "../pages/ShortageTrackerPage";
 import InventoryTable from "../InventoryTable";
+import EndItemPage from "../pages/EndItemPage.jsx";
 
 export default function MainRouter() {
   return (
@@ -15,6 +16,7 @@ export default function MainRouter() {
         <Route path="/shr-viewer" element={<SHRViewPage />} />
         <Route path="/shortages" element={<ShortageTrackerPage />} />
         <Route path="/InventoryTable" element={<InventoryTable />} />
+        <Route path="/enditem/:id" element={<EndItemPage />} />
       </Routes>
     </Router>
   );

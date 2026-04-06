@@ -1,0 +1,23 @@
+# GET /end-items?section_id= returns all end items for a section
+GET 'http://localhost:8080/end-items?section_id=1'
+
+# GET /end-items/:id returns a single end item with its BOM line items
+GET 'http://localhost:8080/end-items/1'
+
+# Create end item
+POST 'http://localhost:8080/end-items'
+Content-Type: application/json
+{
+
+}
+
+# Update end item by id
+PATCH 'http://localhost:8080/end-items/1'
+Content-Type: application/json
+{
+
+}
+
+# Delete end item by id
+DELETE 'http://localhost:8080/end-items/1'
+

@@ -1,0 +1,58 @@
+const API_URL = "http://localhost:8080";
+
+const parseJsonSafely = async (res) => {
+    const text = await res.text();
+    const contentType = res.headers.get("content-type") ?? "";
+
+    if (!text) {
+        return null;
+    }
+
+    if (!contentType.includes("application/json")) {
+        return {
+            error: `Unexpected response from server (${res.status}).`,
+            status: res.status,
+            raw: text,
+        };
+    }
+
+    try {
+        return JSON.parse(text);
+    } catch (e) {
+        return {
+            error: `Unexpected response from server (${res.status}).`,
+            status: res.status,
+        };
+    }
+};
+
+export const getToken = () => localStorage.getItem("token");
+
+export const logout = () => localStorage.removeItem("token");
+
+export const getCurrentUser = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+    return JSON.parse(atob(token.split(".")[1]));
+};
+
+export const tryLogin = async (username, password) => {
+    alert(`Received login request from: ${username}`);
+
+    try {
+        const res = await fetch(`${API_URL}/auth/login/${username}`, {
+            method: "POST",
+            body: JSON.stringify({ pin: password }),
+            headers: { "Content-type": "application/json; charset=UTF-8" },
+        });
+        const data = await parseJsonSafely(res);
+
+        if (data.token) {
+            localStorage.setItem("token", data.token);
+        }
+
+        return data;
+    } catch (e) {
+        console.error(e);
+    }
+};

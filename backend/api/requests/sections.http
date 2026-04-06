@@ -1,0 +1,22 @@
+# Get all sections
+GET 'http://localhost:8080/sections'
+
+# GET /sections/:id returns section data including SHR file path
+GET 'http://localhost:8080/sections/1'
+
+# Create a section
+POST 'http://localhost:8080/sections'
+Content-Type: application/json
+{
+
+}
+
+# Update a section
+PATCH 'http://localhost:8080/sections/1'
+Content-Type: application/json
+{
+
+}
+
+# Delete a section
+DELETE 'http://localhost:8080/sections/1'
