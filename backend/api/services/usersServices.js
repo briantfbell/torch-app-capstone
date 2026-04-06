@@ -1,4 +1,3 @@
-const db = require('../../db/knex');
 const usersModels = require('../models/usersModels');
 
 exports.getAllUsers = async query => {
@@ -73,21 +72,12 @@ exports.updateUser = async (
   return updatedUser;
 };
 
-exports.deleteUser = async (id, user) => {
+exports.deleteUser = async id => {
   const existingUser = await usersModels.getUserById(id);
 
   if (!existingUser) {
     const error = new Error('user does not exist.');
     error.status = 404;
-    throw error;
-  }
-
-  const isAdmin = user.role === 'admin';
-  const isOwner = existingUser.id === user.id;
-
-  if (!isAdmin && !isOwner) {
-    const error = new Error('You can only delete your own user.');
-    error.status = 403;
     throw error;
   }
 

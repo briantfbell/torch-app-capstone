@@ -25,14 +25,20 @@ app.use(
 
 const authRoutes = require('./routes/authRoutes');
 const usersRoutes = require('./routes/usersRoutes');
-// const endItemsRoutes = require('./routes/endItemsRoutes');
+const uicRoutes = require('./routes/uicRoutes');
+const serialItemsRoutes = require('./routes/serialItemsRoutes');
+const componentsRoutes = require('./routes/componentsRoutes');
+const endItemsRoutes = require('./routes/endItemsRoutes');
 // const inventoryRecordsRoutes = require('./routes/inventoryRecordsRoutes');
 // const sectionsRoutes = require('./routes/sectionsRoutes');
 // const shortagesRoutes = require('./routes/shortagesRoutes');
 
 app.use('/auth', authRoutes);
 app.use('/users', usersRoutes);
-// app.use('/end-items', endItemsRoutes);
+app.use('/serial-items', serialItemsRoutes);
+app.use('/components', componentsRoutes);
+app.use('/end-items', endItemsRoutes);
+app.use('/uic', uicRoutes);
 // app.use('/inventory-records', inventoryRecordsRoutes);
 // app.use('/sections', sectionsRoutes);
 // app.use('/shortages', shortagesRoutes);
