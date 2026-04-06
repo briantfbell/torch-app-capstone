@@ -1,3 +1,7 @@
+# GET all
+
+# GET by id
+
 # POST /auth/register creates a new user
 
 # POST /auth/login authenticates a user and returns role and section

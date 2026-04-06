@@ -23,13 +23,13 @@ app.use(
   }),
 );
 
-// const authRoutes = require('./api/routes/auth-routes');
-// const sectionsRoutes = require('./api/routes/sections-routes');
-// const endItemsRoutes = require('./api/routes/end-items-routes');
-// const inventoryRecordsRoutes = require('./api/routes/inventory-records-routes');
-// const shortagesRoutes = require('./api/routes/shortages-routes');
+const authRoutes = require('./routes/auth-routes');
+// const sectionsRoutes = require('./routes/sections-routes');
+// const endItemsRoutes = require('./routes/end-items-routes');
+// const inventoryRecordsRoutes = require('./routes/inventory-records-routes');
+// const shortagesRoutes = require('./routes/shortages-routes');
 
-// app.use('/auth', authRoutes);
+app.use('/auth', authRoutes);
 // app.use('/sections', sectionsRoutes);
 // app.use('/end-items', endItemsRoutes);
 // app.use('/inventory-records', inventoryRecordsRoutes);
