@@ -23,15 +23,15 @@ app.use(
   }),
 );
 
-// TO DO
-
 const authRoutes = require('./routes/authRoutes');
-// const endItemsRoutes = require('./routes/end-itemsRoutes');
+const usersRoutes = require('./routes/usersRoutes');
+// const endItemsRoutes = require('./routes/endItemsRoutes');
 // const inventoryRecordsRoutes = require('./routes/inventoryRecordsRoutes');
 // const sectionsRoutes = require('./routes/sectionsRoutes');
 // const shortagesRoutes = require('./routes/shortagesRoutes');
 
 app.use('/auth', authRoutes);
+app.use('/users', usersRoutes);
 // app.use('/end-items', endItemsRoutes);
 // app.use('/inventory-records', inventoryRecordsRoutes);
 // app.use('/sections', sectionsRoutes);

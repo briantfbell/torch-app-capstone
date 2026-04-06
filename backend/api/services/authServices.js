@@ -31,7 +31,6 @@ exports.getMe = async token => {
 
   const {
     id,
-    role,
     username,
     name_first,
     name_last,
@@ -41,11 +40,12 @@ exports.getMe = async token => {
     updated_at,
     rank,
     uic,
+    role,
+    DoDID,
   } = user;
 
   return {
     id,
-    role,
     username,
     name_first,
     name_last,
@@ -55,11 +55,12 @@ exports.getMe = async token => {
     updated_at,
     rank,
     uic,
+    role,
+    DoDID,
   };
 };
 
 exports.registerUser = async (
-  role,
   username,
   name_first,
   name_last,
@@ -68,9 +69,10 @@ exports.registerUser = async (
   phone,
   rank,
   uic,
+  role,
+  DoDID,
 ) => {
   if (
-    !role ||
     !username ||
     !name_first ||
     !name_last ||
@@ -78,7 +80,9 @@ exports.registerUser = async (
     !password ||
     !phone ||
     !rank ||
-    !uic
+    !uic ||
+    !role ||
+    !DoDID
   ) {
     const error = new Error('All fields are required.');
     error.status = 400;
@@ -118,7 +122,17 @@ exports.registerUser = async (
     uic,
   });
 
-  return newUser;
+  return {
+    username :
+    name_first :
+    name_last :
+    email :
+    phone :
+    rank :
+    uic :
+    role :
+    DoDID :
+  };
 };
 
 exports.login = async (email, password) => {

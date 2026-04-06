@@ -16,8 +16,6 @@ exports.getMe = async (req, res) => {
 exports.registerUser = async (req, res) => {
   try {
     const {
-      id,
-      role,
       username,
       name_first,
       name_last,
@@ -28,11 +26,11 @@ exports.registerUser = async (req, res) => {
       updated_at,
       rank,
       uic,
+      role,
+      DoDID,
     } = req.body;
 
     const newUser = await authServices.registerUser(
-      id,
-      role,
       username,
       name_first,
       name_last,
@@ -43,6 +41,8 @@ exports.registerUser = async (req, res) => {
       updated_at,
       rank,
       uic,
+      role,
+      DoDID,
     );
 
     res.status(201).json({

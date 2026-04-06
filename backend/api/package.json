@@ -4,7 +4,12 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "migrate": "npx knex migrate:latest",
+    "rollback": "npx knex migrate:rollback",
+    "seed": "npx knex seed:run",
+    "reset": "npx knex migrate:rollback && npx knex migrate:latest && npx knex seed:run",
+    "test": "jest --runInBand"
   },
   "keywords": [],
   "author": "",

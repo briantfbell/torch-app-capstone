@@ -25,7 +25,7 @@ const baseQuery = () =>
       'roles.temp_receipt_holder',
     );
 
-// TO DO: can users have multiple roles?
+// TO DO: if users end up with multiple roles
 
 // const groupRoles = query => {
 //   return query
