@@ -29,34 +29,18 @@ exports.getMe = async token => {
     throw error;
   }
 
-  const {
-    id,
-    username,
-    name_first,
-    name_last,
-    email,
-    phone,
-    created_at,
-    updated_at,
-    rank,
-    uic,
-    role,
-    DoDID,
-  } = user;
-
   return {
-    id,
-    username,
-    name_first,
-    name_last,
-    email,
-    phone,
-    created_at,
-    updated_at,
-    rank,
-    uic,
-    role,
-    DoDID,
+    id: user.id,
+    username: user.username,
+    name_first: user.name_first,
+    name_last: user.name_last,
+    email: user.email,
+    phone: user.phone,
+    created_at: user.created_at,
+    updated_at: user.updated_at,
+    rank: user.rank,
+    uic: user.uic,
+    role: user.role,
   };
 };
 
@@ -106,12 +90,8 @@ exports.registerUser = async (
   }
 
   const hashWord = await bcrypt.hash(password, SALT_ROUNDS);
-  // TO DO: change 'password' to actual admin verify
-  const adminHashWord = await bcrypt.hash('password', SALT_ROUNDS);
-  const isAdmin = await bcrypt.compare(password, adminHashWord);
 
   const [newUser] = await authModels.createUser({
-    role: isAdmin ? 'admin' : 'user',
     username,
     name_first,
     name_last,
@@ -119,19 +99,21 @@ exports.registerUser = async (
     password: hashWord,
     phone,
     rank,
-    uic,
+    uic_id: uic,
+    DoDID,
   });
 
+  await authModels.createUserRole(newUser.id, role);
+
   return {
-    username :
-    name_first :
-    name_last :
-    email :
-    phone :
-    rank :
-    uic :
-    role :
-    DoDID :
+    username: newUser.username,
+    name_first: newUser.name_first,
+    name_last: newUser.name_last,
+    email: newUser.email,
+    phone: newUser.phone,
+    rank: newUser.rank,
+    uic: newUser.uic_id,
+    DoDID: newUser.DoDID,
   };
 };
 
@@ -147,7 +129,7 @@ exports.login = async (email, password) => {
 
   if (!user) {
     const error = new Error('Email or password is incorrect.');
-    error.status = 404;
+    error.status = 401;
     throw error;
   }
 
@@ -155,37 +137,21 @@ exports.login = async (email, password) => {
 
   if (!match) {
     const error = new Error('Email or password is incorrect.');
-    error.status = 404;
+    error.status = 401;
     throw error;
   }
 
-  const {
-    id,
-    role,
-    username,
-    name_first,
-    name_last,
-    email,
-    phone,
-    created_at,
-    updated_at,
-    rank,
-    uic,
-  } = user;
-
   const token = jwt.sign(
     {
-      id,
-      role,
-      username,
-      name_first,
-      name_last,
-      email,
-      phone,
-      created_at,
-      updated_at,
-      rank,
-      uic,
+      id: user.id,
+      username: user.username,
+      name_first: user.name_first,
+      name_last: user.name_last,
+      email: user.email,
+      phone: user.phone,
+      rank: user.rank,
+      uic: user.uic,
+      role: user.role,
     },
     process.env.JWT,
     { expiresIn: '7d' },

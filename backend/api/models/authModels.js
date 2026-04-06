@@ -5,8 +5,6 @@ const baseQuery = () =>
   db('users')
     .join('ranks', 'users.rank', 'ranks.rank')
     .join('uic', 'users.uic_id', 'uic.uic')
-    .join('users_roles', 'users.id', 'users_roles.user_id')
-    .join('roles', 'users_roles.role_id', 'roles.id')
     .select(
       'users.id',
       'users.username',
@@ -18,11 +16,6 @@ const baseQuery = () =>
       'users.updated_at',
       'ranks.rank',
       'uic.uic',
-      'roles.id as role_id',
-      'roles.admin',
-      'roles.hand_receipt_holder',
-      'roles.sub_receipt_holder',
-      'roles.temp_receipt_holder',
     );
 
 // TO DO: if users end up with multiple roles
@@ -34,51 +27,26 @@ const baseQuery = () =>
 //     .groupBy('users.id');
 // };
 
-exports.createUser = async (user, roleId) => {
-  return await db.transaction(async trx => {
-    const [newUser] = await trx('users')
-      .insert({
-        username: user.username,
-        name_first: user.name_first,
-        name_last: user.name_last,
-        email: user.email,
-        password: user.password,
-        phone: user.phone,
-        rank: user.rank,
-        uic_id: user.uic_id,
-      })
-      .returning('id');
+exports.createUser = async user => {
+  return await db('users')
+    .insert(user)
+    .returning([
+      'id',
+      'username',
+      'name_first',
+      'name_last',
+      'email',
+      'phone',
+      'created_at',
+      'updated_at',
+      'rank',
+      'uic_id',
+      'DoDID',
+    ]);
+};
 
-    await trx('users_roles').insert({
-      user_id: newUser.id,
-      role_id: roleId,
-    });
-
-    return await trx('users')
-      .join('ranks', 'users.rank', 'ranks.rank')
-      .join('uic', 'users.uic_id', 'uic.uic')
-      .join('users_roles', 'users.id', 'users_roles.user_id')
-      .join('roles', 'users_roles.role_id', 'roles.id')
-      .where('users.id', newUser.id)
-      .select(
-        'users.id',
-        'users.username',
-        'users.name_first',
-        'users.name_last',
-        'users.email',
-        'users.phone',
-        'users.created_at',
-        'users.updated_at',
-        'ranks.rank',
-        'uic.uic',
-        'roles.id as role_id',
-        'roles.admin',
-        'roles.hand_receipt_holder',
-        'roles.sub_receipt_holder',
-        'roles.temp_receipt_holder',
-      )
-      .first();
-  });
+exports.createUserRole = async (userId, roleId) => {
+  return await db('users_roles').insert({ user_id: userId, role_id: roleId });
 };
 
 exports.findUserById = async id => {
