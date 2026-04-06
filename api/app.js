@@ -25,11 +25,11 @@ app.use(
 
 // commented sections are TO DO
 
-// const authRoutes = require('./routes/auth-routes');
-// const sectionsRoutes = require('./routes/sections-routes');
-// const endItemsRoutes = require('./routes/end-items-routes');
-// const inventoryRecordsRoutes = require('./routes/inventory-records-routes');
-// const shortagesRoutes = require('./routes/shortages-routes');
+// const authRoutes = require('./routes/authRoutes');
+// const sectionsRoutes = require('./routes/sectionsRoutes');
+// const endItemsRoutes = require('./routes/end-itemsRoutes');
+// const inventoryRecordsRoutes = require('./routes/inventoryRecordsRoutes');
+// const shortagesRoutes = require('./routes/shortagesRoutes');
 
 // app.use('/auth', authRoutes);
 // app.use('/sections', sectionsRoutes);
