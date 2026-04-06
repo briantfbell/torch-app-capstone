@@ -7,14 +7,12 @@ const router = express.Router();
 const {
   getUserById,
   getAllUsers,
-  createUser,
   updateUser,
   deleteUser,
 } = require('../controllers/usersControllers');
 
 router.get('/:id', auth, getUserById);
 router.get('/', auth, getAllUsers);
-router.post('/', auth, createUser);
 router.patch('/:id', auth, updateUser);
 router.delete('/:id', auth, deleteUser);
 

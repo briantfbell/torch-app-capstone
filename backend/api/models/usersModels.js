@@ -3,8 +3,8 @@ const { applyQueryFilters } = require('../helpers/applyQueryFilters');
 
 const baseQuery = () =>
   db('users')
-    .join('ranks', 'users.rank', 'ranks.rank')
-    .join('uic', 'users.uic_id', 'uic.uic')
+    .join('ranks', 'users.rank', 'ranks.id')
+    .join('uic', 'users.uic_id', 'uic.id')
     .select(
       'users.id',
       'users.username',
@@ -14,6 +14,9 @@ const baseQuery = () =>
       'users.phone',
       'users.created_at',
       'users.updated_at',
+      'users.role',
+      'users.DoDID',
+      'users.uic_id',
       'ranks.rank',
       'uic.uic',
     );

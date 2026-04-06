@@ -27,7 +27,7 @@ exports.updateUser = async (
     password,
     phone,
     rank,
-    uic,
+    uic_id,
     role,
     DoDID,
   },
@@ -45,10 +45,9 @@ exports.updateUser = async (
     existingUser.name_first === name_first &&
     existingUser.name_last === name_last &&
     existingUser.email === email &&
-    existingUser.password === password &&
     existingUser.phone === phone &&
     existingUser.rank === rank &&
-    existingUser.uic === uic &&
+    existingUser.uic_id === uic_id &&
     existingUser.role === role &&
     existingUser.DoDID === DoDID;
 
@@ -66,7 +65,7 @@ exports.updateUser = async (
     password,
     phone,
     rank,
-    uic,
+    uic_id,
     role,
     DoDID,
   });
@@ -84,7 +83,7 @@ exports.deleteUser = async (id, user) => {
   }
 
   const isAdmin = user.role === 'admin';
-  const isOwner = existingUser.submitted_by === user.id;
+  const isOwner = existingUser.id === user.id;
 
   if (!isAdmin && !isOwner) {
     const error = new Error('You can only delete your own user.');
