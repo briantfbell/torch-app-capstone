@@ -1,9 +1,7 @@
 const db = require('../../db/knex');
 const { applyQueryFilters } = require('../helpers/applyQueryFilters');
 
-const baseQuery = () => {
-  db('end_items').select('*');
-};
+const baseQuery = () => db('end_items').select('*');
 
 exports.getAllEndItems = async query => {
   const endItems = await applyQueryFilters(baseQuery(), query);
@@ -12,11 +10,11 @@ exports.getAllEndItems = async query => {
 };
 
 exports.getEndItemById = async id => {
-  return await baseQuery().where('endItems.id', id).first();
+  return await baseQuery().where('end_items.id', id).first();
 };
 
 exports.createEndItem = async endItemData => {
-  const [endItem] = await baseQuery().insert(endItemData).returning('*');
+  const [endItem] = await db('end_items').insert(endItemData).returning('*');
 
   return endItem;
 };
