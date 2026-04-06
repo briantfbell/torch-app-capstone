@@ -1,9 +1,10 @@
-import React from 'react'
-import { useState, useEffect, useContext } from 'react'
-import {useNavigate} from 'react-router-dom'
-import Button from '@mui/material/Button'
+import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import Button from '@mui/material/Button';
 import LoginForm from '../components/LoginForm';
-import RegisterForm from '../components/RegisterForm'
+import RegisterForm from '../components/RegisterForm';
+import {Stack} from '@mui/material';
+import {tryLogin} from '../api/auth.js';
 
 export default function SplashPage() {
     const url = 'http://localhost:8080/';
@@ -31,6 +32,10 @@ export default function SplashPage() {
     const handleLoginSubmit = async (e) => {
         e.preventDefault()
 
+        console.log("Fires handleLoginSubmit")
+
+        alert(`Received login request from: ${username}`);
+        await tryLogin(username, password);
         //Login submission, tokens, context, navigate to next page, etc
     }
 
@@ -62,15 +67,17 @@ export default function SplashPage() {
     if(isLogin) {
         return (
             <div className='loginContainer'>
-                <LoginForm
-                    handleSubmit={handleLoginSubmit}
-                    handleUsernameInput={handleUsernameInput}
-                    handlePasswordInput={handlePasswordInput}
-                    username={username}
-                    password={password}
-                />
-                <p>Need an account? Click here!</p>
-                <Button variant='contained' onClick = {() => handleLoginState()}>Register</Button>
+                <Stack sx={{width:320, justifySelf: 'center'}}>
+                    <LoginForm
+                        handleLoginSubmit={handleLoginSubmit}
+                        handleUsernameInput={handleUsernameInput}
+                        handlePasswordInput={handlePasswordInput}
+                        username={username}
+                        password={password}
+                    />
+                    <p>Need an account?</p>
+                    <Button variant='contained' onClick = {() => handleLoginState()}>Register</Button>
+                </Stack>
             </div>
         )
     }

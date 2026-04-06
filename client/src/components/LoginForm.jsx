@@ -1,25 +1,14 @@
-import DefaultPropsProvider from "@mui/material/DefaultPropsProvider";
-import Button from '@mui/material/Button'
+import Button from '@mui/material/Button';
+import {Stack, TextField} from '@mui/material';
+
 export default function LoginForm({username, password, handleLoginSubmit, handleUsernameInput, handlePasswordInput}) {
     return(
-        <form className='loginForm' onSubmit= {handleLoginSubmit}>
-
-            <input
-                onChange={handleUsernameInput}
-                value={username}
-                type='text'
-                placeholder="Username"
-            />
-
-            <input
-                onChange={handlePasswordInput}
-                value={password}
-                type='password'
-                placeholder="Password"
-            />
-            <br />
-            <Button variant='contained'>Login</Button>
-
+        <form className='loginForm' onSubmit={handleLoginSubmit}>
+            <Stack spacing={2}>
+                <TextField id="outlined-basic" label="Username" variant="outlined" required type={'text'} onChange={handleUsernameInput} value={username}/>
+                <TextField id="outlined-basic" label="Password" variant="outlined" required type={'password'} onChange={handlePasswordInput} value={password}/>
+                <Button variant='contained' type={"submit"}>Login</Button>
+            </Stack>
         </form>
     )
 }

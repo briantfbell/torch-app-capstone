@@ -1,0 +1,31 @@
+# Get current user
+GET 'http://localhost:8080/auth/me
+
+#POST /auth/register creates a new user
+POST 'http://localhost:8080/auth/register
+Content-Type: application/json
+{
+  "username": "test",
+  "name_first": "test",
+  "name_last": "test",
+  "email": "test",
+  "password": "test",
+  "phone": "test",
+  "created_at": "test",
+  "updated_at": "test",
+  "rank": "test",
+  "uic": "test",
+  "role": "test",
+  "DoDID": "test",
+}
+
+# POST login
+POST 'http://localhost:8080/auth/login
+Content-Type: application/json
+{
+  "email": "test",
+  "password": "test",
+}
+
+# Logout and removes cookie
+POST 'http://localhost:8080/auth/logout

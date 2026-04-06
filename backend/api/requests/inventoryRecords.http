@@ -1,0 +1,22 @@
+# GET /inventory-records?end_item_id= returns all saved records for an end item
+GET 'http://localhost:8080/inventory-records?end_item_id=1'
+
+# GET all inventory records
+GET 'http://localhost:8080/inventory-records'
+
+# POST /inventory-records inserts inventory records and calculates variance and status automatically
+POST 'http://localhost:8080/inventory-records'
+Content-Type: application/json
+{
+
+}
+
+# Update inventory record by id
+PATCH 'http://localhost:8080/inventory-records/1'
+Content-Type: application/json
+{
+
+}
+
+# Delete inventory record by id
+DELETE 'http://localhost:8080/inventory-records/1'
