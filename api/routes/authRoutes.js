@@ -8,7 +8,7 @@ const {
   registerUser,
   login,
   logout,
-} = require('../controllers/auth-controller');
+} = require('../controllers/authControllers');
 
 // commented sections are TO DO
 
