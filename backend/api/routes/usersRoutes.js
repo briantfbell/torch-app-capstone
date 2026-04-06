@@ -5,19 +5,17 @@ const adminAuth = require('../middleware/adminAuth');
 const router = express.Router();
 
 const {
-  getEndItemById,
-  getAllEndItems,
-  createEndItem,
-  updateEndItem,
-  deleteEndItem,
-} = require('../controllers/endItemsRecordsControllers');
+  getUserById,
+  getAllUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+} = require('../controllers/usersControllers');
 
-// TO DO
-
-// router.get('/:id', auth, getEndItemById);
-// router.get('/', auth, getAllEndItems);
-// router.post('/', auth, createEndItem);
-// router.patch('/:id', auth, updateEndItem);
-// router.delete('/:id', auth, deleteEndItem);
+router.get('/:id', auth, getUserById);
+router.get('/', auth, getAllUsers);
+router.post('/', auth, createUser);
+router.patch('/:id', auth, updateUser);
+router.delete('/:id', auth, deleteUser);
 
 module.exports = router;

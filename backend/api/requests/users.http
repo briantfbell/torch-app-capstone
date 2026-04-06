@@ -20,4 +20,3 @@ Content-Type: application/json
 
 # Delete user by id
 DELETE 'http://localhost:8080/users/1'
-
