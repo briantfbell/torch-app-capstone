@@ -26,15 +26,15 @@ app.use(
 // commented sections are TO DO
 
 // const authRoutes = require('./routes/authRoutes');
-// const sectionsRoutes = require('./routes/sectionsRoutes');
 // const endItemsRoutes = require('./routes/end-itemsRoutes');
 // const inventoryRecordsRoutes = require('./routes/inventoryRecordsRoutes');
+// const sectionsRoutes = require('./routes/sectionsRoutes');
 // const shortagesRoutes = require('./routes/shortagesRoutes');
 
 // app.use('/auth', authRoutes);
-// app.use('/sections', sectionsRoutes);
 // app.use('/end-items', endItemsRoutes);
 // app.use('/inventory-records', inventoryRecordsRoutes);
+// app.use('/sections', sectionsRoutes);
 // app.use('/shortages', shortagesRoutes);
 
 app.get('/', (req, res) => {

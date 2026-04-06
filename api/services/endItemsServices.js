@@ -1,36 +1,23 @@
 const db = require('../../db/knex');
-const reportsModel = require('../models/reports-model');
-const categoriesModel = require('../models/categories-model');
+const endItemModel = require('../models/endItemsModels');
 
-exports.getAllReports = async query => {
-  return await reportsModel.getAllReports(query);
+exports.getAllEndItem = async query => {
+  return await endItemModel.getAllEndItem(query);
 };
 
-exports.getReportById = async id => {
-  const report = await reportsModel.getReportById(id);
+exports.getEndItemById = async id => {
+  const endItem = await endItemModel.getEndItemById(id);
 
-  if (!report) {
-    const error = new Error('Report does not exist.');
+  if (!endItem) {
+    const error = new Error('End item does not exist.');
     error.status = 404;
     throw error;
   }
 
-  return report;
+  return endItem;
 };
 
-exports.getReportsByCategory = async category => {
-  const match = await categoriesModel.getCategoriesByNames(category);
-
-  if (!match.length) {
-    const error = new Error('Category is not valid.');
-    error.status = 404;
-    throw error;
-  }
-
-  return await reportsModel.getReportsByCategory(category);
-};
-
-exports.createReport = async (
+exports.createEndItem = async (
   userId,
   {
     title,
@@ -66,7 +53,7 @@ exports.createReport = async (
   }
 
   return await db.transaction(async trx => {
-    const report = await reportsModel.createReport(trx, {
+    const EndItem = await endItemModel.createEndItem(trx, {
       title,
       summary,
       mgrs,
@@ -96,20 +83,20 @@ exports.createReport = async (
 
     const allCategories = [...existingCategories, ...newCategories];
 
-    await reportsModel.createReportCategories(
+    await endItemModel.createEndItemCategories(
       trx,
       allCategories.map(category => ({
-        report_id: report.id,
+        EndItem_id: EndItem.id,
         category_id: category.id,
       })),
     );
 
-    return { ...report, categories: cleanedCategories };
+    return { ...EndItem, categories: cleanedCategories };
   });
 };
 
-exports.updateReport = async (
-  reportId,
+exports.updateEndItem = async (
+  EndItemId,
   user,
   {
     title,
@@ -121,19 +108,19 @@ exports.updateReport = async (
     categories = [],
   },
 ) => {
-  const existingReport = await reportsModel.getReportById(reportId);
+  const existingEndItem = await endItemModel.getEndItemById(EndItemId);
 
-  if (!existingReport) {
-    const error = new Error('Report does not exist.');
+  if (!existingEndItem) {
+    const error = new Error('EndItem does not exist.');
     error.status = 404;
     throw error;
   }
 
   const isAdmin = user.role === 'admin';
-  const isOwner = existingReport.submitted_by === user.id;
+  const isOwner = existingEndItem.submitted_by === user.id;
 
   if (!isAdmin && !isOwner) {
-    const error = new Error('You can only edit your own reports.');
+    const error = new Error('You can only edit your own EndItem.');
     error.status = 403;
     throw error;
   }
@@ -155,7 +142,8 @@ exports.updateReport = async (
     throw error;
   }
 
-  const existingCategoryRows = await reportsModel.getReportCategories(reportId);
+  const existingCategoryRows =
+    await endItemModel.getEndItemCategories(EndItemId);
 
   const existingCategories = existingCategoryRows
     .map(row => row.category)
@@ -163,25 +151,25 @@ exports.updateReport = async (
 
   const nextCategories = [...cleanedCategories].sort();
 
-  const noReportChanges =
-    existingReport.title === title &&
-    existingReport.summary === summary &&
-    existingReport.mgrs === mgrs &&
-    existingReport.lat_long === lat_long &&
-    existingReport.recommendations === recommendations &&
-    existingReport.priority === priority;
+  const noEndItemChanges =
+    existingEndItem.title === title &&
+    existingEndItem.summary === summary &&
+    existingEndItem.mgrs === mgrs &&
+    existingEndItem.lat_long === lat_long &&
+    existingEndItem.recommendations === recommendations &&
+    existingEndItem.priority === priority;
 
   const noCategoryChanges =
     JSON.stringify(existingCategories) === JSON.stringify(nextCategories);
 
-  if (noReportChanges && noCategoryChanges) {
+  if (noEndItemChanges && noCategoryChanges) {
     const error = new Error('No changes detected.');
     error.status = 400;
     throw error;
   }
 
-  const updatedReport = await db.transaction(async trx => {
-    const report = await reportsModel.updateReport(trx, reportId, {
+  const updatedEndItem = await db.transaction(async trx => {
+    const EndItem = await endItemModel.updateEndItem(trx, EndItemId, {
       title,
       summary,
       mgrs,
@@ -190,41 +178,41 @@ exports.updateReport = async (
       priority,
     });
 
-    await reportsModel.deleteReportCategories(trx, reportId);
+    await endItemModel.deleteEndItemCategories(trx, EndItemId);
 
-    await reportsModel.createReportCategories(
+    await endItemModel.createEndItemCategories(
       trx,
       matchedCategories.map(category => ({
-        report_id: Number(reportId),
+        EndItem_id: Number(EndItemId),
         category_id: category.id,
       })),
     );
 
-    return report;
+    return EndItem;
   });
 
-  return updatedReport;
+  return updatedEndItem;
 };
 
-exports.deleteReport = async (id, user) => {
-  const existingReport = await reportsModel.getReportById(id);
+exports.deleteEndItem = async (id, user) => {
+  const existingEndItem = await endItemModel.getEndItemById(id);
 
-  if (!existingReport) {
-    const error = new Error('Report does not exist.');
+  if (!existingEndItem) {
+    const error = new Error('EndItem does not exist.');
     error.status = 404;
     throw error;
   }
 
   const isAdmin = user.role === 'admin';
-  const isOwner = existingReport.submitted_by === user.id;
+  const isOwner = existingEndItem.submitted_by === user.id;
 
   if (!isAdmin && !isOwner) {
-    const error = new Error('You can only delete your own reports.');
+    const error = new Error('You can only delete your own EndItem.');
     error.status = 403;
     throw error;
   }
 
-  const [deletedReport] = await reportsModel.deleteReport(id);
+  const [deletedEndItem] = await endItemModel.deleteEndItem(id);
 
-  return deletedReport;
+  return deletedEndItem;
 };

@@ -5,19 +5,17 @@ const adminAuth = require('../middleware/adminAuth');
 const router = express.Router();
 
 const {
-  getReportsByCategory,
-  getReportById,
-  getAllReports,
-  createReport,
-  updateReport,
-  deleteReport,
-} = require('../controllers/shortagesRecords');
+  getEndItemById,
+  getAllEndItems,
+  createEndItem,
+  updateEndItem,
+  deleteEndItem,
+} = require('../controllers/endItemsRecordsControllers');
 
-router.get('/category/:category', auth, getReportsByCategory);
-router.get('/:id', auth, getReportById);
-router.get('/', auth, getAllReports);
-router.post('/', auth, createReport);
-router.patch('/:id', auth, updateReport);
-router.delete('/:id', auth, deleteReport);
+// router.get('/:id', auth, getEndItemById);
+// router.get('/', auth, getAllEndItems);
+// router.post('/', auth, createEndItem);
+// router.patch('/:id', auth, updateEndItem);
+// router.delete('/:id', auth, deleteEndItem);
 
 module.exports = router;

@@ -41,16 +41,7 @@ const joinAllTables = query => {
 exports.getAllReports = async query => {
   const reports = await applyQueryFilters(joinAllTables(baseQuery()), query);
 
-  const countReports = await applyQueryFilters(
-    baseQuery().countDistinct('reports.id as total').first(),
-    query,
-    {
-      includeSort: false,
-      includePagination: false,
-    },
-  );
-
-  return [reports, countReports];
+  return [reports];
 };
 
 exports.getReportById = async id => {

@@ -1,14 +1,11 @@
-const reportsService = require('../services/shortagesServices');
+const endItemsService = require('../services/endItemsServices');
 
-exports.getAllReports = async (req, res) => {
+exports.getAllEndItems = async (req, res) => {
   try {
     const { query } = req;
-    const data = await reportsService.getAllReports(query);
+    const data = await endItemsService.getAllEndItems(query);
 
-    res.status(200).json({
-      reports: data[0],
-      total: Number(data[1]?.total || 0),
-    });
+    res.status(200).json(data);
   } catch (err) {
     res
       .status(err.status || 500)
@@ -16,12 +13,12 @@ exports.getAllReports = async (req, res) => {
   }
 };
 
-exports.getReportById = async (req, res) => {
+exports.getEndItemById = async (req, res) => {
   try {
     const { id } = req.params;
-    const report = await reportsService.getReportById(id);
+    const endItem = await endItemsService.getEndItemById(id);
 
-    res.status(200).json(report);
+    res.status(200).json(endItem);
   } catch (err) {
     res
       .status(err.status || 500)
@@ -29,12 +26,12 @@ exports.getReportById = async (req, res) => {
   }
 };
 
-exports.getReportsByCategory = async (req, res) => {
+exports.getEndItemsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
-    const reports = await reportsService.getReportsByCategory(category);
+    const endItems = await endItemsService.getEndItemsByCategory(category);
 
-    res.status(200).json(reports);
+    res.status(200).json(endItems);
   } catch (err) {
     res
       .status(err.status || 500)
@@ -42,14 +39,14 @@ exports.getReportsByCategory = async (req, res) => {
   }
 };
 
-exports.createReport = async (req, res) => {
+exports.createEndItem = async (req, res) => {
   try {
     const { id: userId } = req.user;
-    const newReport = await reportsService.createReport(userId, req.body);
+    const newEndItem = await endItemsService.createEndItem(userId, req.body);
 
     res.status(201).json({
-      newReport: newReport,
-      message: `'${newReport.title}' has been successfully posted.`,
+      newEndItem: newEndItem,
+      message: `'${newEndItem.title}' has been successfully posted.`,
     });
   } catch (err) {
     res
@@ -58,16 +55,16 @@ exports.createReport = async (req, res) => {
   }
 };
 
-exports.updateReport = async (req, res) => {
+exports.updateEndItem = async (req, res) => {
   try {
-    const updatedReport = await reportsService.updateReport(
+    const updatedEndItem = await endItemsService.updateEndItem(
       req.params.id,
       req.user,
       req.body,
     );
 
     res.status(200).json({
-      message: `'${updatedReport.title}' has been successfully updated.`,
+      message: `'${updatedEndItem.title}' has been successfully updated.`,
     });
   } catch (err) {
     res.status(err.status || 500).json({
@@ -76,16 +73,16 @@ exports.updateReport = async (req, res) => {
   }
 };
 
-exports.deleteReport = async (req, res) => {
+exports.deleteEndItem = async (req, res) => {
   try {
-    const deletedReport = await reportsService.deleteReport(
+    const deletedEndItem = await endItemsService.deleteEndItem(
       req.params.id,
       req.user,
     );
 
     res
       .status(200)
-      .json({ message: `'${deletedReport.title}' was successfully deleted.` });
+      .json({ message: `'${deletedEndItem.title}' was successfully deleted.` });
   } catch (err) {
     res
       .status(err.status || 500)

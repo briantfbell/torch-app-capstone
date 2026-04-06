@@ -5,19 +5,17 @@ const adminAuth = require('../middleware/adminAuth');
 const router = express.Router();
 
 const {
-  getReportsByCategory,
-  getReportById,
-  getAllReports,
-  createReport,
-  updateReport,
-  deleteReport,
+  getShortageById,
+  getAllShortages,
+  createShortage,
+  updateShortage,
+  deleteShortage,
 } = require('../controllers/shortagesRecords');
 
-router.get('/category/:category', auth, getReportsByCategory);
-router.get('/:id', auth, getReportById);
-router.get('/', auth, getAllReports);
-router.post('/', auth, createReport);
-router.patch('/:id', auth, updateReport);
-router.delete('/:id', auth, deleteReport);
+// router.get('/:id', auth, getShortageById);
+// router.get('/', auth, getAllShortages);
+// router.post('/', auth, createShortage);
+// router.patch('/:id', auth, updateShortage);
+// router.delete('/:id', auth, deleteShortage);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 # Get current user
 GET 'http://localhost:8080/auth/me
 
-# Creates a new user
+#POST /auth/register creates a new user
 POST 'http://localhost:8080/auth/register
 Content-Type: application/json
 {
@@ -11,7 +11,7 @@ Content-Type: application/json
   "section": "section"
 }
 
-# Authenticates a user and returns role and section
+# POST /auth/register creates a new user
 POST 'http://localhost:8080/auth/login
 Content-Type: application/json
 {

@@ -1,1 +1,22 @@
+// router.get('/:id', auth, getShortageById);
+GET 'http://localhost:8080/shortages/1'
+
 # GET /shortages?section_id= returns all non-zero variance records for a section
+GET 'http://localhost:8080/shortages?section_id=1'
+
+// router.post('/', auth, createShortage);
+POST 'http://localhost:8080/shortages'
+Content-Type: application/json
+{
+
+}
+
+// router.patch('/:id', auth, updateShortage);
+PATCH 'http://localhost:8080/shortages/1'
+Content-Type: application/json
+{
+
+}
+
+// router.delete('/:id', auth, deleteShortage);
+DELETE 'http://localhost:8080/shortages/1'
