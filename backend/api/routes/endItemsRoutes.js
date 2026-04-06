@@ -10,7 +10,7 @@ const {
   createEndItem,
   updateEndItem,
   deleteEndItem,
-} = require('../controllers/endItemsRecordsControllers');
+} = require('../controllers/endItemsControllers');
 
 router.get('/:id', auth, getEndItemById);
 router.get('/', auth, getAllEndItems);

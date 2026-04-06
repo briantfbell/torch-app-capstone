@@ -6,7 +6,7 @@ const baseQuery = () => db('end_items').select('*');
 exports.getAllEndItems = async query => {
   const endItems = await applyQueryFilters(baseQuery(), query);
 
-  return [endItems];
+  return endItems;
 };
 
 exports.getEndItemById = async id => {
