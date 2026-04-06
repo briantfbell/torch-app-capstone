@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import SplashPage from '../pages/SplashPage';
 import EquipmentPage from '../pages/EquipmentPage.jsx';
 import SHRViewPage from '../pages/SHRViewPage.jsx';
+import EndItemPage from '../pages/EndItemPage.jsx';
 
 
 export default function MainRouter() {
@@ -12,6 +13,7 @@ export default function MainRouter() {
                 <Route path = '/' element={<SplashPage />} />
                 <Route path="/" element={<EquipmentPage />} />
                 <Route path="/shr-viewer" element={<SHRViewPage />} />
+                <Route path="/enditem/:id" element={<EndItemPage />} />
             </Routes>
         </Router>
     )
