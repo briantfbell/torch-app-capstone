@@ -5,18 +5,23 @@ GET 'http://localhost:8080/auth/me
 POST 'http://localhost:8080/auth/register
 Content-Type: application/json
 {
-  "email": "email",
-  "password": "password",
-  "role": "role",
-  "section": "section"
+  "role": "test",
+  "username": "test",
+  "name_first": "test",
+  "name_last": "test",
+  "email": "test",
+  "password": "test",
+  "phone": "test",
+  "rank": "test",
+  "uic": "test",
 }
 
 # POST /auth/register creates a new user
 POST 'http://localhost:8080/auth/login
 Content-Type: application/json
 {
-  "email": "email",
-  "password": "password",
+  "email": "test",
+  "password": "test",
 }
 
 # Logout and removes cookie

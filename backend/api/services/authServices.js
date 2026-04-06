@@ -102,7 +102,7 @@ exports.registerUser = async (
   }
 
   const hashWord = await bcrypt.hash(password, SALT_ROUNDS);
-  // change 'password' to actual admin verify
+  // TO DO: change 'password' to actual admin verify
   const adminHashWord = await bcrypt.hash('password', SALT_ROUNDS);
   const isAdmin = await bcrypt.compare(password, adminHashWord);
 

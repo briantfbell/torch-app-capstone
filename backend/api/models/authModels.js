@@ -1,4 +1,4 @@
-// change route based on actual knex location
+// TO DO: change route based on actual knex location
 const db = require('../../db/knex');
 
 const baseQuery = () =>
@@ -8,12 +8,14 @@ const baseQuery = () =>
     .join('users_roles', 'users.id', 'users_roles.user_id')
     .join('roles', 'users_roles.role_id', 'roles.id');
 
-const joinAllTables = query => {
-  return query
-    .select('users.*')
-    .select(db.raw('ARRAY_AGG(roles.role) as roles'))
-    .groupBy('users.id');
-};
+// TO DO: can users have multiple roles?
+
+// const groupRoles = query => {
+//   return query
+//     .select('users.*')
+//     .select(db.raw('ARRAY_AGG(roles.role) as roles'))
+//     .groupBy('users.id');
+// };
 
 exports.createUser = async user => {
   return await baseQuery()

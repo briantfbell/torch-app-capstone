@@ -12,6 +12,8 @@ const {
   deleteShortage,
 } = require('../controllers/shortagesRecords');
 
+// TO DO
+
 // router.get('/:id', auth, getShortageById);
 // router.get('/', auth, getAllShortages);
 // router.post('/', auth, createShortage);

@@ -13,6 +13,8 @@ const {
   deleteSection,
 } = require('../controllers/sectionsControllers');
 
+// TO DO
+
 // router.get('/:id', auth, getSectionById);
 // router.get('/', auth, getAllSections);
 // router.post('/', auth, createSection);

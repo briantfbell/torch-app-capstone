@@ -12,6 +12,8 @@ const {
   deleteInventoryRecord,
 } = require('../controllers/inventoryRecordsControllers');
 
+// TO DO:
+
 // router.get('/:id', auth, getInventoryRecordById);
 // router.get('/', auth, getAllInventoryRecords);
 // router.post('/', auth, createInventoryRecord);

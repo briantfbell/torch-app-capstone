@@ -12,6 +12,8 @@ const {
   deleteEndItem,
 } = require('../controllers/endItemsRecordsControllers');
 
+// TO DO
+
 // router.get('/:id', auth, getEndItemById);
 // router.get('/', auth, getAllEndItems);
 // router.post('/', auth, createEndItem);

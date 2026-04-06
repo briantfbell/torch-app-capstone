@@ -1,4 +1,4 @@
-// match with actual db schema
+// TO DO: match with actual db schema
 const parseMultiValue = value => {
   if (!value) return [];
 
