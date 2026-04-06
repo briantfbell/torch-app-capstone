@@ -11,7 +11,7 @@ const {
   createReport,
   updateReport,
   deleteReport,
-} = require('../controllers/reports-controller');
+} = require('../controllers/shortagesRecords');
 
 router.get('/category/:category', auth, getReportsByCategory);
 router.get('/:id', auth, getReportById);

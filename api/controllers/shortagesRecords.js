@@ -1,4 +1,4 @@
-const reportsService = require('../services/reports-service');
+const reportsService = require('../services/shortagesServices');
 
 exports.getAllReports = async (req, res) => {
   try {
@@ -47,12 +47,10 @@ exports.createReport = async (req, res) => {
     const { id: userId } = req.user;
     const newReport = await reportsService.createReport(userId, req.body);
 
-    res
-      .status(201)
-      .json({
-        newReport: newReport,
-        message: `'${newReport.title}' has been successfully posted.`,
-      });
+    res.status(201).json({
+      newReport: newReport,
+      message: `'${newReport.title}' has been successfully posted.`,
+    });
   } catch (err) {
     res
       .status(err.status || 500)
