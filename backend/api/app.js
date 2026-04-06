@@ -23,8 +23,6 @@ app.use(
   }),
 );
 
-// commented sections are TO DO
-
 // const authRoutes = require('./routes/authRoutes');
 // const endItemsRoutes = require('./routes/end-itemsRoutes');
 // const inventoryRecordsRoutes = require('./routes/inventoryRecordsRoutes');

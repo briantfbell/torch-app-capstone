@@ -15,12 +15,34 @@ exports.getMe = async (req, res) => {
 
 exports.registerUser = async (req, res) => {
   try {
-    const { email, password, role, section } = req.body;
-    const newUser = await authServices.registerUser(
+    const {
+      id,
+      role,
+      username,
+      name_first,
+      name_last,
       email,
       password,
+      phone,
+      created_at,
+      updated_at,
+      rank,
+      uic,
+    } = req.body;
+
+    const newUser = await authServices.registerUser(
+      id,
       role,
-      section,
+      username,
+      name_first,
+      name_last,
+      email,
+      password,
+      phone,
+      created_at,
+      updated_at,
+      rank,
+      uic,
     );
 
     res.status(201).json({
