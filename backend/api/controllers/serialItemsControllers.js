@@ -28,11 +28,7 @@ exports.getSerialItemById = async (req, res) => {
 
 exports.createSerialItem = async (req, res) => {
   try {
-    const { id: userId } = req.user;
-    const newSerialItem = await serialItemsServices.createSerialItem(
-      userId,
-      req.body,
-    );
+    const newSerialItem = await serialItemsServices.createSerialItem(req.body);
 
     res.status(201).json({
       newSerialItem: newSerialItem,
@@ -66,7 +62,6 @@ exports.deleteSerialItem = async (req, res) => {
   try {
     const deletedSerialItem = await serialItemsServices.deleteSerialItem(
       req.params.id,
-      req.user,
     );
 
     res.status(200).json({

@@ -32,7 +32,7 @@ exports.createEndItem = async (req, res) => {
 
     res.status(201).json({
       newEndItem,
-      message: `'${newEndItem.description}' has been successfully created.`,
+      message: `LIN: ${newEndItem.lin} has been successfully created.`,
     });
   } catch (err) {
     res
@@ -49,7 +49,7 @@ exports.updateEndItem = async (req, res) => {
     );
 
     res.status(200).json({
-      message: `'${updatedEndItem.description}' has been successfully updated.`,
+      message: `LIN: ${updatedEndItem.lin} has been successfully updated.`,
     });
   } catch (err) {
     res.status(err.status || 500).json({
@@ -62,9 +62,9 @@ exports.deleteEndItem = async (req, res) => {
   try {
     const deletedEndItem = await endItemsServices.deleteEndItem(req.params.id);
 
-    res
-      .status(200)
-      .json({ message: `'${deletedEndItem.description}' was successfully deleted.` });
+    res.status(200).json({
+      message: `LIN: ${deletedEndItem.lin} was successfully deleted.`,
+    });
   } catch (err) {
     res
       .status(err.status || 500)

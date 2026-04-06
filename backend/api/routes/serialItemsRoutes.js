@@ -10,7 +10,7 @@ const {
   createSerialItem,
   updateSerialItem,
   deleteSerialItem,
-} = require('../controllers/endItemsRecordsControllers');
+} = require('../controllers/serialItemsControllers');
 
 router.get('/:id', auth, getSerialItemById);
 router.get('/', auth, getAllSerialItems);

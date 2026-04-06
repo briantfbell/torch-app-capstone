@@ -16,14 +16,38 @@ exports.getComponentById = async id => {
   return component;
 };
 
-exports.createComponent = async ({ description, nsn, end_qty, has_qty, image, end_id }) => {
-  if (!description || !nsn || !end_id) {
-    const error = new Error('description, nsn, and end_id are required.');
+exports.createComponent = async ({
+  niin,
+  description,
+  ui,
+  auth_qty,
+  image,
+  arc,
+  end_item_id,
+}) => {
+  if (
+    !niin ||
+    !description ||
+    !ui ||
+    !auth_qty ||
+    !image ||
+    !arc ||
+    !end_item_id
+  ) {
+    const error = new Error('All fields are required.');
     error.status = 400;
     throw error;
   }
 
-  return await componentsModels.createComponent({ description, nsn, end_qty, has_qty, image, end_id });
+  return await componentsModels.createComponent({
+    niin,
+    description,
+    ui,
+    auth_qty,
+    image,
+    arc,
+    end_item_id,
+  });
 };
 
 exports.updateComponent = async (id, componentData) => {

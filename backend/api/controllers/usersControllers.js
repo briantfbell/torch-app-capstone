@@ -42,7 +42,7 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const deletedUser = await usersServices.deleteUser(req.params.id, req.user);
+    const deletedUser = await usersServices.deleteUser(req.params.id);
 
     res
       .status(200)

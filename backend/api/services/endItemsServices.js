@@ -16,14 +16,28 @@ exports.getEndItemById = async id => {
   return endItem;
 };
 
-exports.createEndItem = async ({ fsc, description, niin, image, auth_qty, lin }) => {
-  if (!fsc || !description || !niin) {
-    const error = new Error('fsc, description, and niin are required.');
+exports.createEndItem = async ({
+  fsc,
+  description,
+  niin,
+  image,
+  auth_qty,
+  lin,
+}) => {
+  if (!fsc || !description || !niin || !image || !auth_qty || !lin) {
+    const error = new Error('All fields are required.');
     error.status = 400;
     throw error;
   }
 
-  return await endItemsModels.createEndItem({ fsc, description, niin, image, auth_qty, lin });
+  return await endItemsModels.createEndItem({
+    fsc,
+    description,
+    niin,
+    image,
+    auth_qty,
+    lin,
+  });
 };
 
 exports.updateEndItem = async (id, endItemData) => {
