@@ -23,10 +23,10 @@ exports.createUic = async ({ uic, unit_name, parent_uic }) => {
     throw error;
   }
 
-  return await uicModels.createUic({ uic });
+  return await uicModels.createUic({ uic, unit_name, parent_uic });
 };
 
-exports.updateUic = async (id, { uic }) => {
+exports.updateUic = async (id, uicData) => {
   const existingUic = await uicModels.getUicById(id);
 
   if (!existingUic) {
@@ -35,13 +35,7 @@ exports.updateUic = async (id, { uic }) => {
     throw error;
   }
 
-  if (existingUic.uic === uic) {
-    const error = new Error('No changes detected.');
-    error.status = 400;
-    throw error;
-  }
-
-  return await uicModels.updateUic(id, { uic });
+  return await uicModels.updateUic(id, uicData);
 };
 
 exports.deleteUic = async id => {
