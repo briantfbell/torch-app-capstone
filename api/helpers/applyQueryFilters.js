@@ -1,3 +1,4 @@
+// match with actual db schema
 const parseMultiValue = value => {
   if (!value) return [];
 
@@ -17,25 +18,7 @@ const parseMultiValue = value => {
 };
 
 exports.applyQueryFilters = (query, filters, options = {}) => {
-  const {
-    category,
-    categories,
-    priority,
-    priorities,
-    id,
-    title,
-    mgrs,
-    submitted_by,
-    date_range,
-    q,
-    before,
-    after,
-    classification,
-    limit,
-    offset,
-    sort_by,
-    order,
-  } = filters;
+  const { section_id, end_item_id } = filters;
 
   const { includeSort = true, includePagination = true } = options;
 

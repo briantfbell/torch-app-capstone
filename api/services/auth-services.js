@@ -29,12 +29,17 @@ exports.getMe = async token => {
     throw error;
   }
 
-  return { id: user.id, email: user.email, role: user.role };
+  return {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    section: user.section,
+  };
 };
 
-exports.registerUser = async (email, password) => {
-  if (!email || !password) {
-    const error = new Error('Email and password are required.');
+exports.registerUser = async (email, password, section) => {
+  if (!email || !password || !section) {
+    const error = new Error('All fields are required.');
     error.status = 400;
     throw error;
   }
@@ -57,6 +62,7 @@ exports.registerUser = async (email, password) => {
     email: normalizedEmail,
     password: hashWord,
     role: isAdmin ? 'admin' : 'user',
+    section: section,
   });
 
   return newUser;
@@ -91,6 +97,7 @@ exports.login = async (email, password) => {
       id: user.id,
       email: user.email,
       role: user.role,
+      section: user.section,
     },
     process.env.JWT,
     { expiresIn: '7d' },

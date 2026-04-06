@@ -23,13 +23,15 @@ app.use(
   }),
 );
 
-const authRoutes = require('./routes/auth-routes');
+// commented sections are TO DO
+
+// const authRoutes = require('./routes/auth-routes');
 // const sectionsRoutes = require('./routes/sections-routes');
 // const endItemsRoutes = require('./routes/end-items-routes');
 // const inventoryRecordsRoutes = require('./routes/inventory-records-routes');
 // const shortagesRoutes = require('./routes/shortages-routes');
 
-app.use('/auth', authRoutes);
+// app.use('/auth', authRoutes);
 // app.use('/sections', sectionsRoutes);
 // app.use('/end-items', endItemsRoutes);
 // app.use('/inventory-records', inventoryRecordsRoutes);

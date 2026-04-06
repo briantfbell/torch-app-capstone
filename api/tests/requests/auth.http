@@ -1,7 +1,23 @@
-# GET all
+# Get current user
+GET 'http://localhost:8080/auth/me
 
-# GET by id
+# Creates a new user
+POST 'http://localhost:8080/auth/register
+Content-Type: application/json
+{
+  "email": "email",
+  "password": "password",
+  "role": "role",
+  "section": "section"
+}
 
-# POST /auth/register creates a new user
+# Authenticates a user and returns role and section
+POST 'http://localhost:8080/auth/login
+Content-Type: application/json
+{
+  "email": "email",
+  "password": "password",
+}
 
-# POST /auth/login authenticates a user and returns role and section
+# Logout and removes cookie
+POST 'http://localhost:8080/auth/logout

@@ -2,7 +2,9 @@
 const db = require('../../db/knex');
 
 exports.createUser = async user => {
-  return await db('users').insert(user).returning(['id', 'email', 'role']);
+  return await db('users')
+    .insert(user)
+    .returning(['id', 'email', 'role', 'section']);
 };
 
 exports.findUserById = async id => {
