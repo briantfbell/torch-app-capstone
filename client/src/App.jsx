@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
@@ -119,3 +120,27 @@ function App() {
 }
 
 export default App
+=======
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import EquipmentPage from "./pages/EquipmentPage";
+import SHRViewPage from "./pages/SHRViewPage";
+import { useState } from 'react'
+import './App.css';
+import MainRouter from './services/Router'
+import MiniDrawer from './components/ui/MiniDrawer.jsx';
+
+function App() {
+  return (
+    <MainRouter />
+    <MiniDrawer/>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<EquipmentPage />} />
+        <Route path="/shr-viewer" element={<SHRViewPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+>>>>>>> 9a231875b7f8324264461f40bee46c33e51c4432
