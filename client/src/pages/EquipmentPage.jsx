@@ -6,9 +6,18 @@ export default function EquipmentPage() {
   return (
     <div>
       <h1>Equipment</h1>
-      <button onClick={() => navigate("/shr-viewer")}>
-        Sub Hand Receipt PDF
-      </button>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "16px",
+        }}
+      >
+        <button onClick={() => navigate("/shr-viewer")}>
+          Sub Hand Receipt PDF
+        </button>
+      </div>
     </div>
   );
 }
