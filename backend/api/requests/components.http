@@ -2,7 +2,7 @@
 GET http://localhost:8080/components
 
 ### GET component by id
-GET http://localhost:8080/components/1
+GET http://localhost:8080/components/5
 
 ### Create a component
 POST http://localhost:8080/components
