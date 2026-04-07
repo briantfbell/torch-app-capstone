@@ -1,4 +1,3 @@
-// TO DO: match with actual db schema
 const parseMultiValue = value => {
   if (!value) return [];
 
@@ -18,121 +17,140 @@ const parseMultiValue = value => {
 };
 
 exports.applyQueryFilters = (query, filters, options = {}) => {
-  const { section_id, end_item_id } = filters;
+  const {
+    id,
+    description,
+    niin,
+    fsc,
+    lin,
+    arc,
+    end_item_id,
+    status,
+    item_id,
+    serial_number,
+    signed_to,
+    section_id,
+    q,
+    sort_by,
+    order,
+    limit,
+    offset,
+  } = filters;
 
-  const { includeSort = true, includePagination = true } = options;
+  const {
+    includeSort = true,
+    includePagination = true,
+    searchFields = ['description'],
+  } = options;
 
   const allowedSortFields = [
     'id',
-    'title',
-    'mgrs',
-    'priority',
-    'created_at',
-    'classification',
+    'description',
+    'niin',
+    'fsc',
+    'lin',
+    'arc',
+    'status',
+    'serial_number',
+    'assigned_at',
   ];
 
   const allowedOrder = ['asc', 'desc'];
 
-  // CATEGORY
-  const selectedCategories = parseMultiValue(categories || category).filter(
-    value => value !== 'all_categories',
-  );
-
-  if (selectedCategories.length) {
-    query.whereIn('categories.category', selectedCategories);
-  }
-
-  // PRIORITY
-  const selectedPriorities = parseMultiValue(priorities || priority).filter(
-    value => value !== 'all_priorities',
-  );
-
-  if (selectedPriorities.length) {
-    query.whereIn('reports.priority', selectedPriorities);
-  }
-
   // ID
   if (id) {
-    query.where('reports.id', id);
+    query.where('id', id);
   }
 
-  // TITLE
-  if (title) {
-    query.whereILike('reports.title', `%${title}%`);
+  // DESCRIPTION (end_items, components)
+  if (description) {
+    query.whereILike('description', `%${description}%`);
   }
 
-  // MGRS
-  if (mgrs) {
-    query.whereILike('reports.mgrs', `%${mgrs}%`);
+  // NIIN (end_items, components)
+  if (niin) {
+    query.whereILike('niin', `%${niin}%`);
   }
 
-  // SUBMITTED BY
-  if (submitted_by) {
-    query.whereILike('users.email', `%${submitted_by}%`);
+  // FSC (end_items)
+  if (fsc) {
+    query.whereILike('fsc', `%${fsc}%`);
   }
 
-  // PLAIN QUERY TEXT
-  if (q) {
-    query.where(text => {
-      text
-        .whereILike('reports.title', `%${q}%`)
-        .orWhereILike('reports.mgrs', `%${q}%`)
-        .orWhereILike('users.email', `%${q}%`);
+  // LIN (end_items)
+  if (lin) {
+    query.whereILike('lin', `%${lin}%`);
+  }
+
+  // ARC (components)
+  if (arc) {
+    query.whereILike('arc', `%${arc}%`);
+  }
+
+  // END_ITEM_ID (components)
+  if (end_item_id) {
+    query.where('end_item_id', end_item_id);
+  }
+
+  // STATUS (serial_items) — supports comma-separated or array values
+  const selectedStatuses = parseMultiValue(status).filter(
+    value => value !== 'all_statuses',
+  );
+
+  if (selectedStatuses.length) {
+    query.whereIn('status', selectedStatuses);
+  }
+
+  // ITEM_ID (serial_items)
+  if (item_id) {
+    query.where('item_id', item_id);
+  }
+
+  // SERIAL_NUMBER (serial_items)
+  if (serial_number) {
+    query.whereILike('serial_number', `%${serial_number}%`);
+  }
+
+  // SIGNED_TO (serial_items)
+  if (signed_to) {
+    query.where('signed_to', signed_to);
+  }
+
+  // SECTION_ID
+  if (section_id) {
+    query.where('section_id', section_id);
+  }
+
+  // PLAIN QUERY TEXT — searches across caller-specified searchFields
+  if (q && searchFields.length) {
+    query.where(builder => {
+      searchFields.forEach((field, i) => {
+        if (i === 0) {
+          builder.whereILike(field, `%${q}%`);
+        } else {
+          builder.orWhereILike(field, `%${q}%`);
+        }
+      });
     });
-  }
-
-  // DATES
-  if (after) {
-    query.where('reports.created_at', '>', after);
-  }
-
-  if (before) {
-    query.where('reports.created_at', '<', before);
-  }
-
-  const dateRangeDays = {
-    last_7_days: 7,
-    last_30_days: 30,
-    last_60_days: 60,
-    last_90_days: 90,
-    last_90_days: 90,
-    last_6_months: 180,
-    last_year: 365,
-  };
-
-  if (date_range && date_range !== 'all_dates' && dateRangeDays[date_range]) {
-    const days = dateRangeDays[date_range];
-
-    const cutoff = new Date();
-
-    cutoff.setDate(cutoff.getDate() - days);
-
-    query.where('reports.created_at', '>=', cutoff);
-  }
-
-  // CLASSIFICATION
-  if (classification && classification !== 'all_classifications') {
-    query.where('reports.classification', classification);
   }
 
   // SORT
   if (includeSort) {
     if (sort_by && allowedSortFields.includes(sort_by)) {
-      const safeOrder = allowedOrder.includes(order) ? order : 'desc';
-      query.orderBy(`reports.${sort_by}`, safeOrder);
+      const safeOrder = allowedOrder.includes(order) ? order : 'asc';
+      query.orderBy(sort_by, safeOrder);
     } else {
-      query.orderBy('reports.created_at', 'desc');
+      query.orderBy('id', 'asc');
     }
   }
 
-  // LIMIT
+  // PAGINATION
   if (includePagination) {
     const parsedLimit = parseInt(limit, 10);
     if (!isNaN(parsedLimit) && parsedLimit > 0 && parsedLimit <= 100) {
       query.limit(parsedLimit);
     }
 
-    // OFFSET
     const parsedOffset = parseInt(offset, 10);
     if (!isNaN(parsedOffset) && parsedOffset >= 0) {
       query.offset(parsedOffset);

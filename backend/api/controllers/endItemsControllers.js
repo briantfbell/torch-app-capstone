@@ -1,9 +1,9 @@
-const endItemsService = require('../services/endItemsServices');
+const endItemsServices = require('../services/endItemsServices');
 
 exports.getAllEndItems = async (req, res) => {
   try {
     const { query } = req;
-    const data = await endItemsService.getAllEndItems(query);
+    const data = await endItemsServices.getAllEndItems(query);
 
     res.status(200).json(data);
   } catch (err) {
@@ -16,7 +16,7 @@ exports.getAllEndItems = async (req, res) => {
 exports.getEndItemById = async (req, res) => {
   try {
     const { id } = req.params;
-    const endItem = await endItemsService.getEndItemById(id);
+    const endItem = await endItemsServices.getEndItemById(id);
 
     res.status(200).json(endItem);
   } catch (err) {
@@ -26,27 +26,13 @@ exports.getEndItemById = async (req, res) => {
   }
 };
 
-exports.getEndItemsByCategory = async (req, res) => {
-  try {
-    const { category } = req.params;
-    const endItems = await endItemsService.getEndItemsByCategory(category);
-
-    res.status(200).json(endItems);
-  } catch (err) {
-    res
-      .status(err.status || 500)
-      .json({ message: err.message || 'Internal server error.' });
-  }
-};
-
 exports.createEndItem = async (req, res) => {
   try {
-    const { id: userId } = req.user;
-    const newEndItem = await endItemsService.createEndItem(userId, req.body);
+    const newEndItem = await endItemsServices.createEndItem(req.body);
 
     res.status(201).json({
-      newEndItem: newEndItem,
-      message: `'${newEndItem.title}' has been successfully posted.`,
+      newEndItem,
+      message: `LIN: ${newEndItem.lin} has been successfully created.`,
     });
   } catch (err) {
     res
@@ -57,14 +43,13 @@ exports.createEndItem = async (req, res) => {
 
 exports.updateEndItem = async (req, res) => {
   try {
-    const updatedEndItem = await endItemsService.updateEndItem(
+    const updatedEndItem = await endItemsServices.updateEndItem(
       req.params.id,
-      req.user,
       req.body,
     );
 
     res.status(200).json({
-      message: `'${updatedEndItem.title}' has been successfully updated.`,
+      message: `LIN: ${updatedEndItem.lin} has been successfully updated.`,
     });
   } catch (err) {
     res.status(err.status || 500).json({
@@ -75,14 +60,11 @@ exports.updateEndItem = async (req, res) => {
 
 exports.deleteEndItem = async (req, res) => {
   try {
-    const deletedEndItem = await endItemsService.deleteEndItem(
-      req.params.id,
-      req.user,
-    );
+    const deletedEndItem = await endItemsServices.deleteEndItem(req.params.id);
 
-    res
-      .status(200)
-      .json({ message: `'${deletedEndItem.title}' was successfully deleted.` });
+    res.status(200).json({
+      message: `LIN: ${deletedEndItem.lin} was successfully deleted.`,
+    });
   } catch (err) {
     res
       .status(err.status || 500)
