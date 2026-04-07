@@ -1,6 +1,9 @@
 node_modules/
-.env*
+.env.development
+.env.production
+.env.test
 .DS_Store
 dist/
 coverage/
 .idea/
+./backend/db/docker_db

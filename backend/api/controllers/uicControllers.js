@@ -5,7 +5,7 @@ exports.getAllUics = async (req, res) => {
     const { query } = req;
     const data = await uicServices.getAllUics(query);
 
-    res.status(200).json(data);
+    res.status(200).json({ allUics: data });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -18,7 +18,7 @@ exports.getUicById = async (req, res) => {
     const { id } = req.params;
     const uic = await uicServices.getUicById(id);
 
-    res.status(200).json(uic);
+    res.status(200).json({ uic: uic });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -46,6 +46,7 @@ exports.updateUic = async (req, res) => {
     const updatedUic = await uicServices.updateUic(req.params.id, req.body);
 
     res.status(200).json({
+      updatedUic,
       message: `UIC '${updatedUic.uic}' has been successfully updated.`,
     });
   } catch (err) {
@@ -60,6 +61,7 @@ exports.deleteUic = async (req, res) => {
     const deletedUic = await uicServices.deleteUic(req.params.id);
 
     res.status(200).json({
+      deletedUic,
       message: `UIC '${deletedUic.uic}' was successfully deleted.`,
     });
   } catch (err) {
