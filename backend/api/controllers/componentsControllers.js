@@ -32,7 +32,7 @@ exports.createComponent = async (req, res) => {
 
     res.status(201).json({
       newComponent: newComponent,
-      message: `LIN: ${newComponent.lin} has been successfully created.`,
+      message: `NIIN: ${newComponent.niin} has been successfully created.`,
     });
   } catch (err) {
     res
@@ -50,7 +50,7 @@ exports.updateComponent = async (req, res) => {
 
     res.status(200).json({
       updatedComponent: updatedComponent,
-      message: `LIN: ${updatedComponent.lin} has been successfully updated.`,
+      message: `NIIN: ${updatedComponent.niin} has been successfully updated.`,
     });
   } catch (err) {
     res.status(err.status || 500).json({
@@ -67,7 +67,7 @@ exports.deleteComponent = async (req, res) => {
 
     res.status(200).json({
       deletedComponent: deletedComponent,
-      message: `LIN: ${deletedComponent.lin} was successfully deleted.`,
+      message: `NIIN: ${deletedComponent.niin} was successfully deleted.`,
     });
   } catch (err) {
     res

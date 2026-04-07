@@ -13,12 +13,13 @@ Content-Type: application/json
   "description": "example component",
   "ui": "EA",
   "auth_qty": 4,
+  "image": "image",
   "arc": "B",
   "end_item_id": 1
 }
 
 ### Update component by id
-PATCH http://localhost:8080/components/1
+PATCH http://localhost:8080/components/2
 Content-Type: application/json
 
 {

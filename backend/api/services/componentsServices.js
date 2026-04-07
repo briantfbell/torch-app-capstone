@@ -59,6 +59,16 @@ exports.updateComponent = async (id, componentData) => {
     throw error;
   }
 
+  const hasChanges = Object.keys(componentData).some(
+    key => existingComponent[key] !== componentData[key],
+  );
+
+  if (!hasChanges) {
+    const error = new Error('No changes detected.');
+    error.status = 400;
+    throw error;
+  }
+
   return await componentsModels.updateComponent(id, componentData);
 };
 
