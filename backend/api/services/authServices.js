@@ -159,5 +159,5 @@ exports.login = async (email, password) => {
     { expiresIn: '7d' },
   );
 
-  return token;
+  return { user, token };
 };

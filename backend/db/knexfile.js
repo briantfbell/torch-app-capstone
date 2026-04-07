@@ -1,4 +1,4 @@
-require('dotenv').config({ path: './db/.env' });
+require('dotenv').config({ path: 'db/.env' });
 
 module.exports = {
   development: {
@@ -10,7 +10,5 @@ module.exports = {
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
     },
-    migrations: { directory: './db/migrations' },
-    seeds: { directory: './db/seeds' },
   },
 };
