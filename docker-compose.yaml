@@ -1,4 +1,17 @@
 services:
+  backend:
+    container_name: backend
+    build: ./backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/db/.env
+    environment:
+      - POSTGRES_HOST=db
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db
+
   db:
     container_name: db
     image: postgres:latest
@@ -10,4 +23,4 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - ./docker_db:/var/lib/postgresql
+      - ./docker_db:/var/lib/postgresql/data
