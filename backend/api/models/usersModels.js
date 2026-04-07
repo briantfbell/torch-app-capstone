@@ -66,7 +66,7 @@ exports.updateUser = async (userId, userUpdates) => {
 };
 
 exports.deleteUser = async id => {
-  return await db('users')
+  const [user] = await db('users')
     .where('id', id)
     .del()
     .returning(
@@ -85,4 +85,6 @@ exports.deleteUser = async id => {
       'uic.unit_name',
       'uic.parent_uic',
     );
+
+  return user;
 };
