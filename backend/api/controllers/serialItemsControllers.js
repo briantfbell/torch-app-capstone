@@ -5,7 +5,7 @@ exports.getAllSerialItems = async (req, res) => {
     const { query } = req;
     const data = await serialItemsServices.getAllSerialItems(query);
 
-    res.status(200).json(data);
+    res.status(200).json({ allSerialItems: data });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -18,7 +18,7 @@ exports.getSerialItemById = async (req, res) => {
     const { id } = req.params;
     const serialItem = await serialItemsServices.getSerialItemById(id);
 
-    res.status(200).json(serialItem);
+    res.status(200).json({ serialItem: serialItem });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -32,7 +32,7 @@ exports.createSerialItem = async (req, res) => {
 
     res.status(201).json({
       newSerialItem: newSerialItem,
-      message: `'${newSerialItem.title}' has been successfully posted.`,
+      message: `LIN: ${newSerialItem.lin} has been successfully posted.`,
     });
   } catch (err) {
     res
@@ -49,7 +49,8 @@ exports.updateSerialItem = async (req, res) => {
     );
 
     res.status(200).json({
-      message: `'${updatedSerialItem.title}' has been successfully updated.`,
+      updatedSerialItem: updatedSerialItem,
+      message: `LIN: ${updatedSerialItem.lin} has been successfully updated.`,
     });
   } catch (err) {
     res.status(err.status || 500).json({
@@ -65,7 +66,8 @@ exports.deleteSerialItem = async (req, res) => {
     );
 
     res.status(200).json({
-      message: `'${deletedSerialItem.title}' was successfully deleted.`,
+      deletedSerialItem: deletedSerialItem,
+      message: `LIN: ${deletedSerialItem.lin} was successfully deleted.`,
     });
   } catch (err) {
     res
