@@ -4,8 +4,7 @@
 // TODO: hook up to real database later (see notes below)
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useParams } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+
 
 import {
   Box,
@@ -522,12 +521,6 @@ function EndItemRow({ item, onClick, selected }) {
 export default function EquipmentPage({ uic = "W4MOCK" }) {
   const navigate = useNavigate();
 
-    const { id } = useParams()
-    const { user } = useAuth()
-
-    if (user && user.uic !== id) {
-    return <div>Access Denied</div>
-    }
 
   // tracks which row the user last clicked so we can highlight it
   // starts as null (nothing selected)

@@ -17,8 +17,6 @@ import {
     Typography
 } from '@mui/material';
 import {getCurrentUser} from '../api/auth.js';
-import { useParams } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
 
 const getInitialProfile = () => {
     const currentUser = getCurrentUser() ?? {};
@@ -42,12 +40,6 @@ const SectionHeader = ({title, description}) => (
 
 const UserSettings = () => {
     const initialProfile = useMemo(() => getInitialProfile(), []);
-    const { id } = useParams()
-    const { user } = useAuth()
-    
-    if (user && user.uic !== id) {
-    return <div>Access Denied</div>
-    }
 
     const [savedProfile, setSavedProfile] = useState(initialProfile);
     const [username, setUsername] = useState(initialProfile.username);

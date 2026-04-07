@@ -4,18 +4,11 @@
 
 import { Box, Typography, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useParams } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+
 
 export default function BomPdfViewerPage() {
     const navigate = useNavigate();
 
-    const { id } = useParams()
-    const { user } = useAuth()
-
-    if (user && user.uic !== id) {
-    return <div>Access Denied</div>
-    }
 
     return (
         <Box>

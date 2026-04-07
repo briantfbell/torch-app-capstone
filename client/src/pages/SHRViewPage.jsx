@@ -6,8 +6,7 @@ import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { Box, Button, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useParams } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -23,12 +22,6 @@ export default function SHRViewPage() {
     setNumPages(numPages);
   };
 
-  const { id } = useParams()
-  const { user } = useAuth()
-
-  if (user && user.uic !== id) {
-    return <div>Access Denied</div>
-  }
 
   return (
     <Box sx={styles.page}>
