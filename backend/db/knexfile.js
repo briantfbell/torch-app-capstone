@@ -11,4 +11,4 @@ module.exports = {
       database: process.env.POSTGRES_DB
     }
   },
-}; 
+};

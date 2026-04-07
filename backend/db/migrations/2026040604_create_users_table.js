@@ -6,10 +6,10 @@ exports.up = function(knex) {
     table.string('name_first', 50).notNullable();
     table.string('name_last', 50).notNullable();
     table.varchar('email', 50).unique()
-    table.integer('phone');
+    table.varchar('phone');
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at');
-    table.integer('dodid').unique();
+    table.bigInteger('dodid').unique();
     table.string('role')
     table.integer('rank_id').unsigned();
     table.integer('uic_id').unsigned();
