@@ -5,11 +5,12 @@ GET http://localhost:8080/users
 GET http://localhost:8080/users/1
 
 ### Update user by id
-PATCH http://localhost:8080/users/1
+PATCH http://localhost:8080/users/12
 Content-Type: application/json
-{
 
+{
+  "username": "test1"
 }
 
 ### Delete user by id
-DELETE http://localhost:8080/users/1
+DELETE http://localhost:8080/users/12

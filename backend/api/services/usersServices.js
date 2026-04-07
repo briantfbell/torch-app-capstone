@@ -27,7 +27,7 @@ exports.updateUser = async (
     phone,
     rank,
     uic_id,
-    role = [],
+    role,
     DoDID,
   },
 ) => {
@@ -81,7 +81,7 @@ exports.deleteUser = async id => {
     throw error;
   }
 
-  const [deletedUser] = await usersModels.deleteUser(id);
+  const deletedUser = await usersModels.deleteUser(id);
 
   return deletedUser;
 };

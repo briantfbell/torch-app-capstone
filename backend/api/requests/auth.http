@@ -13,8 +13,8 @@ Content-Type: application/json
   "password": "5",
   "phone": "6",
   "rank_id": "7",
-  "uic_id": "1",
-  "role": ["9", "10"],
+  "uic_id": "2",
+  "role": "9, 10",
   "DoDID": "1011"
 }
 
