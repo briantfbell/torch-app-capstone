@@ -1,7 +1,7 @@
 const db = require('../../db/knex');
 const { applyQueryFilters } = require('../helpers/applyQueryFilters');
 
-const baseQuery = () => db('uic').select('*');
+const baseQuery = () => db('uics').select('*');
 
 exports.getAllUics = async query => {
   return await applyQueryFilters(baseQuery(), query, { searchFields: ['uic'] });
@@ -12,7 +12,7 @@ exports.getUicById = async id => {
 };
 
 exports.createUic = async uicData => {
-  const [uic] = await db('uic').insert(uicData).returning('*');
+  const [uic] = await db('uics').insert(uicData).returning('*');
 
   return uic;
 };
@@ -27,5 +27,5 @@ exports.updateUic = async (uicId, uicData) => {
 };
 
 exports.deleteUic = async id => {
-  return await db('uic').where('id', id).del().returning('*');
+  return await db('uics').where('id', id).del().returning('*');
 };

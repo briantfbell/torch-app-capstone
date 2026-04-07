@@ -1,11 +1,11 @@
-const uicModels = require('../models/uicModels');
+const uicsModels = require('../models/uicsModels');
 
 exports.getAllUics = async query => {
-  return await uicModels.getAllUics(query);
+  return await uicsModels.getAllUics(query);
 };
 
 exports.getUicById = async id => {
-  const uic = await uicModels.getUicById(id);
+  const uic = await uicsModels.getUicById(id);
 
   if (!uic) {
     const error = new Error('UIC does not exist.');
@@ -23,11 +23,11 @@ exports.createUic = async ({ uic, unit_name, parent_uic }) => {
     throw error;
   }
 
-  return await uicModels.createUic({ uic, unit_name, parent_uic });
+  return await uicsModels.createUic({ uic, unit_name, parent_uic });
 };
 
 exports.updateUic = async (id, uicData) => {
-  const existingUic = await uicModels.getUicById(id);
+  const existingUic = await uicsModels.getUicById(id);
 
   if (!existingUic) {
     const error = new Error('UIC does not exist.');
@@ -35,11 +35,11 @@ exports.updateUic = async (id, uicData) => {
     throw error;
   }
 
-  return await uicModels.updateUic(id, uicData);
+  return await uicsModels.updateUic(id, uicData);
 };
 
 exports.deleteUic = async id => {
-  const existingUic = await uicModels.getUicById(id);
+  const existingUic = await uicsModels.getUicById(id);
 
   if (!existingUic) {
     const error = new Error('UIC does not exist.');
@@ -47,7 +47,7 @@ exports.deleteUic = async id => {
     throw error;
   }
 
-  const [deletedUic] = await uicModels.deleteUic(id);
+  const [deletedUic] = await uicsModels.deleteUic(id);
 
   return deletedUic;
 };

@@ -1,31 +1,31 @@
-# Get current user
-GET 'http://localhost:8080/auth/me
+### Get current user
+GET http://localhost:8080/auth/me
 
-#POST /auth/register creates a new user
-POST 'http://localhost:8080/auth/register
+### POST /auth/register creates a new user
+POST http://localhost:8080/auth/register
 Content-Type: application/json
+
 {
-  "username": "test",
-  "name_first": "test",
-  "name_last": "test",
-  "email": "test",
-  "password": "test",
-  "phone": "test",
-  "created_at": "test",
-  "updated_at": "test",
-  "rank": "test",
-  "uic": "test",
-  "role": "test",
-  "DoDID": "test",
+  "username": "1",
+  "name_first": "2",
+  "name_last": "3",
+  "email": "1",
+  "password": "5",
+  "phone": "6",
+  "rank_id": "7",
+  "uic_id": "2",
+  "role": "9, 10",
+  "DoDID": "101"
 }
 
-# POST login
-POST 'http://localhost:8080/auth/login
+### POST login
+POST http://localhost:8080/auth/login
 Content-Type: application/json
+
 {
-  "email": "test",
-  "password": "test",
+  "email": "1",
+  "password": "5"
 }
 
-# Logout and removes cookie
-POST 'http://localhost:8080/auth/logout
+### Logout and removes cookie
+POST http://localhost:8080/auth/logout

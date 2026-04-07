@@ -1,0 +1,27 @@
+### GET all serial items
+GET http://localhost:8080/serial-items
+
+### GET serial item by id
+GET http://localhost:8080/serial-items/1
+
+### Create a serial item
+POST http://localhost:8080/serial-items
+Content-Type: application/json
+
+{
+  "serial_number": "SN-002",
+  "status": "serviceable",
+  "item_id": "12",
+  "user_id": "2"
+}
+
+### Update serial item by id
+PATCH http://localhost:8080/serial-items/4
+Content-Type: application/json
+
+{
+  "status": "unserviceable"
+}
+
+### Delete serial item by id
+DELETE http://localhost:8080/serial-items/4

@@ -10,7 +10,7 @@ const {
   createUic,
   updateUic,
   deleteUic,
-} = require('../controllers/uicControllers');
+} = require('../controllers/uicsControllers');
 
 router.get('/', auth, getAllUics);
 router.get('/:id', auth, getUicById);
