@@ -35,12 +35,12 @@ app.use(
 );
 
 // Route modules — each file handles a specific resource
-const authRoutes = require('./routes/authRoutes');         // /auth
-const usersRoutes = require('./routes/usersRoutes');       // /users
-const uicRoutes = require('./routes/uicRoutes');           // /uic
-const serialItemsRoutes = require('./routes/serialItemsRoutes'); // /serial-items
-const componentsRoutes = require('./routes/componentsRoutes');   // /components
-const endItemsRoutes = require('./routes/endItemsRoutes');       // /end-items
+const authRoutes = require('./api/routes/authRoutes'); // /auth
+const usersRoutes = require('./api/routes/usersRoutes'); // /users
+const uicRoutes = require('./api/routes/uicRoutes'); // /uic
+const serialItemsRoutes = require('./api/routes/serialItemsRoutes'); // /serial-items
+const componentsRoutes = require('./api/routes/componentsRoutes'); // /components
+const endItemsRoutes = require('./api/routes/endItemsRoutes'); // /end-items
 
 // Commented out: routes not yet active — controllers/services exist but are
 // pending integration
