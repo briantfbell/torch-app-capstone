@@ -1,0 +1,75 @@
+const rawServices = require('../services/rawServices');
+
+exports.getAllComponents = async (req, res) => {
+  try {
+    const { query } = req;
+    const data = await rawServices.getAllComponents(query);
+
+    res.status(200).json({ allComponents: data });
+  } catch (err) {
+    res
+      .status(err.status || 500)
+      .json({ message: err.message || 'Internal server error.' });
+  }
+};
+
+exports.getComponentById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const component = await rawServices.getComponentById(id);
+
+    res.status(200).json({ component: component });
+  } catch (err) {
+    res
+      .status(err.status || 500)
+      .json({ message: err.message || 'Internal server error.' });
+  }
+};
+
+exports.createComponent = async (req, res) => {
+  try {
+    const newComponent = await rawServices.createComponent(req.body);
+
+    res.status(201).json({
+      newComponent: newComponent,
+      message: `NIIN: ${newComponent.niin} has been successfully created.`,
+    });
+  } catch (err) {
+    res
+      .status(err.status || 500)
+      .json({ message: err.message || 'Internal server error.' });
+  }
+};
+
+exports.updateComponent = async (req, res) => {
+  try {
+    const updatedComponent = await rawServices.updateComponent(
+      req.params.id,
+      req.body,
+    );
+
+    res.status(200).json({
+      updatedComponent: updatedComponent,
+      message: `NIIN: ${updatedComponent.niin} has been successfully updated.`,
+    });
+  } catch (err) {
+    res.status(err.status || 500).json({
+      message: err.message || 'Internal server error.',
+    });
+  }
+};
+
+exports.deleteComponent = async (req, res) => {
+  try {
+    const deletedComponent = await rawServices.deleteComponent(req.params.id);
+
+    res.status(200).json({
+      deletedComponent: deletedComponent,
+      message: `NIIN: ${deletedComponent.niin} was successfully deleted.`,
+    });
+  } catch (err) {
+    res
+      .status(err.status || 500)
+      .json({ message: err.message || 'Internal server error.' });
+  }
+};
