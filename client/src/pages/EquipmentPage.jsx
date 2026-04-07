@@ -318,62 +318,60 @@ export default function EquipmentPage({ uic = "W4MOCK" }) {
   };
 
   return (
-    <div>
-      <h1>Equipment</h1>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "16px",
-        }}
-      >
-        <button onClick={() => navigate("/shr-viewer")}>
-          Sub Hand Receipt PDF
-        </button>
+    <>
+      <div>
+        <h1>Equipment</h1>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "16px",
+          }}
+        >
+          <button onClick={() => navigate("/shr-viewer")}>
+            Sub Hand Receipt PDF
+          </button>
+        </div>
       </div>
-    </div>
-    <Box sx={styles.page}>
-      {/* TOP ROW - page label left, UIC badge right */}
-      <Box sx={styles.header}>
-        <Typography variant="h5" fontWeight={700}>
-          Equipment
-        </Typography>
-        {/* UIC comes in as a prop from the auth system - TODO: remove "W4MOCK" default */}
-        <Chip label={`UIC: ${uic}`} variant="outlined" size="medium" />
+
+      <Box sx={styles.page}>
+        {/* TOP ROW - page label left, UIC badge right */}
+        <Box sx={styles.header}>
+          <Typography variant="h5" fontWeight={700}>
+            Equipment
+          </Typography>
+          <Chip label={`UIC: ${uic}`} variant="outlined" size="medium" />
+        </Box>
+
+        <Divider sx={styles.divider} />
+
+        <Button
+          variant="outlined"
+          size="large"
+          startIcon={<PictureAsPdfIcon />}
+          onClick={handleSubHandReceipt}
+          sx={styles.pdfButton}
+        >
+          Sub Hand Receipt PDF
+        </Button>
+
+        <SectionLabel>END ITEMS</SectionLabel>
+
+        <Box sx={styles.scrollBox}>
+          <List disablePadding>
+            {MOCK_END_ITEMS.map((item) => (
+              <EndItemRow
+                key={item.id}
+                item={item}
+                onClick={handleItemClick}
+                selected={selectedItem === item.id}
+              />
+            ))}
+          </List>
+        </Box>
       </Box>
-
-      <Divider sx={styles.divider} />
-
-      {/* SUB HAND RECEIPT BUTTON */}
-      <Button
-        variant="outlined"
-        size="large"
-        startIcon={<PictureAsPdfIcon />}
-        onClick={handleSubHandReceipt}
-        sx={styles.pdfButton}
-      >
-        Sub Hand Receipt PDF
-      </Button>
-
-      {/* END ITEMS section label */}
-      <SectionLabel>END ITEMS</SectionLabel>
-
-      {/* SCROLLABLE EQUIPMEN T LIST */}
-      <Box sx={styles.scrollBox}>
-        <List disablePadding>
-          {/* TODO: swap MOCK_END_ITEMS for real API data once backend is ready */}
-          {MOCK_END_ITEMS.map((item) => (
-            <EndItemRow
-              key={item.id}
-              item={item}
-              onClick={handleItemClick}
-              selected={selectedItem === item.id}
-            />
-          ))}
-        </List>
-      </Box>
-    </Box>
+    </>
   );
 }
 
