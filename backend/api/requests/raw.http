@@ -1,0 +1,51 @@
+### Create raw
+POST http://localhost:8080/raw
+Content-Type: application/json
+
+{
+  "componentsData": {
+    "niin": "123456789",
+    "description": "example component",
+    "ui": "EA",
+    "auth_qty": "4",
+    "image": "image",
+    "arc": "B",
+    "end_item_id": "1",
+  },
+
+  "endItemsData": {
+    "fsc": "123",
+    "description": "test2",
+    "niin": "123",
+    "image":"test4",
+    "auth_qty": "123",
+    "lin": "test6",
+  },
+
+  "serialItemsData": {
+    "serial_number": "SN-002",
+    "status": "serviceable",
+    "item_id": "12",
+    "user_id": "2",
+  },
+
+  "usersData": {
+    "username": "1",
+    "name_first": "2",
+    "name_last": "3",
+    "email": "1",
+    "password": "5",
+    "phone": "6",
+    "rank_id": "7",
+    "uic_id": "2",
+    "role": "9, 10",
+    "DoDID": "101"
+  },
+
+  "uicsData": {
+    "uic": "W1A1AA",
+    "unit_name": "1st Battalion",
+    "parent_uic": "W1A1AB"
+  }
+}
+

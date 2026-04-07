@@ -2,10 +2,23 @@ const rawServices = require('../services/rawServices');
 
 exports.createRaw = async (req, res) => {
   try {
-    const newRaw = await rawServices.createRaw(req.body);
+    const {
+      componentsData,
+      endItemsData,
+      serialItemsData,
+      usersData,
+      uicsData,
+    } = req.body;
+    const raw = await rawServices.createRaw(
+      componentsData,
+      endItemsData,
+      serialItemsData,
+      usersData,
+      uicsData,
+    );
 
     res.status(201).json({
-      newRaw: newRaw,
+      raw: raw,
     });
   } catch (err) {
     res
