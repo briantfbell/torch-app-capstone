@@ -4,7 +4,7 @@ import SplashPage from "../pages/SplashPage";
 import EquipmentPage from "../pages/EquipmentPage.jsx";
 import SHRViewPage from "../pages/SHRViewPage.jsx";
 import ShortageTrackerPage from "../pages/ShortageTrackerPage";
-import InventoryTable from "../InventoryTable";
+import InventoryTable from "../pages/InventoryTable";
 import EndItemPage from "../pages/EndItemPage.jsx";
 import MiniDrawer from "../components/ui/MiniDrawer.jsx";
 import UserSettings from "../pages/UserSettings.jsx";
