@@ -16,9 +16,10 @@ const baseQuery = () =>
       'users.updated_at',
       'users.role',
       'users.DoDID',
-      'users.uic_id',
       'ranks.rank',
       'uic.uic',
+      'uic.unit_name',
+      'uic.parent_uic',
     );
 
 // TO DO: if users end up with multiple roles
@@ -44,11 +45,44 @@ exports.updateUser = async (userId, userUpdates) => {
   const [user] = await db('users')
     .where('id', userId)
     .update(userUpdates)
-    .returning('*');
+    .returning(
+      'users.id',
+      'users.username',
+      'users.name_first',
+      'users.name_last',
+      'users.email',
+      'users.phone',
+      'users.created_at',
+      'users.updated_at',
+      'users.role',
+      'users.DoDID',
+      'ranks.rank',
+      'uic.uic',
+      'uic.unit_name',
+      'uic.parent_uic',
+    );
 
   return user;
 };
 
 exports.deleteUser = async id => {
-  return await db('users').where('id', id).del().returning('*');
+  return await db('users')
+    .where('id', id)
+    .del()
+    .returning(
+      'users.id',
+      'users.username',
+      'users.name_first',
+      'users.name_last',
+      'users.email',
+      'users.phone',
+      'users.created_at',
+      'users.updated_at',
+      'users.role',
+      'users.DoDID',
+      'ranks.rank',
+      'uic.uic',
+      'uic.unit_name',
+      'uic.parent_uic',
+    );
 };
