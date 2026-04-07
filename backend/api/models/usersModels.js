@@ -22,23 +22,19 @@ const baseQuery = () =>
       'uic.parent_uic',
     );
 
-// TO DO: if users end up with multiple roles
-
-// const groupRoles = query => {
-//   return query
-//     .select('users.*')
-//     .select(db.raw('ARRAY_AGG(roles.role) as roles'))
-//     .groupBy('users.id');
-// };
+const groupRoles = query => {
+  return query
+    .select('users.*')
+    .select(db.raw('ARRAY_AGG(user.role) as roles'))
+    .groupBy('users.id');
+};
 
 exports.getAllUsers = async query => {
-  const users = await applyQueryFilters(baseQuery(), query);
-
-  return [users];
+  return await applyQueryFilters(groupRoles(baseQuery()), query);
 };
 
 exports.getUserById = async id => {
-  return await baseQuery().where('users.id', id).first();
+  return await groupRoles(baseQuery()).where('users.id', id).first();
 };
 
 exports.updateUser = async (userId, userUpdates) => {

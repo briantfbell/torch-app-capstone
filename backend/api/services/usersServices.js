@@ -27,7 +27,7 @@ exports.updateUser = async (
     phone,
     rank,
     uic_id,
-    role,
+    role = [],
     DoDID,
   },
 ) => {
