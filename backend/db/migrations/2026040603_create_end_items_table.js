@@ -3,9 +3,9 @@ exports.up = function(knex) {
     table.increments('id');
     table.varchar('fsc', 50)
     table.text('description')
-    table.integer('niin', 50).notNullable();
-    table.integer('auth_qty', 50);
-    table.integer('lin');
+    table.string('niin', 9).notNullable();
+    table.integer('auth_qty');
+    table.string('lin', 6);
     table.string('image');
   })
 };

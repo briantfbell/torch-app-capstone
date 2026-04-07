@@ -1,9 +1,9 @@
-import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {Document, Page, pdfjs} from 'react-pdf';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Document, Page, pdfjs } from "react-pdf";
 // remember to npm install react-pdf
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -22,7 +22,9 @@ const SHRViewerPage = () => {
   return (
     <div>
       <div>
-        <button onClick={() => navigate("/")}>Back to Equipment</button>
+        <button onClick={() => navigate("/equipment")}>
+          Back to Equipment
+        </button>
       </div>
       <h1>Sub Hand Receipt</h1>
       <Document
@@ -59,6 +61,6 @@ const SHRViewerPage = () => {
       </div>
     </div>
   );
-}
+};
 
-export default SHRViewerPage
+export default SHRViewerPage;

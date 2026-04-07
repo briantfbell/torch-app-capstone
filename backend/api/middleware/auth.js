@@ -1,3 +1,12 @@
+// auth middleware — protects routes that require any logged-in user.
+// Reads the httpOnly 'token' cookie set by the login endpoint, verifies
+// the JWT signature, and attaches the decoded payload to req.user so
+// downstream controllers can access the caller's id, email, and role.
+//
+// Frontend team: the cookie is set automatically by the browser on login.
+// Requests to protected routes must include credentials (withCredentials: true
+// in axios, or credentials: 'include' in fetch).
+
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {

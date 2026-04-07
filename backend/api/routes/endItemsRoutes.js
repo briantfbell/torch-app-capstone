@@ -10,14 +10,12 @@ const {
   createEndItem,
   updateEndItem,
   deleteEndItem,
-} = require('../controllers/endItemsRecordsControllers');
+} = require('../controllers/endItemsControllers');
 
-// TO DO:
-
-// router.get('/:id', auth, getEndItemById);
-// router.get('/', auth, getAllEndItems);
-// router.post('/', auth, createEndItem);
-// router.patch('/:id', auth, updateEndItem);
-// router.delete('/:id', auth, deleteEndItem);
+router.get('/:id', auth, getEndItemById);
+router.get('/', auth, getAllEndItems);
+router.post('/', auth, createEndItem);
+router.patch('/:id', auth, updateEndItem);
+router.delete('/:id', auth, deleteEndItem);
 
 module.exports = router;
