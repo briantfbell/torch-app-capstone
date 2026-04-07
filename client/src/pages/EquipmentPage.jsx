@@ -86,55 +86,91 @@ function EndItemRow({ item, onClick, selected }) {
 }
 
 export default function EquipmentPage({ uic = "W4MOCK" }) {
-    const navigate = useNavigate();
-    const [selectedItem, setSelectedItem] = useState(null);
+  const navigate = useNavigate();
 
-    const handleItemClick = (item) => {
-        setSelectedItem(item.id);
-        navigate(`/equipment/${item.id}`);
-    };
+  // tracks which row the user last clicked so we can highlight it
+  // starts as null (nothing selected)
+  const [selectedItem, setSelectedItem] = useState(null);
 
-    const handleSubHandReceipt = () => {
-        navigate("/equipment/sub-hand-receipt");
-    };
+  // ============================================================
+  // TODO: REPLACE MOCK DATA WITH REAL DATABASE FETCH
+  // ============================================================
+  // When the backend API is ready:
+  //   1. Delete the MOCK_END_ITEMS array at the top of this file
+  //   2. Add these two state variables up above:
+  //        const [endItems, setEndItems] = useState([]);
+  //        const [loading, setLoading] = useState(true);
+  //   3. Uncomment the useEffect block below
+  //   4. Replace MOCK_END_ITEMS in the List below with endItems
+  //
+  // useEffect(() => {
+  //   fetch(`/api/equipment?uic=${uic}`)      // calls the backend route
+  //     .then((res) => res.json())             // parses the response as JSON
+  //     .then((data) => {
+  //       setEndItems(data);                   // saves the items into state
+  //       setLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Failed to load equipment:", err);
+  //       setLoading(false);
+  //     });
+  // }, [uic]); // reruns if the uic prop ever changes
+  // ============================================================
 
-    return (
-        <Box sx={styles.page}>
-            <Box sx={styles.header}>
-                <Typography variant="h5" fontWeight={700}>
-                    Equipment
-                </Typography>
-                <Chip label={`UIC: ${uic}`} variant="outlined" size="medium" />
-            </Box>
+  // called when a row is clicked
+  const handleItemClick = (item) => {
+    setSelectedItem(item.id);
+    // goes to the detail page for this item
+    // TODO: confirm this path matches the route defined in App.jsx for the detail page
+    navigate(`/equipment/${item.id}`);
+  };
 
-            <Divider sx={styles.divider} />
+  const handleSubHandReceipt = () => {
+    // goes to the sub hand receipt page
+    // TODO: confirm this path matches the route in App.jsx
+    navigate("/shr-viewer");
+  };
 
-            <Button
-                variant="outlined"
-                size="large"
-                startIcon={<PictureAsPdfIcon />}
-                onClick={handleSubHandReceipt}
-                sx={styles.pdfButton}
-            >
-                Sub Hand Receipt PDF
-            </Button>
-
-            <SectionLabel>END ITEMS</SectionLabel>
-
-            <Box sx={styles.scrollBox}>
-                <List disablePadding>
-                    {MOCK_END_ITEMS.map((item) => (
-                        <EndItemRow
-                            key={item.id}
-                            item={item}
-                            onClick={handleItemClick}
-                            selected={selectedItem === item.id}
-                        />
-                    ))}
-                </List>
-            </Box>
+  return (
+    <>
+      <Box sx={styles.page}>
+        {/* TOP ROW - page label left, UIC badge right */}
+        <Box sx={styles.header}>
+          <Typography variant="h5" fontWeight={700}>
+            Equipment
+          </Typography>
+          <Chip label={`UIC: ${uic}`} variant="outlined" size="medium" />
         </Box>
-    );
+
+        <Divider sx={styles.divider} />
+
+        <Button
+          variant="outlined"
+          size="large"
+          startIcon={<PictureAsPdfIcon />}
+          onClick={handleSubHandReceipt}
+          sx={styles.pdfButton}
+        >
+          Sub Hand Receipt PDF
+        </Button>
+
+        <SectionLabel>END ITEMS</SectionLabel>
+
+        <Box sx={styles.scrollBox}>
+          <List disablePadding>
+            {MOCK_END_ITEMS.map((item) => (
+              <EndItemRow
+                key={item.id}
+                item={item}
+                onClick={handleItemClick}
+                selected={selectedItem === item.id}
+              />
+            ))}
+          </List>
+        </Box>
+      </Box>
+    </>
+  );
 }
 
 const styles = {
