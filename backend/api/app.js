@@ -32,7 +32,7 @@ app.use(
 
 const authRoutes = require('./routes/authRoutes');
 const usersRoutes = require('./routes/usersRoutes');
-const uicRoutes = require('./routes/uicRoutes');
+const uicsRoutes = require('./routes/uicsRoutes');
 const serialItemsRoutes = require('./routes/serialItemsRoutes');
 const componentsRoutes = require('./routes/componentsRoutes');
 const endItemsRoutes = require('./routes/endItemsRoutes');
@@ -45,7 +45,7 @@ app.use('/users', usersRoutes);
 app.use('/serial-items', serialItemsRoutes);
 app.use('/components', componentsRoutes);
 app.use('/end-items', endItemsRoutes);
-app.use('/uic', uicRoutes);
+app.use('/uics', uicsRoutes);
 // app.use('/inventory-records', inventoryRecordsRoutes);
 // app.use('/sections', sectionsRoutes);
 // app.use('/shortages', shortagesRoutes);

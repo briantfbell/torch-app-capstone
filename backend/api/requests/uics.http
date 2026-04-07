@@ -1,11 +1,11 @@
 ### GET all UICs
-GET http://localhost:8080/uic
+GET http://localhost:8080/uics
 
 ### GET UIC by id
-GET http://localhost:8080/uic/1
+GET http://localhost:8080/uics/1
 
 ### Create a UIC
-POST http://localhost:8080/uic
+POST http://localhost:8080/uics
 Content-Type: application/json
 
 {
@@ -15,7 +15,7 @@ Content-Type: application/json
 }
 
 ### Update UIC by id
-PATCH http://localhost:8080/uic/1
+PATCH http://localhost:8080/uics/1
 Content-Type: application/json
 
 {
@@ -23,4 +23,4 @@ Content-Type: application/json
 }
 
 ### Delete UIC by id
-DELETE http://localhost:8080/uic/1
+DELETE http://localhost:8080/uics/1
