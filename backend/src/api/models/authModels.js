@@ -1,4 +1,3 @@
-// TO DO: change route based on actual knex location
 const db = require('../../db/knex');
 
 const baseQuery = () =>

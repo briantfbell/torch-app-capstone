@@ -183,6 +183,7 @@ const styles = {
         maxWidth: 900,
         mx: "auto",
         width: "100%",
+<<<<<<< HEAD
     },
     header: {
         display: "flex",
@@ -252,3 +253,74 @@ const styles = {
         flex: 1,
     },
 };
+=======
+    },
+    header: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+    },
+    divider: {
+        width: "100%",
+    },
+    pdfButton: {
+        width: "100%",
+        py: 1.5,
+    },
+    sectionLabel: {
+        border: "1px solid",
+        borderColor: "grey.400",
+        borderRadius: 1,
+        px: 3,
+        py: 1,
+        textAlign: "center",
+        width: "100%",
+    },
+    scrollBox: {
+        width: "100%",
+        maxHeight: 420,
+        overflowY: "auto",
+        pr: 0.5,
+        "&::-webkit-scrollbar": { width: 8 },
+        "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "grey.400",
+            borderRadius: 4,
+        },
+    },
+    row: {
+        border: "1px solid",
+        borderColor: "grey.400",
+        borderRadius: 1,
+        mb: 1,
+        backgroundColor: "background.paper",
+        "&:hover": { backgroundColor: "action.hover" },
+    },
+    rowSelected: {
+        border: "1px solid",
+        borderColor: "primary.main",
+        borderRadius: 1,
+        mb: 1,
+        backgroundColor: "primary.light",
+        "&:hover": { backgroundColor: "action.hover" },
+    },
+    rowContent: {
+        display: "flex",
+        gap: 2,
+        flexWrap: "wrap",
+        alignItems: "center",
+    },
+    rowField: {
+        minWidth: 80,
+    },
+    rowFieldWide: {
+        minWidth: 160,
+    },
+    rowFieldMed: {
+        minWidth: 120,
+    },
+    rowFieldFlex: {
+        flex: 1,
+    },
+};
+>>>>>>> 2d402b7553d0e4c9322c9f82bc91508d965635f0

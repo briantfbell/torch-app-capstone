@@ -66,7 +66,7 @@ export default function SHRViewPage() {
       </Box>
     </Box>
   );
-};
+}
 
 // ============================================================
 // ALL STYLES IN ONE PLACE
