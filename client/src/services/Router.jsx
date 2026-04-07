@@ -8,20 +8,28 @@ import InventoryTable from '../InventoryTable';
 import EndItemPage from '../pages/EndItemPage.jsx';
 import MiniDrawer from '../components/ui/MiniDrawer.jsx';
 import UserSettings from '../pages/UserSettings.jsx';
+import ProtectedRoute from './ProtectedRoute.jsx';
 
 export default function MainRouter() {
     return (
         <Router>
-            <MiniDrawer>
-                <Routes>
-                    <Route path="/" element={<SplashPage/>}/>
-                    <Route path="/equipment" element={<EquipmentPage/>}/>
-                    <Route path="/equipment/sub-hand-receipt" element={<SHRViewPage/>}/>
-                    <Route path="/shortages" element={<ShortageTrackerPage/>}/>
-                    <Route path="/InventoryTable" element={<InventoryTable/>}/>
-                    <Route path="/enditem/:id" element={<EndItemPage/>}/>
-                    <Route path="/user-settings" element={<UserSettings/>}/>
-                </Routes>
-            </MiniDrawer>
+            <Routes>
+                <Route path="/" element={<SplashPage/>}/>
+
+                <Route path='/*' element={
+                    <ProtectedRoute>
+                        <MiniDrawer>
+                            <Routes>
+                                <Route path="/equipment" element={<EquipmentPage/>}/>
+                                <Route path="/equipment/sub-hand-receipt" element={<SHRViewPage/>}/>
+                                <Route path="/shortages" element={<ShortageTrackerPage/>}/>
+                                <Route path="/InventoryTable" element={<InventoryTable/>}/>
+                                <Route path="/enditem/:id" element={<EndItemPage/>}/>
+                                <Route path="/user-settings" element={<UserSettings/>}/>
+                            </Routes>
+                        </MiniDrawer>
+                    </ProtectedRoute>
+                }/>
+            </Routes>
         </Router>);
 }

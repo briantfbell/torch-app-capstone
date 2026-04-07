@@ -8,6 +8,8 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { useParams } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 const mockShortages = [
   {
@@ -36,6 +38,12 @@ const mockShortages = [
 
 function ShortageTrackerPage() {
   const shortages = mockShortages;
+  const { id } = useParams()
+  const { user } = useAuth()
+
+  if (user && user.uic !== id) {
+  return <div>Access Denied</div>
+  }
 
   return (
     <div>

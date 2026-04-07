@@ -2,9 +2,19 @@ import { Box, Typography, Paper, Button, Chip, Divider } from "@mui/material";
 import { useState } from "react";
 import PdfModalViewer from "../components/PdfModalViewer";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import { useParams } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 export default function EndItemPage() {
   const [openPdf, setOpenPdf] = useState(false);
+
+    const { id } = useParams()
+    const { user } = useAuth()
+
+    if (user && user.uic !== id) {
+    return <div>Access Denied</div>
+    }
+    
 
     const item = {
         inventoryName: "AN/PRC-117G",

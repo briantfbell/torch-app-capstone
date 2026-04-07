@@ -85,12 +85,14 @@ export default function SplashPage() {
     else if(!isLogin) {
         return (
             <div className='registerContainer'>
+                <Stack sx={{justifySelf: 'center'}}>
                 <RegisterForm
                     onSubmit={handleRegisterSubmit}
                     error={registerError}
                 />
                 <p>Already have an account? Click here!</p>
                 <Button variant='contained' onClick = {() => handleLoginState()}>Return to Login</Button>
+                </Stack>
             </div>
         )
     }
