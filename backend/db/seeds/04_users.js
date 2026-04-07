@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
   const createUsers = async (num) => {
     const hashWord = await bcrypt.hash('password', 10)
 
-    const rankArry = [admin, HRC, sub-HRH, THR]
+    const rankArry = ["admin", "HRC", "sub-HRH", "THR"]
     let temp= []
     for(let i = 0; i < num; i++){
       const randNum = faker.number.int({ min: 0, max: 3})
@@ -15,8 +15,8 @@ const bcrypt = require('bcrypt')
         name_last: faker.person.lastName(),
         email: faker.internet.email(),
         phone: faker.phone.number(),
-        rank: faker.number.int({ min: 2, max: 21 }),
-        uic: faker.number.int({ min: 0, max: 1 }),
+        rank_id: faker.number.int({ min: 2, max: 21 }),
+        uic_id: faker.number.int({ min: 1, max: 2 }),
         role: rankArry[randNum],
         dodid: faker.string.numeric(10)
       })

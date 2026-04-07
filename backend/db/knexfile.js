@@ -1,4 +1,4 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env.development') });
+require('dotenv').config();
 
 module.exports = {
   development: {
@@ -11,4 +11,4 @@ module.exports = {
       database: process.env.POSTGRES_DB
     }
   },
-}; 
+};

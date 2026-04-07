@@ -1,11 +1,11 @@
 exports.up = function(knex) {
   return knex.schema.createTable('end_items', table => {
     table.increments('id');
-    table.varchar('fsc', 50)
+    table.integer('fsc', 50)
     table.text('description')
-    table.string('niin', 9).notNullable();
-    table.integer('auth_qty');
-    table.string('lin', 6);
+    table.integer('niin', 50).notNullable();
+    table.integer('auth_qty', 50);
+    table.varchar('lin');
     table.string('image');
   })
 };
