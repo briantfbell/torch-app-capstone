@@ -14,12 +14,12 @@ const baseQuery = () =>
       'users.phone',
       'users.created_at',
       'users.updated_at',
+      'users.dodid',
       'users.role',
-      'users.DoDID',
       'ranks.rank',
-      'uic.uic',
-      'uic.unit_name',
-      'uic.parent_uic',
+      'uics.uic',
+      'uics.unit_name',
+      'uics.parent_uic',
     );
 
 const groupRoles = query => {
