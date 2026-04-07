@@ -314,27 +314,11 @@ export default function EquipmentPage({ uic = "W4MOCK" }) {
   const handleSubHandReceipt = () => {
     // goes to the sub hand receipt page
     // TODO: confirm this path matches the route in App.jsx
-    navigate("/equipment/sub-hand-receipt");
+    navigate("/shr-viewer");
   };
 
   return (
     <>
-      <div>
-        <h1>Equipment</h1>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "16px",
-          }}
-        >
-          <button onClick={() => navigate("/shr-viewer")}>
-            Sub Hand Receipt PDF
-          </button>
-        </div>
-      </div>
-
       <Box sx={styles.page}>
         {/* TOP ROW - page label left, UIC badge right */}
         <Box sx={styles.header}>
