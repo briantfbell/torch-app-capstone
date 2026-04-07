@@ -1,0 +1,26 @@
+### GET all UICs
+GET http://localhost:8080/uic
+
+### GET UIC by id
+GET http://localhost:8080/uic/1
+
+### Create a UIC
+POST http://localhost:8080/uic
+Content-Type: application/json
+
+{
+  "uic": "W1A1AA",
+  "unit_name": "1st Battalion",
+  "parent_uic": "W1A1AB"
+}
+
+### Update UIC by id
+PATCH http://localhost:8080/uic/1
+Content-Type: application/json
+
+{
+  "unit_name": "Updated Unit Name"
+}
+
+### Delete UIC by id
+DELETE http://localhost:8080/uic/1

@@ -1,0 +1,29 @@
+### GET all components
+GET http://localhost:8080/components
+
+### GET component by id
+GET http://localhost:8080/components/1
+
+### Create a component
+POST http://localhost:8080/components
+Content-Type: application/json
+
+{
+  "niin": 123456789,
+  "description": "example component",
+  "ui": "EA",
+  "auth_qty": 4,
+  "arc": "B",
+  "end_item_id": 1
+}
+
+### Update component by id
+PATCH http://localhost:8080/components/1
+Content-Type: application/json
+
+{
+  "auth_qty": 2
+}
+
+### Delete component by id
+DELETE http://localhost:8080/components/1

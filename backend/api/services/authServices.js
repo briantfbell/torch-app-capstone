@@ -38,7 +38,7 @@ exports.getMe = async token => {
     phone: user.phone,
     created_at: user.created_at,
     updated_at: user.updated_at,
-    rank: user.rank,
+    rank_id: user.rank_id,
     uic: user.uic,
     role: user.role,
   };
@@ -51,10 +51,10 @@ exports.registerUser = async (
   email,
   password,
   phone,
-  rank,
+  rank_id,
   uic,
   role,
-  DoDID,
+  dodid,
 ) => {
   if (
     !username ||
@@ -63,10 +63,10 @@ exports.registerUser = async (
     !email ||
     !password ||
     !phone ||
-    !rank ||
+    !rank_id ||
     !uic ||
     !role ||
-    !DoDID
+    !dodid
   ) {
     const error = new Error('All fields are required.');
     error.status = 400;
@@ -98,12 +98,13 @@ exports.registerUser = async (
     email: normalizedEmail,
     password: hashWord,
     phone,
-    rank,
+    rank_id,
     uic_id: uic,
-    DoDID,
+    role,
+    dodid,
   });
 
-  await authModels.createUserRole(newUser.id, role);
+  // await authModels.createUserRole(newUser.id, role);
 
   return {
     username: newUser.username,
@@ -111,9 +112,10 @@ exports.registerUser = async (
     name_last: newUser.name_last,
     email: newUser.email,
     phone: newUser.phone,
-    rank: newUser.rank,
+    rank_id: newUser.rank_id,
     uic: newUser.uic_id,
-    DoDID: newUser.DoDID,
+    role: newUser.role,
+    dodid: newUser.dodid,
   };
 };
 
@@ -149,7 +151,7 @@ exports.login = async (email, password) => {
       name_last: user.name_last,
       email: user.email,
       phone: user.phone,
-      rank: user.rank,
+      rank_id: user.rank_id,
       uic: user.uic,
       role: user.role,
     },

@@ -1,15 +1,15 @@
-# GET all users
-GET 'http://localhost:8080/users'
+### GET all users
+GET http://localhost:8080/users
 
-# GET user by id
-GET 'http://localhost:8080/users/1'
+### GET user by id
+GET http://localhost:8080/users/1
 
-# Update user by id
-PATCH 'http://localhost:8080/users/1'
+### Update user by id
+PATCH http://localhost:8080/users/1
 Content-Type: application/json
 {
 
 }
 
-# Delete user by id
-DELETE 'http://localhost:8080/users/1'
+### Delete user by id
+DELETE http://localhost:8080/users/1
