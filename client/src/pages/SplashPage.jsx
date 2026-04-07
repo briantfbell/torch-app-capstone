@@ -41,6 +41,7 @@ export default function SplashPage() {
 
     const [registerError, setRegisterError] = useState('')
     const handleRegisterSubmit = async (data) => {
+        console.log(data)
         try{
             const res = await fetch(`${url}/auth/register`, {
                 method: 'POST',
