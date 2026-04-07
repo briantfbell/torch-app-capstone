@@ -43,7 +43,7 @@ export default function SplashPage() {
     const handleRegisterSubmit = async (data) => {
         console.log(data)
         try{
-            const res = await fetch(`${url}/auth/register`, {
+            const res = await fetch(`${url}auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json'},
                 body: JSON.stringify(data)

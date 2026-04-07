@@ -23,4 +23,13 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - ./docker_db:/var/lib/postgresql/data
+      - ./docker_db:/var/lib/postgresql/
+
+  client:
+    build: ./client
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./client:/app
