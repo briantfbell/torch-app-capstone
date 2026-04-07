@@ -23,7 +23,6 @@ module.exports = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    console.log(token, process.env.JWT);
     return res.status(401).json({ message: 'Invalid or expired token.' });
   }
 };
