@@ -1,4 +1,4 @@
-const db = require('../../src/db/knex');
+const db = require('../../db/knex');
 const { applyQueryFilters } = require('../helpers/applyQueryFilters');
 
 const baseQuery = () => db('end_items').select('*');

@@ -1,5 +1,5 @@
 const db = require('../../db/knex');
-const reportsModel = require('../models/reports-model');
+const reportsModel = require('../models/inventoryRecordsModels');
 const categoriesModel = require('../models/categories-model');
 
 exports.getAllReports = async query => {
