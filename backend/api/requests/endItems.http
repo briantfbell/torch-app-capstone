@@ -1,23 +1,29 @@
-# GET /end-items?section_id= returns all end items for a section
-GET 'http://localhost:8080/end-items?section_id=1'
+### GET all end items
+GET http://localhost:8080/end-items
 
-# GET /end-items/:id returns a single end item with its BOM line items
-GET 'http://localhost:8080/end-items/1'
+### GET end item by id
+GET http://localhost:8080/end-items/1
 
-# Create end item
-POST 'http://localhost:8080/end-items'
+### Create end item
+POST http://localhost:8080/end-items
 Content-Type: application/json
-{
 
+{
+  "fsc": "123",
+  "description": "test2",
+  "niin": "123",
+  "image":"test4",
+  "auth_qty": "123",
+  "lin": "test6"
 }
 
-# Update end item by id
-PATCH 'http://localhost:8080/end-items/1'
+### Update end item by id
+PATCH http://localhost:8080/end-items/1
 Content-Type: application/json
-{
 
+{
+  "description": "test2"
 }
 
-# Delete end item by id
-DELETE 'http://localhost:8080/end-items/1'
-
+### Delete end item by id
+DELETE http://localhost:8080/end-items/2

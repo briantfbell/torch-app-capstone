@@ -17,10 +17,9 @@ exports.getSerialItemById = async id => {
 };
 
 exports.createSerialItem = async serialItemData => {
-  const { item_id, serial_number, signed_to, assigned_at, status } =
-    serialItemData;
+  const { item_id, serial_number, user_id, status } = serialItemData;
 
-  if (!item_id || !serial_number || !signed_to || !assigned_at || !status) {
+  if (!serial_number || !user_id || !status || !item_id) {
     const error = new Error('All fields are required.');
     error.status = 400;
     throw error;
@@ -29,8 +28,7 @@ exports.createSerialItem = async serialItemData => {
   return await serialItemsModels.createSerialItem({
     item_id,
     serial_number,
-    signed_to,
-    assigned_at,
+    user_id,
     status,
   });
 };

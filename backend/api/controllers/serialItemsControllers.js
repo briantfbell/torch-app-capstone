@@ -32,7 +32,7 @@ exports.createSerialItem = async (req, res) => {
 
     res.status(201).json({
       newSerialItem: newSerialItem,
-      message: `LIN: ${newSerialItem.lin} has been successfully posted.`,
+      message: `SN: ${newSerialItem.serial_number} has been successfully posted.`,
     });
   } catch (err) {
     res
@@ -50,7 +50,7 @@ exports.updateSerialItem = async (req, res) => {
 
     res.status(200).json({
       updatedSerialItem: updatedSerialItem,
-      message: `LIN: ${updatedSerialItem.lin} has been successfully updated.`,
+      message: `SN: ${updatedSerialItem.serial_number} has been successfully updated.`,
     });
   } catch (err) {
     res.status(err.status || 500).json({
@@ -67,7 +67,7 @@ exports.deleteSerialItem = async (req, res) => {
 
     res.status(200).json({
       deletedSerialItem: deletedSerialItem,
-      message: `LIN: ${deletedSerialItem.lin} was successfully deleted.`,
+      message: `SN: ${deletedSerialItem.serial_number} was successfully deleted.`,
     });
   } catch (err) {
     res

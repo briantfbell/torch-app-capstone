@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 
 module.exports = {
   development: {
@@ -8,7 +8,7 @@ module.exports = {
       port: process.env.POSTGRES_PORT,
       user: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DB
-    }
+      database: process.env.POSTGRES_DB,
+    },
   },
 };

@@ -1,34 +1,32 @@
-// TO DO: change route based on actual knex location
 const db = require('../../db/knex');
 
 const baseQuery = () =>
   db('users')
-    .join('ranks', 'users.rank', 'ranks.id')
-    .join('uic', 'users.uic_id', 'uic.id')
+    .join('ranks', 'users.rank_id', 'ranks.id')
+    .join('uics', 'users.uic_id', 'uics.id')
     .select(
       'users.id',
       'users.username',
       'users.name_first',
       'users.name_last',
       'users.email',
+      'users.password',
       'users.phone',
       'users.created_at',
       'users.updated_at',
       'users.role',
-      'users.DoDID',
+      'users.dodid',
       'users.uic_id',
       'ranks.rank',
-      'uic.uic',
+      'uics.uic',
     );
 
-// TO DO: if users end up with multiple roles
-
-// const groupRoles = query => {
-//   return query
-//     .select('users.*')
-//     .select(db.raw('ARRAY_AGG(roles.role) as roles'))
-//     .groupBy('users.id');
-// };
+const groupRoles = query => {
+  return query
+    .select(db.raw('MAX("ranks"."rank") as "rank_name"'))
+    .select(db.raw('ARRAY_AGG(users.role) as roles'))
+    .groupBy('users.id', 'uics.uic', 'ranks.rank');
+};
 
 exports.createUser = async user => {
   return await db('users')
@@ -42,9 +40,10 @@ exports.createUser = async user => {
       'phone',
       'created_at',
       'updated_at',
-      'rank',
+      'role',
       'uic_id',
-      'DoDID',
+      'rank_id',
+      'dodid',
     ]);
 };
 
@@ -53,13 +52,13 @@ exports.createUserRole = async (userId, roleId) => {
 };
 
 exports.findUserById = async id => {
-  return await baseQuery().where('users.id', id).first();
+  return await groupRoles(baseQuery()).where('users.id', id).first();
 };
 
 exports.findUserByEmail = async email => {
-  return await baseQuery().where('email', email).first();
+  return await groupRoles(baseQuery()).where('email', email).first();
 };
 
 exports.findUserByUsername = async username => {
-  return await baseQuery().where('username', username).first();
+  return await groupRoles(baseQuery()).where('username', username).first();
 };
