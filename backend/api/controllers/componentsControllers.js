@@ -5,7 +5,7 @@ exports.getAllComponents = async (req, res) => {
     const { query } = req;
     const data = await componentsServices.getAllComponents(query);
 
-    res.status(200).json(data);
+    res.status(200).json({ allComponents: data });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -18,7 +18,7 @@ exports.getComponentById = async (req, res) => {
     const { id } = req.params;
     const component = await componentsServices.getComponentById(id);
 
-    res.status(200).json(component);
+    res.status(200).json({ component: component });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -31,8 +31,8 @@ exports.createComponent = async (req, res) => {
     const newComponent = await componentsServices.createComponent(req.body);
 
     res.status(201).json({
-      newComponent,
-      message: `'${newComponent.description}' has been successfully created.`,
+      newComponent: newComponent,
+      message: `LIN: ${newComponent.lin} has been successfully created.`,
     });
   } catch (err) {
     res
@@ -49,7 +49,8 @@ exports.updateComponent = async (req, res) => {
     );
 
     res.status(200).json({
-      message: `'${updatedComponent.description}' has been successfully updated.`,
+      updatedComponent: updatedComponent,
+      message: `LIN: ${updatedComponent.lin} has been successfully updated.`,
     });
   } catch (err) {
     res.status(err.status || 500).json({
@@ -60,11 +61,14 @@ exports.updateComponent = async (req, res) => {
 
 exports.deleteComponent = async (req, res) => {
   try {
-    const deletedComponent = await componentsServices.deleteComponent(req.params.id);
+    const deletedComponent = await componentsServices.deleteComponent(
+      req.params.id,
+    );
 
-    res
-      .status(200)
-      .json({ message: `'${deletedComponent.description}' was successfully deleted.` });
+    res.status(200).json({
+      deletedComponent: deletedComponent,
+      message: `LIN: ${deletedComponent.lin} was successfully deleted.`,
+    });
   } catch (err) {
     res
       .status(err.status || 500)
