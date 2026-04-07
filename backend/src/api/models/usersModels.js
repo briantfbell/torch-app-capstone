@@ -25,7 +25,7 @@ const baseQuery = () =>
 const groupRoles = query => {
   return query
     .select('users.*')
-    .select(db.raw('ARRAY_AGG(user.role) as roles'))
+    .select(db.raw('ARRAY_AGG(users.role) as roles'))
     .groupBy('users.id');
 };
 
