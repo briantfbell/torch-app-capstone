@@ -40,7 +40,6 @@ exports.createUser = async (user, { rank }, { uic }) => {
       'role',
       'uic_id',
       'rank_id',
-      'dodid',
     ]);
 };
 

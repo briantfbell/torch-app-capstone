@@ -142,7 +142,9 @@ exports.registerUser = async ({
     email: newUser.email,
     phone: newUser.phone,
     rank_id: newUser.rank_id,
+    rank,
     uic_id: newUser.uic_id,
+    uic,
     role: newUser.role,
     dodid: newUser.dodid,
   };
