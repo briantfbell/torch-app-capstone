@@ -18,9 +18,9 @@ export default function SplashPage() {
     }
 
     //Username input
-    const [username, setUsername] = useState('')
-    const handleUsernameInput = (e) => {
-        setUsername(e.target.value)
+    const [email, setEmail] = useState('')
+    const handleEmailInput = (e) => {
+        setEmail(e.target.value)
     }
     //Password input
     const [password, setPassword] = useState('')
@@ -31,11 +31,7 @@ export default function SplashPage() {
     //Submission handling
     const handleLoginSubmit = async (e) => {
         e.preventDefault()
-
-        console.log("Fires handleLoginSubmit")
-
-        alert(`Received login request from: ${username}`);
-        await tryLogin(username, password);
+        await tryLogin(email, password);
         //Login submission, tokens, context, navigate to next page, etc
     }
 
@@ -71,9 +67,9 @@ export default function SplashPage() {
                 <Stack sx={{width:320, justifySelf: 'center'}}>
                     <LoginForm
                         handleLoginSubmit={handleLoginSubmit}
-                        handleUsernameInput={handleUsernameInput}
+                        handleEmailInput={handleEmailInput}
                         handlePasswordInput={handlePasswordInput}
-                        username={username}
+                        email={email}
                         password={password}
                     />
                     <p>Need an account?</p>
