@@ -21,13 +21,6 @@ const baseQuery = () =>
       'uics.uic',
     );
 
-const groupRoles = query => {
-  return query
-    .select(db.raw('MAX("ranks"."rank") as "rank_name"'))
-    .select(db.raw('ARRAY_AGG(users.role) as roles'))
-    .groupBy('users.id', 'uics.uic', 'ranks.rank');
-};
-
 exports.createUser = async user => {
   return await db('users')
     .insert(user)
@@ -52,13 +45,13 @@ exports.createUserRole = async (userId, roleId) => {
 };
 
 exports.findUserById = async id => {
-  return await groupRoles(baseQuery()).where('users.id', id).first();
+  return await baseQuery().where('users.id', id).first();
 };
 
 exports.findUserByEmail = async email => {
-  return await groupRoles(baseQuery()).where('email', email).first();
+  return await baseQuery().where('email', email).first();
 };
 
 exports.findUserByUsername = async username => {
-  return await groupRoles(baseQuery()).where('username', username).first();
+  return await baseQuery().where('username', username).first();
 };
