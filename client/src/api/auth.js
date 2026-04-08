@@ -28,31 +28,40 @@ const parseJsonSafely = async (res) => {
 
 export const getToken = () => localStorage.getItem("token");
 
-export const logout = () => localStorage.removeItem("token");
 
 export const getCurrentUser = () => {
     const token = localStorage.getItem("token");
     if (!token) return null;
-    return JSON.parse(atob(token.split(".")[1]));
+
+    try {
+        return JSON.parse(atob(token.split(".")[1]));
+    } catch (e) {
+        console.error(e);
+        return null;
+    }
 };
 
 export const tryLogin = async (email, password) => {
     try {
-        // console.log(email, password)
         const res = await fetch(`${API_URL}/auth/login`, {
             method: "POST",
             body: JSON.stringify({ email, password }),
             headers: { "Content-type": "application/json; charset=UTF-8" },
+            credentials: "include",
         });
         const data = await parseJsonSafely(res);
 
-        if (data.token) {
+        if (!res.ok) {
+            return data;
+        }
+
+        if (data?.token) {
             localStorage.setItem("token", data.token);
-            alert(`Successfully logged in as: ${data.token}`)
         }
 
         return data;
     } catch (e) {
         console.error(e);
+        return { message: "Unable to reach the server." };
     }
 };
