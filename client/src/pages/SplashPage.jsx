@@ -31,14 +31,8 @@ export default function SplashPage() {
     //Submission handling
     const handleLoginSubmit = async (e) => {
         e.preventDefault()
-<<<<<<< HEAD
-
-        console.log("Fires handleLoginSubmit")
-
-        await tryLogin(username, password);
-=======
         await tryLogin(email, password);
->>>>>>> origin/main
+        navigate('/dashboard')
         //Login submission, tokens, context, navigate to next page, etc
     }
 
