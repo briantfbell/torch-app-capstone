@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Button from '@mui/material/Button'
-import { Checkbox, FormGroup, RadioGroup, FormControlLabel, FormLabel, FormControl, Stack, TextField, Radio } from "@mui/material"
+import { Checkbox, FormGroup, RadioGroup, FormControlLabel, FormLabel, FormControl, Stack, TextField, Radio, InputLabel, Select, MenuItem, Menu } from "@mui/material"
 
 export default function RegisterForm({onSubmit, error}){
     //Form for form data (trying something new)
@@ -60,7 +60,7 @@ export default function RegisterForm({onSubmit, error}){
     //Error messaging
     const [localError, setLocalError] = useState('')
 
-
+    //Handle regular change (not uic and role)
     const handleChange = (e) => {
         const {name, value} = e.target;
 
@@ -72,6 +72,8 @@ export default function RegisterForm({onSubmit, error}){
         //When change happens, clear error
         setLocalError('');
     }
+
+    //Handle overall submit
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -90,7 +92,7 @@ export default function RegisterForm({onSubmit, error}){
         const payload = {
             username: form.username.trim().toLowerCase(), //trim it for spaces, lowercase it for safety
             password: form.password,
-            uic: form.uic.trim(),
+            uic: form.uic,
             email: form.email.trim().toLowerCase(),
             name_first: form.name_first.trim(),
             name_last: form.name_last.trim(),
@@ -102,6 +104,32 @@ export default function RegisterForm({onSubmit, error}){
 
         onSubmit(payload)
     }
+
+    //Handle the UIC change
+    const handleUicChange = (e) => {
+        setForm({
+            ...form,
+            uic: e.target.value
+        })
+    }
+
+    //Fetch the UICs
+    const [uics, setUics] = useState([''])
+    
+    useEffect(() => {
+        const fetchUics = async () => {
+            try{
+                const res = await fetch('http://localhost:8080/uics')
+                const data = await res.json();
+                setUics(data.allUics)
+                console.log(data.allUics)
+            } catch{
+                console.error('Failed to fetch UICs')
+            }
+        }
+        fetchUics()
+    }, [])
+
 
     return(
         <form className='registerFormContainer' onSubmit={handleSubmit}>
@@ -156,11 +184,22 @@ export default function RegisterForm({onSubmit, error}){
                     name='DoDID'
                     placeholder="DoDID"
                 />
-                <TextField id='outlined-basic'  label='uic' required value={form.uic}
-                    onChange={handleChange}
-                    name='uic'
-                    placeholder="Unit UIC"
-                />
+                
+
+                <FormControl fullWidth>
+                    <InputLabel id='uic'>UIC</InputLabel>
+                    <Select
+                        labelId='uic'
+                        id='uic'
+                        value={form.uic}
+                        label="UIC"
+                        onChange={handleUicChange}
+                    >
+                        {uics.map((uic) => (
+                            <MenuItem key={uic.uic} value={uic.uic}>{uic.uic}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
                 </Stack>
             </Stack>
             <br/>
