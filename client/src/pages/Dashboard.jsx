@@ -10,7 +10,7 @@ const mockPieData = [
   { value: 9, label: 'Expected' },
 ];
 
-export const mockShortageDataset = [
+const mockShortageDataset = [
   {
     name: 'HQ Element',
     percent: 98.0,
@@ -32,10 +32,6 @@ export const mockShortageDataset = [
     percent: 44.0,
   },
 ];
-
-function createData(itemName, nsn, qty, value) {
-  return { itemName, nsn, qty, value };
-}
 
 const barChartSettings = {
   xAxis: [
@@ -78,7 +74,7 @@ function PieCenterLabel({ children }) {
 const Dashboard = () => {
   return (
     <>
-      <Box sx={{ maxWidth: 1500, mx: 'auto', width: '100%' }}>
+      <Box sx={{ mx: 'auto', width: '100%' }}>
         <Stack spacing={3}>
           <Card
             elevation={0}
@@ -93,20 +89,20 @@ const Dashboard = () => {
                 <Stack
                   direction={{ xs: 'column', sm: 'row' }}
                   justifyContent="space-between"
-                  alignItems={{ xs: 'flex-start', sm: 'center' }}
+                  alignItems={{ xs: 'flex-start', sm: 'stretch' }}
                   spacing={2}
+                  sx={{ width: '100%' }}
                 >
-                  <Stack spacing={1} width={'100%'}>
+                  <Stack spacing={1} sx={{ width: '100%' }}>
                     <Typography
                       variant="overline"
                       color="primary"
                       fontWeight={700}
-                      sx={{ fontSize: 16 }}
                     >
                       Metrics Dashboard
                     </Typography>
-                    <Stack direction={'row'} spacing={2}>
-                      <Card sx={{ flexGrow: 1 }}>
+                    <Stack direction={'row'} spacing={2} sx={{ width: '100%' }}>
+                      <Card sx={{ flex: 1 }}>
                         <CardContent>
                           <Typography variant={'h3'} color={'primary'}>
                             XX%
@@ -114,7 +110,7 @@ const Dashboard = () => {
                           <Typography>On Hand</Typography>
                         </CardContent>
                       </Card>
-                      <Card sx={{ flexGrow: 1 }}>
+                      <Card sx={{ flex: 1 }}>
                         <CardContent>
                           <Typography variant={'h3'} color={'success'}>
                             ##
@@ -122,7 +118,7 @@ const Dashboard = () => {
                           <Typography>Verified</Typography>
                         </CardContent>
                       </Card>
-                      <Card sx={{ flexGrow: 1 }}>
+                      <Card sx={{ flex: 1 }}>
                         <CardContent>
                           <Typography variant={'h3'} color={'error'}>
                             ##
@@ -137,7 +133,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Stack direction={'row'} spacing={2}>
+          <Stack direction={{ xs: 'column', lg: 'row' }} spacing={2}>
             <Card
               elevation={0}
               sx={{
@@ -155,13 +151,12 @@ const Dashboard = () => {
                     alignItems={{ xs: 'flex-start', sm: 'center' }}
                     spacing={2}
                   >
-                    <Stack width={'100%'} spacing={5}>
+                    <Stack spacing={5}>
                       <Stack>
                         <Typography
                           variant="overline"
                           color="primary"
                           fontWeight={700}
-                          sx={{ fontSize: 16 }}
                         >
                           Inventory Health
                         </Typography>
@@ -217,13 +212,12 @@ const Dashboard = () => {
                     alignItems={{ xs: 'flex-start', sm: 'center' }}
                     spacing={2}
                   >
-                    <Stack width={'100%'} spacing={2}>
+                    <Stack spacing={2}>
                       <Stack>
                         <Typography
                           variant="overline"
                           color="primary"
                           fontWeight={700}
-                          sx={{ fontSize: 16 }}
                         >
                           Shortage Summary
                         </Typography>

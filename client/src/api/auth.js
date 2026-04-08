@@ -36,19 +36,19 @@ export const getCurrentUser = () => {
     return JSON.parse(atob(token.split(".")[1]));
 };
 
-export const tryLogin = async (username, password) => {
-    alert(`Received login request from: ${username}`);
-
+export const tryLogin = async (email, password) => {
     try {
-        const res = await fetch(`${API_URL}/auth/login/${username}`, {
+        // console.log(email, password)
+        const res = await fetch(`${API_URL}/auth/login`, {
             method: "POST",
-            body: JSON.stringify({ pin: password }),
+            body: JSON.stringify({ email, password }),
             headers: { "Content-type": "application/json; charset=UTF-8" },
         });
         const data = await parseJsonSafely(res);
 
         if (data.token) {
             localStorage.setItem("token", data.token);
+            alert(`Successfully logged in as: ${data.token}`)
         }
 
         return data;

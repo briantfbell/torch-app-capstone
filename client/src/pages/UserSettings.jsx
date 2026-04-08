@@ -132,7 +132,7 @@ const UserSettings = () => {
 
     return (
         <>
-            <Box sx={{maxWidth: 880, mx: 'auto', width: '100%'}}>
+            <Box sx={{maxWidth: 1500, mx: 'auto', width: '100%'}}>
                 <Stack spacing={3}>
                     <Card
                         elevation={0}
@@ -151,7 +151,7 @@ const UserSettings = () => {
                                     spacing={2}
                                 >
                                     <Stack spacing={1}>
-                                        <Typography variant="overline" color="primary" fontWeight={700}>
+                                        <Typography variant="overline" color="primary" fontWeight={700} >
                                             Account Settings
                                         </Typography>
                                         <Typography variant="h4" fontWeight={800}>

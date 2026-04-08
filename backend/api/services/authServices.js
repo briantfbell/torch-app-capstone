@@ -151,6 +151,7 @@ exports.registerUser = async ({
 };
 
 exports.login = async (email, password) => {
+
   if (!email || !password) {
     const error = new Error('Email and password are required.');
     error.status = 400;
@@ -161,7 +162,7 @@ exports.login = async (email, password) => {
   const user = await authModels.findUserByEmail(normalizedEmail);
 
   if (!user) {
-    const error = new Error('Email or password is incorrect.');
+    const error = new Error('User not found.');
     error.status = 401;
     throw error;
   }
