@@ -8,6 +8,7 @@ import InventoryTable from "../pages/InventoryTable";
 import EndItemPage from "../pages/EndItemPage.jsx";
 import MiniDrawer from "../components/ui/MiniDrawer.jsx";
 import UserSettings from "../pages/UserSettings.jsx";
+import Ingest from "../components/Ingest.jsx";
 
 export default function MainRouter() {
   return (
@@ -21,6 +22,7 @@ export default function MainRouter() {
           <Route path="/InventoryTable" element={<InventoryTable />} />
           <Route path="/enditem/:id" element={<EndItemPage />} />
           <Route path="/user-settings" element={<UserSettings />} />
+          <Route path="/ingest" element={<Ingest />} />
         </Routes>
       </MiniDrawer>
     </Router>
