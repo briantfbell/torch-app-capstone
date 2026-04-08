@@ -1,14 +1,15 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import SplashPage from "../pages/SplashPage";
-import EquipmentPage from "../pages/EquipmentPage.jsx";
-import SHRViewPage from "../pages/SHRViewPage.jsx";
-import ShortageTrackerPage from "../pages/ShortageTrackerPage";
-import InventoryTable from "../pages/InventoryTable";
-import EndItemPage from "../pages/EndItemPage.jsx";
-import MiniDrawer from "../components/ui/MiniDrawer.jsx";
-import UserSettings from "../pages/UserSettings.jsx";
-import Ingest from "../components/Ingest.jsx";
+import React from 'react';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import SplashPage from '../pages/SplashPage';
+import EquipmentPage from '../pages/EquipmentPage.jsx';
+import SHRViewPage from '../pages/SHRViewPage.jsx';
+import ShortageTrackerPage from '../pages/ShortageTrackerPage';
+import InventoryTable from '../pages/InventoryTable';
+import EndItemPage from '../pages/EndItemPage.jsx';
+import MiniDrawer from '../components/ui/MiniDrawer.jsx';
+import UserSettings from '../pages/UserSettings.jsx';
+import Ingest from '../components/Ingest.jsx';
+import Dashboard from '../pages/Dashboard.jsx';
 
 export default function MainRouter() {
   return (
@@ -16,6 +17,7 @@ export default function MainRouter() {
       <MiniDrawer>
         <Routes>
           <Route path="/" element={<SplashPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/equipment" element={<EquipmentPage />} />
           <Route path="/equipment/shr-viewer" element={<SHRViewPage />} />
           <Route path="/shortages" element={<ShortageTrackerPage />} />
