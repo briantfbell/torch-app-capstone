@@ -6,16 +6,16 @@ POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
-  "username": "1",
+  "username": "test",
   "name_first": "2",
   "name_last": "3",
   "email": "1",
   "password": "5",
   "phone": "6",
-  "rank_id": "7",
-  "uic_id": "2",
-  "role": "9, 10",
-  "DoDID": "101"
+  "rank": "E-7",
+  "uic": "WCAEB1",
+  "role": "[9, 10]",
+  "DoDID": 101
 }
 
 ### POST login

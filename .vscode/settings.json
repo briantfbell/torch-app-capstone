@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["niin"],
+  "cSpell.words": ["dodid", "niin", "uics"],
   "sqltools.connections": [
     {
       "ssh": "Disabled",
@@ -12,5 +12,6 @@
       "username": "postgres",
       "password": "docker"
     }
-  ]
+  ],
+  "CodeGPT.apiKey": "OpenAI"
 }
