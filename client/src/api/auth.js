@@ -43,12 +43,12 @@ export const getCurrentUser = () => {
 };
 
 export const tryLogin = async (username, password) => {
-    alert(`Received login request from: ${username}`);
 
     try {
-        const res = await fetch(`${API_URL}/auth/login/${username}`, {
+        const res = await fetch(`${API_URL}/auth/login/`, {
             method: "POST",
-            body: JSON.stringify({ pin: password }),
+            credentials: "include",
+            body: JSON.stringify({email: username, password}),
             headers: { "Content-type": "application/json; charset=UTF-8" },
         });
         const data = await parseJsonSafely(res);
@@ -56,7 +56,6 @@ export const tryLogin = async (username, password) => {
         if (data.token) {
             localStorage.setItem("token", data.token);
         }
-
         return data;
     } catch (e) {
         console.error(e);

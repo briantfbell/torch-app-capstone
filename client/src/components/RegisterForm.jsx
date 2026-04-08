@@ -57,6 +57,7 @@ export default function RegisterForm({onSubmit, error}){
             }
         })
     }
+
     //Error messaging
     const [localError, setLocalError] = useState('')
 
@@ -135,71 +136,52 @@ export default function RegisterForm({onSubmit, error}){
         <form className='registerFormContainer' onSubmit={handleSubmit}>
             <Stack spacing={2} direction="row" justifyContent="center">
                 <Stack spacing={2}>
-                <TextField id='outlined-basic'  value={form.username} label='username' required onChange={handleChange} name='username' type='text' placeholder="Username"/>
-                <TextField id='outlined-basic'  value={form.password} label='password' required onChange={handleChange} name='password' type='password' placeholder="Password"/>
-                <TextField id='outlined-basic'  value={form.confirmPass} label='confirmPass' required onChange={handleChange} name='confirmPass' type='password' placeholder="Confirm Password"/>
-                {/* etc info, TODO: refactor for visualization */}
-                <TextField id='outlined-basic'  label='email' required value={form.email}
-                    onChange={handleChange}
-                    name='email'
-                    placeholder="Email Address"
-                />
-                <TextField id='outlined-basic'  label='name_first' required value={form.name_first}
-                    onChange={handleChange}
-                    name='name_first'
-                    placeholder="First Name"
-                />
-                <TextField id='outlined-basic'  label='name_last' required value={form.name_last}
-                    onChange={handleChange}
-                    name='name_last'
-                    placeholder="Last Name"
-                />
-                <TextField id='outlined-basic'  label='phone' required value={form.phone}
-                    onChange={handleChange}
-                    name='phone'
-                    placeholder="Phone Number"
-                />
+                    <TextField id='outlined-basic'  value={form.username} label='username' required onChange={handleChange} name='username' type='text' placeholder="Username"/>
+                    <TextField id='outlined-basic'  value={form.password} label='password' required onChange={handleChange} name='password' type='password' placeholder="Password"/>
+                    <TextField id='outlined-basic'  value={form.confirmPass} label='confirmPass' required onChange={handleChange} name='confirmPass' type='password' placeholder="Confirm Password"/>
+                    {/* etc info, */}
+                    <TextField id='outlined-basic'  label='email' required value={form.email} onChange={handleChange} name='email' placeholder="Email Address" />
+                    <TextField id='outlined-basic'  label='name_first' required value={form.name_first} onChange={handleChange} name='name_first' placeholder="First Name"/>
+                    <TextField id='outlined-basic'  label='name_last' required value={form.name_last} onChange={handleChange} name='name_last' placeholder="Last Name"/>
+                    <TextField id='outlined-basic'  label='phone' required value={form.phone} onChange={handleChange} name='phone' placeholder="Phone Number" />
                 </Stack>
                 <Stack spacing={2}>
-                <TextField id='outlined-basic'  label='rank' required value={form.rank}
-                    onChange={handleChange}
-                    name='rank'
-                    placeholder="Rank"
-                />
-                <FormControl required>
-                    <FormLabel id="role">Account Type</FormLabel>
-                    <RadioGroup value={accountType} onChange={handleAccountTypeChange}>
-                        <FormControlLabel value="admin" control={<Radio />} label="Admin" />
-                        <FormControlLabel value="user" control={<Radio />} label="User" />
-                    </RadioGroup>
-                    <FormLabel>Roles</FormLabel>
-                    <FormGroup required>
-                        <FormControlLabel control={<Checkbox value= 'hrh' checked={roles.includes('hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange} />} label="HRH" />
-                        <FormControlLabel control={<Checkbox value = 'sub-hrh' checked={roles.includes('sub-hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange} />} label="sub-HRH" />
-                        <FormControlLabel control={<Checkbox value = 't-hrh' checked={roles.includes('t-hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange}/>} label="t-HRH" />
-                    </FormGroup>
-                </FormControl>
-                <TextField id='outlined-basic'  label='DoDID' required value={form.DoDID}
-                    onChange={handleChange}
-                    name='DoDID'
-                    placeholder="DoDID"
-                />
-                
+                    <TextField id='outlined-basic'  label='rank' required value={form.rank} onChange={handleChange} name='rank' placeholder="Rank" />
+                    {/*Form for account control, has checkbox and radio control*/}
+                    <FormControl required>
+                        <FormLabel id="role">Account Type</FormLabel>
+                        <RadioGroup value={accountType} onChange={handleAccountTypeChange}>
+                            <FormControlLabel value="admin" control={<Radio />} label="Admin" />
+                            <FormControlLabel value="user" control={<Radio />} label="User" />
+                        </RadioGroup>
+                        <FormLabel>Roles</FormLabel>
+                        <FormGroup required>
+                            <FormControlLabel control={<Checkbox value= 'hrh' checked={roles.includes('hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange} />} label="HRH" />
+                            <FormControlLabel control={<Checkbox value = 'sub-hrh' checked={roles.includes('sub-hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange} />} label="sub-HRH" />
+                            <FormControlLabel control={<Checkbox value = 't-hrh' checked={roles.includes('t-hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange}/>} label="t-HRH" />
+                        </FormGroup>
+                    </FormControl>
 
-                <FormControl fullWidth>
-                    <InputLabel id='uic'>UIC</InputLabel>
-                    <Select
-                        labelId='uic'
-                        id='uic'
-                        value={form.uic}
-                        label="UIC"
-                        onChange={handleUicChange}
-                    >
-                        {uics.map((uic) => (
-                            <MenuItem key={uic.uic} value={uic.uic}>{uic.uic}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+                    <TextField id='outlined-basic'  label='DoDID' required value={form.DoDID}
+                        onChange={handleChange}
+                        name='DoDID'
+                        placeholder="DoDID"
+                    />
+                    {/*UIC input with drop down, from upper fetch*/}
+                    <FormControl fullWidth>
+                        <InputLabel id='uic'>UIC</InputLabel>
+                        <Select
+                            labelId='uic'
+                            id='uic'
+                            value={form.uic}
+                            label="UIC"
+                            onChange={handleUicChange}
+                        >
+                            {uics.map((uic) => (
+                                <MenuItem key={uic.uic} value={uic.uic}>{uic.uic}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                 </Stack>
             </Stack>
             <br/>

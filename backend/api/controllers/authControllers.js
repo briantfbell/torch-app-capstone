@@ -41,8 +41,9 @@ exports.registerUser = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const token = await authServices.login(email, password);
 
+    const token = await authServices.login(email, password);
+    
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

@@ -34,7 +34,6 @@ export default function SplashPage() {
 
         console.log("Fires handleLoginSubmit")
 
-        alert(`Received login request from: ${username}`);
         await tryLogin(username, password);
         //Login submission, tokens, context, navigate to next page, etc
     }

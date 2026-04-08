@@ -12,8 +12,8 @@ export function useAuth() {
                 })
 
                 const data = await res.json()
-
                 if(res.ok) {
+                    console.log('made it to res ok')
                     setUser(data.message)
                 } else {
                     setUser(null)
