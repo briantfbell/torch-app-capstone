@@ -88,9 +88,10 @@ router.post('/excel', upload.single('file'), async (req, res) => {
             niin: obj.niin,
             fsc: obj.fsc,
           })
-          .select('id');
+          .select('id')
+          .first();
 
-        if (match.length !== 0) {
+        if (match) {
           errors.push(obj);
         } else {
           await db('end_items').insert(obj);
