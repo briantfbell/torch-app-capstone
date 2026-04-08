@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Button from '@mui/material/Button'
-import { Checkbox, FormGroup, RadioGroup, FormControlLabel, FormLabel, FormControl, Stack, TextField, Radio } from "@mui/material"
+import { Checkbox, FormGroup, RadioGroup, FormControlLabel, FormLabel, FormControl, Stack, TextField, Radio, InputLabel, Select, MenuItem, Menu } from "@mui/material"
 
 export default function RegisterForm({onSubmit, error}){
     //Form for form data (trying something new)
@@ -57,10 +57,11 @@ export default function RegisterForm({onSubmit, error}){
             }
         })
     }
+
     //Error messaging
     const [localError, setLocalError] = useState('')
 
-
+    //Handle regular change (not uic and role)
     const handleChange = (e) => {
         const {name, value} = e.target;
 
@@ -72,6 +73,8 @@ export default function RegisterForm({onSubmit, error}){
         //When change happens, clear error
         setLocalError('');
     }
+
+    //Handle overall submit
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -90,7 +93,7 @@ export default function RegisterForm({onSubmit, error}){
         const payload = {
             username: form.username.trim().toLowerCase(), //trim it for spaces, lowercase it for safety
             password: form.password,
-            uic: form.uic.trim(),
+            uic: form.uic,
             email: form.email.trim().toLowerCase(),
             name_first: form.name_first.trim(),
             name_last: form.name_last.trim(),
@@ -103,64 +106,82 @@ export default function RegisterForm({onSubmit, error}){
         onSubmit(payload)
     }
 
+    //Handle the UIC change
+    const handleUicChange = (e) => {
+        setForm({
+            ...form,
+            uic: e.target.value
+        })
+    }
+
+    //Fetch the UICs
+    const [uics, setUics] = useState([''])
+    
+    useEffect(() => {
+        const fetchUics = async () => {
+            try{
+                const res = await fetch('http://localhost:8080/uics')
+                const data = await res.json();
+                setUics(data.allUics)
+                console.log(data.allUics)
+            } catch{
+                console.error('Failed to fetch UICs')
+            }
+        }
+        fetchUics()
+    }, [])
+
+
     return(
         <form className='registerFormContainer' onSubmit={handleSubmit}>
             <Stack spacing={2} direction="row" justifyContent="center">
                 <Stack spacing={2}>
-                <TextField id='outlined-basic'  value={form.username} label='username' required onChange={handleChange} name='username' type='text' placeholder="Username"/>
-                <TextField id='outlined-basic'  value={form.password} label='password' required onChange={handleChange} name='password' type='password' placeholder="Password"/>
-                <TextField id='outlined-basic'  value={form.confirmPass} label='confirmPass' required onChange={handleChange} name='confirmPass' type='password' placeholder="Confirm Password"/>
-                {/* etc info, TODO: refactor for visualization */}
-                <TextField id='outlined-basic'  label='email' required value={form.email}
-                    onChange={handleChange}
-                    name='email'
-                    placeholder="Email Address"
-                />
-                <TextField id='outlined-basic'  label='name_first' required value={form.name_first}
-                    onChange={handleChange}
-                    name='name_first'
-                    placeholder="First Name"
-                />
-                <TextField id='outlined-basic'  label='name_last' required value={form.name_last}
-                    onChange={handleChange}
-                    name='name_last'
-                    placeholder="Last Name"
-                />
-                <TextField id='outlined-basic'  label='phone' required value={form.phone}
-                    onChange={handleChange}
-                    name='phone'
-                    placeholder="Phone Number"
-                />
+                    <TextField id='outlined-basic'  value={form.username} label='username' required onChange={handleChange} name='username' type='text' placeholder="Username"/>
+                    <TextField id='outlined-basic'  value={form.password} label='password' required onChange={handleChange} name='password' type='password' placeholder="Password"/>
+                    <TextField id='outlined-basic'  value={form.confirmPass} label='confirmPass' required onChange={handleChange} name='confirmPass' type='password' placeholder="Confirm Password"/>
+                    {/* etc info, */}
+                    <TextField id='outlined-basic'  label='email' required value={form.email} onChange={handleChange} name='email' placeholder="Email Address" />
+                    <TextField id='outlined-basic'  label='name_first' required value={form.name_first} onChange={handleChange} name='name_first' placeholder="First Name"/>
+                    <TextField id='outlined-basic'  label='name_last' required value={form.name_last} onChange={handleChange} name='name_last' placeholder="Last Name"/>
+                    <TextField id='outlined-basic'  label='phone' required value={form.phone} onChange={handleChange} name='phone' placeholder="Phone Number" />
                 </Stack>
                 <Stack spacing={2}>
-                <TextField id='outlined-basic'  label='rank' required value={form.rank}
-                    onChange={handleChange}
-                    name='rank'
-                    placeholder="Rank"
-                />
-                <FormControl required>
-                    <FormLabel id="role">Account Type</FormLabel>
-                    <RadioGroup value={accountType} onChange={handleAccountTypeChange}>
-                        <FormControlLabel value="admin" control={<Radio />} label="Admin" />
-                        <FormControlLabel value="user" control={<Radio />} label="User" />
-                    </RadioGroup>
-                    <FormLabel>Roles</FormLabel>
-                    <FormGroup required>
-                        <FormControlLabel control={<Checkbox value= 'hrh' checked={roles.includes('hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange} />} label="HRH" />
-                        <FormControlLabel control={<Checkbox value = 'sub-hrh' checked={roles.includes('sub-hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange} />} label="sub-HRH" />
-                        <FormControlLabel control={<Checkbox value = 't-hrh' checked={roles.includes('t-hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange}/>} label="t-HRH" />
-                    </FormGroup>
-                </FormControl>
-                <TextField id='outlined-basic'  label='DoDID' required value={form.DoDID}
-                    onChange={handleChange}
-                    name='DoDID'
-                    placeholder="DoDID"
-                />
-                <TextField id='outlined-basic'  label='uic' required value={form.uic}
-                    onChange={handleChange}
-                    name='uic'
-                    placeholder="Unit UIC"
-                />
+                    <TextField id='outlined-basic'  label='rank' required value={form.rank} onChange={handleChange} name='rank' placeholder="Rank" />
+                    {/*Form for account control, has checkbox and radio control*/}
+                    <FormControl required>
+                        <FormLabel id="role">Account Type</FormLabel>
+                        <RadioGroup value={accountType} onChange={handleAccountTypeChange}>
+                            <FormControlLabel value="admin" control={<Radio />} label="Admin" />
+                            <FormControlLabel value="user" control={<Radio />} label="User" />
+                        </RadioGroup>
+                        <FormLabel>Roles</FormLabel>
+                        <FormGroup required>
+                            <FormControlLabel control={<Checkbox value= 'hrh' checked={roles.includes('hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange} />} label="HRH" />
+                            <FormControlLabel control={<Checkbox value = 'sub-hrh' checked={roles.includes('sub-hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange} />} label="sub-HRH" />
+                            <FormControlLabel control={<Checkbox value = 't-hrh' checked={roles.includes('t-hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange}/>} label="t-HRH" />
+                        </FormGroup>
+                    </FormControl>
+
+                    <TextField id='outlined-basic'  label='DoDID' required value={form.DoDID}
+                        onChange={handleChange}
+                        name='DoDID'
+                        placeholder="DoDID"
+                    />
+                    {/*UIC input with drop down, from upper fetch*/}
+                    <FormControl fullWidth>
+                        <InputLabel id='uic'>UIC</InputLabel>
+                        <Select
+                            labelId='uic'
+                            id='uic'
+                            value={form.uic}
+                            label="UIC"
+                            onChange={handleUicChange}
+                        >
+                            {uics.map((uic) => (
+                                <MenuItem key={uic.uic} value={uic.uic}>{uic.uic}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                 </Stack>
             </Stack>
             <br/>

@@ -15,8 +15,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import {BarChart, Dashboard, RunningWithErrors, Settings} from '@mui/icons-material';
+import {BarChart, Dashboard, RunningWithErrors, Settings, Logout} from '@mui/icons-material';
 import {useNavigate} from 'react-router-dom';
+import {logout, logoutFunc} from '../../api/auth'
 
 const drawerWidth = 240;
 
@@ -81,6 +82,13 @@ export default function MiniDrawer({children}) {
         setOpen(false);
     };
 
+    const handleLogout = async () => {
+        await logoutFunc();
+        logout();
+
+        navigate('/')
+    }
+
     return (<Box sx={{display: 'flex'}}>
         <AppBar position="fixed" open={open}>
             <Toolbar>
@@ -138,6 +146,14 @@ export default function MiniDrawer({children}) {
                             <Settings/>
                         </ListItemIcon>
                         <ListItemText>User Settings</ListItemText>
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding sx={{display: 'block'}} onClick={handleLogout}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Logout/>
+                        </ListItemIcon>
+                        <ListItemText>Logout</ListItemText>
                     </ListItemButton>
                 </ListItem>
             </List>

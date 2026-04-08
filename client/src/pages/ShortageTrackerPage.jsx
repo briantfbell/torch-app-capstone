@@ -39,6 +39,7 @@ const mockShortages = [
 function ShortageTrackerPage() {
   const shortages = mockShortages;
 
+
   return (
     <Box sx={styles.page}>
       <Box sx={styles.header}>

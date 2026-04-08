@@ -5,15 +5,17 @@
 import { Box, Typography, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
+
 export default function BomPdfViewerPage() {
     const navigate = useNavigate();
+
 
     return (
         <Box>
             <Button
                 variant="contained"
                 sx={{ mb: 2 }}
-                onClick={() => navigate(/*path)*/}
+                onClick={() => navigate(/*path*/)}
             >
                 Back
             </Button>

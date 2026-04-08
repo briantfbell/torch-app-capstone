@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 import {
   Box,
   Button,
@@ -519,6 +520,7 @@ function EndItemRow({ item, onClick, selected }) {
 
 export default function EquipmentPage({ uic = 'W4MOCK' }) {
   const navigate = useNavigate();
+
 
   // tracks which row the user last clicked so we can highlight it
   // starts as null (nothing selected)
