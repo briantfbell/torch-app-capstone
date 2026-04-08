@@ -38,7 +38,7 @@ export default function SHRViewPage() {
 
       <Box sx={styles.pdfContainer}>
         <Document
-          file="/pdfs/DET10_FWD_SHR_OCT25_FLAT.pdf"
+          file="/pdfs/1B10_SHR_flat.pdf"
           onLoadSuccess={onDocumentLoadSuccess}
         >
           <Page pageNumber={pageNumber} scale={1.4} />
