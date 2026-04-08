@@ -40,6 +40,7 @@ const rawRoutes = require('./routes/rawRoutes');
 // const inventoryRecordsRoutes = require('./routes/inventoryRecordsRoutes');
 // const sectionsRoutes = require('./routes/sectionsRoutes');
 // const shortagesRoutes = require('./routes/shortagesRoutes');
+const ingestRoutes = require('./routes/ingestRoutes');
 
 app.use('/auth', authRoutes);
 app.use('/users', usersRoutes);
@@ -51,6 +52,7 @@ app.use('/raw', rawRoutes);
 // app.use('/inventory-records', inventoryRecordsRoutes);
 // app.use('/sections', sectionsRoutes);
 // app.use('/shortages', shortagesRoutes);
+app.use('/ingest', ingestRoutes);
 
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Working for now...' });

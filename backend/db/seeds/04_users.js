@@ -13,7 +13,7 @@ const bcrypt = require('bcrypt')
         password: hashWord,
         name_first: faker.person.firstName(),
         name_last: faker.person.lastName(),
-        email: faker.internet.email(),
+        email: faker.internet.email().toLowerCase(),
         phone: faker.phone.number(),
         rank_id: faker.number.int({ min: 2, max: 21 }),
         uic_id: faker.number.int({ min: 1, max: 2 }),

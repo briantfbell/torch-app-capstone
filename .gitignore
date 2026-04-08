@@ -5,4 +5,8 @@ dist/
 coverage/
 .idea/
 ./backend/db/docker_db
+<<<<<<< HEAD
 db/
+=======
+docker_db/
+>>>>>>> origin/main

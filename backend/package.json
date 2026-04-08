@@ -19,12 +19,14 @@
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.1",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "knex": "^3.2.9",
+    "multer": "^2.1.1",
     "nodemon": "^3.1.14",
-    "dotenv": "^17.4.1",
-    "pg": "^8.20.0"
+    "pg": "^8.20.0",
+    "read-excel-file": "^8.0.3"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.4.0"
