@@ -3,12 +3,18 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-const {} = require('../controllers/historyControllers');
+const {
+  getHistoryById,
+  getAllHistory,
+  createHistory,
+  updateHistory,
+  deleteHistory,
+} = require('../controllers/historyControllers');
 
-// router.get('/:id', auth, getComponentById);
-// router.get('/', auth, getAllComponents);
-// router.post('/', auth, createComponent);
-// router.patch('/:id', auth, updateComponent);
-// router.delete('/:id', auth, deleteComponent);
+router.get('/:id', auth, getHistoryById);
+router.get('/', auth, getAllHistory);
+router.post('/', auth, createHistory);
+router.patch('/:id', auth, updateHistory);
+router.delete('/:id', auth, deleteHistory);
 
 module.exports = router;

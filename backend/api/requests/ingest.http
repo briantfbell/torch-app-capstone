@@ -1,0 +1,6 @@
+### POST csv file
+POST http://localhost:8080/inventory-records
+Content-Type: application/json
+{
+
+}
