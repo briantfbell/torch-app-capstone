@@ -30,6 +30,9 @@ exports.getMe = async token => {
     throw error;
   }
 
+  // const userRank = await authModels.findRankById(user.rank_id);
+  // const userUIC = await uicsModels.getUicById(user.uic_id);
+
   return {
     id: user.id,
     username: user.username,
@@ -40,6 +43,8 @@ exports.getMe = async token => {
     created_at: user.created_at,
     updated_at: user.updated_at,
     rank_id: user.rank_id,
+    rank: user.rank,
+    uic_id: user.uic_id,
     uic: user.uic,
     role: user.role,
   };
@@ -137,7 +142,7 @@ exports.registerUser = async ({
     email: newUser.email,
     phone: newUser.phone,
     rank_id: newUser.rank_id,
-    uic: newUser.uic_id,
+    uic_id: newUser.uic_id,
     role: newUser.role,
     dodid: newUser.dodid,
   };

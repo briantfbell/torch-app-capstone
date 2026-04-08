@@ -12,10 +12,10 @@ Content-Type: application/json
   "niin": 123456789,
   "description": "example component",
   "ui": "EA",
-  "auth_qty": 4,
+  "auth_qty": "4",
   "image": "image",
   "arc": "B",
-  "end_item_lin": 1
+  "end_item_lin": "pyropZ"
 }
 
 ### Update component by id

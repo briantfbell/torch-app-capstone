@@ -12,8 +12,8 @@ const {
   deleteUic,
 } = require('../controllers/uicsControllers');
 
-router.get('/', auth, getAllUics);
-router.get('/:id', auth, getUicById);
+router.get('/', getAllUics);
+router.get('/:id', getUicById);
 router.post('/', auth, createUic);
 router.patch('/:id', auth, updateUic);
 router.delete('/:id', auth, deleteUic);
