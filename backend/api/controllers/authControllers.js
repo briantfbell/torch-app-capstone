@@ -51,7 +51,7 @@ exports.login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json({ message: `Welcome back ${email}` });
+    return res.status(200).json({token});
   } catch (err) {
     res.status(err.status || 500).json({
       message: err.message || 'Internal server error.',
