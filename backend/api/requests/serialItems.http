@@ -9,10 +9,10 @@ POST http://localhost:8080/serial-items
 Content-Type: application/json
 
 {
-  "serial_number": "SN-002",
+  "serial_number": "SN-012",
   "status": "serviceable",
-  "item_id": "12",
-  "user_id": "2"
+  "end_item_lin": "pyropZ",
+  "user_dodid": "221191331"
 }
 
 ### Update serial item by id
