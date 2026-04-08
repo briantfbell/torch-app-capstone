@@ -10,7 +10,7 @@ Content-Type: application/json
     "auth_qty": "4",
     "image": "image",
     "arc": "B",
-    "end_item_id": "1",
+    "end_item_id": "1"
   },
 
   "endItemsData": {
@@ -19,7 +19,7 @@ Content-Type: application/json
     "niin": "123",
     "image":"test4",
     "auth_qty": "123",
-    "lin": "test6",
+    "lin": "test6"
   },
 
   "serialItemsData": {
@@ -30,11 +30,9 @@ Content-Type: application/json
   },
 
   "usersData": {
-    "username": "1",
     "name_first": "2",
     "name_last": "3",
     "email": "1",
-    "password": "5",
     "phone": "6",
     "rank_id": "7",
     "uic_id": "2",

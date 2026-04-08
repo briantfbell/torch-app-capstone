@@ -12,5 +12,6 @@
       "username": "postgres",
       "password": "docker"
     }
-  ]
+  ],
+  "CodeGPT.apiKey": "OpenAI"
 }

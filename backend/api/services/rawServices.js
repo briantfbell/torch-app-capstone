@@ -25,7 +25,6 @@ exports.createRaw = async (
     status: serial_items_status,
   },
   {
-    username: users_data_username,
     name_first: users_data_name_first,
     name_last: users_data_name_last,
     email: users_data_email,
@@ -62,11 +61,9 @@ exports.createRaw = async (
       serial_items_status,
     },
     users: {
-      users_data_username,
       users_data_name_first,
       users_data_name_last,
       users_data_email,
-      users_data_password,
       users_data_phone,
       users_data_rank,
       users_data_uic_id,
