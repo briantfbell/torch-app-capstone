@@ -45,7 +45,7 @@ exports.getMe = async token => {
   };
 };
 
-exports.registerUser = async (
+exports.registerUser = async ({
   username,
   name_first,
   name_last,
@@ -56,7 +56,7 @@ exports.registerUser = async (
   uic,
   role,
   dodid,
-) => {
+}) => {
   if (
     !username ||
     !name_first ||
