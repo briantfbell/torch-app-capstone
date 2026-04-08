@@ -32,7 +32,7 @@ export default function SplashPage() {
     const handleLoginSubmit = async (e) => {
         e.preventDefault()
         await tryLogin(email, password);
-        navigate('/dashboard')
+        setTimeout(() => navigate('/dashboard'), 200);
         //Login submission, tokens, context, navigate to next page, etc
     }
 
