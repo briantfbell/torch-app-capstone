@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const { readSheet, parseData } = require('read-excel-file/node');
 const auth = require('../middleware/auth');
+const db = require('../../db/knex');
 
 const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
@@ -23,6 +24,11 @@ router.post('/excel', upload.single('file'), async (req, res) => {
         type: Number,
         required: true,
       },
+      niin: {
+        column: 'Material',
+        type: String,
+        required: true,
+      },
       description: {
         column: 'Material Description',
         type: String,
@@ -33,11 +39,11 @@ router.post('/excel', upload.single('file'), async (req, res) => {
         type: Number,
         required: true,
       },
-      ui: {
-        column: 'Unit of Measure',
-        type: String,
-        required: true,
-      },
+      // ui: {
+      //   column: 'Unit of Measure',
+      //   type: String,
+      //   required: true,
+      // },
       // serial_number: {
       //   column: 'Serial Number',
       //   type: Number,
@@ -46,7 +52,6 @@ router.post('/excel', upload.single('file'), async (req, res) => {
     };
 
     const results = parseData(data, schema);
-
     const errors = [];
     const objects = [];
 
@@ -76,8 +81,24 @@ router.post('/excel', upload.single('file'), async (req, res) => {
         );
       }
     } else {
-      console.log('Objects', objects);
+      // console.log('Objects:', objects);
+      for (let obj of objects) {
+        const match = await db('end_items')
+          .where({
+            niin: obj.niin,
+            fsc: obj.fsc,
+          })
+          .select('id');
+
+        if (match.length !== 0) {
+          errors.push(obj);
+        } else {
+          await db('end_items').insert(obj);
+        }
+      }
     }
+
+    res.status(201).json({ message: 'Success.' });
   } catch (err) {
     res
       .status(err.status || 500)
