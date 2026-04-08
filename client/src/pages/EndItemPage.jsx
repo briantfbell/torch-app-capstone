@@ -1,7 +1,7 @@
-import { Box, Typography, Paper, Button, Chip, Divider } from "@mui/material";
-import { useState } from "react";
-import PdfModalViewer from "../components/PdfModalViewer";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import {Box, Button, Chip, Divider, Paper, Typography} from '@mui/material';
+import {useState} from 'react';
+import PdfModalViewer from '../components/PdfModalViewer';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 export default function EndItemPage() {
   const [openPdf, setOpenPdf] = useState(false);
