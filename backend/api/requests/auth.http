@@ -12,9 +12,9 @@ Content-Type: application/json
   "email": "1",
   "password": "5",
   "phone": "6",
-  "rank": "E-7",
+  "rank": "E-10",
   "uic": "WCAEB1",
-  "role": "[9, 10]",
+  "role": "[user, hrh]",
   "DoDID": 101
 }
 

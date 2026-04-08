@@ -58,3 +58,7 @@ exports.findUserByEmail = async email => {
 exports.findUserByUsername = async username => {
   return await baseQuery().where('username', username).first();
 };
+
+exports.findRankByRank = async rank => {
+  return await db('ranks').where('rank', rank).first();
+};

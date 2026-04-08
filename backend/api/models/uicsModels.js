@@ -11,6 +11,10 @@ exports.getUicById = async id => {
   return await baseQuery().where('id', id).first();
 };
 
+exports.getUicByUic = async uic => {
+  return await baseQuery().where('uic', uic).first();
+};
+
 exports.createUic = async uicData => {
   const [uic] = await db('uics').insert(uicData).returning('*');
 
