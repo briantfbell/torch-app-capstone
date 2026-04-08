@@ -9,8 +9,8 @@ Content-Type: application/json
     "name_last": "3",
     "email": "1",
     "phone": "6",
-    "rank_id": "7",
-    "uic_id": "2",
+    "rank": "E-7",
+    "uic": "WA8GB0",
     "role": "9, 10",
     "DoDID": "101"
   },
@@ -19,7 +19,7 @@ Content-Type: application/json
     "uic": "W1A1AA",
     "unit_name": "1st Battalion",
     "parent_uic": "W1A1AB"
-  }
+  },
 
   // create end item
   "endItemsData": {
@@ -47,8 +47,7 @@ Content-Type: application/json
     "serial_number": "SN-002",
     "status": "serviceable",
     "item_id": "12",
-    "user_id": "2",
-  },
-
+    "user_id": "2"
+  }
 
 }

@@ -21,9 +21,12 @@ const baseQuery = () =>
       'uics.uic',
     );
 
-exports.createUser = async user => {
+exports.createUser = async (user, { rank }, { uic }) => {
+  const rankId = await db('ranks').where('rank', rank).select('id').first();
+  const uicId = await db('uics').where('uic', uic).select('id').first();
+
   return await db('users')
-    .insert(user)
+    .insert({ ...user, rank_id: rankId.id, uic_id: uicId.id })
     .returning([
       'id',
       'username',

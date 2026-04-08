@@ -22,8 +22,8 @@ exports.registerUser = async (req, res) => {
       req.body.email,
       req.body.password,
       req.body.phone,
-      req.body.rank_id,
-      req.body.uic_id,
+      req.body.rank,
+      req.body.uic,
       req.body.role,
       req.body.DoDID,
     );

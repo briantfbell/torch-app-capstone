@@ -51,7 +51,7 @@ exports.registerUser = async (
   email,
   password,
   phone,
-  rank_id,
+  rank,
   uic,
   role,
   dodid,
@@ -63,7 +63,7 @@ exports.registerUser = async (
     !email ||
     !password ||
     !phone ||
-    !rank_id ||
+    !rank ||
     !uic ||
     !role ||
     !dodid
@@ -74,6 +74,8 @@ exports.registerUser = async (
   }
 
   const normalizedEmail = email.trim().toLowerCase();
+  const normalizedUic = uic.trim().toUpperCase();
+  const normalizedRank = rank.trim().toUpperCase();
   const matchEmail = await authModels.findUserByEmail(normalizedEmail);
   const matchUsername = await authModels.findUserByUsername(username);
 
@@ -91,18 +93,20 @@ exports.registerUser = async (
 
   const hashWord = await bcrypt.hash(password, SALT_ROUNDS);
 
-  const [newUser] = await authModels.createUser({
-    username,
-    name_first,
-    name_last,
-    email: normalizedEmail,
-    password: hashWord,
-    phone,
-    rank_id,
-    uic_id: uic,
-    role,
-    dodid,
-  });
+  const [newUser] = await authModels.createUser(
+    {
+      username,
+      name_first,
+      name_last,
+      email: normalizedEmail,
+      password: hashWord,
+      phone,
+      role,
+      dodid,
+    },
+    { rank: normalizedRank },
+    { uic: normalizedUic },
+  );
 
   // await authModels.createUserRole(newUser.id, role);
 
