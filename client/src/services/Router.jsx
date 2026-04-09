@@ -42,8 +42,7 @@ export default function MainRouter({ mode, onToggleTheme }) {
                     <Route path="/equipment/:id" element={<EndItemPage />} />
                     <Route path="/user-settings" element={<UserSettings />} />
                     <Route path="/dashboard" element={<Dashboard />} />
-                                <Route path="/ingest" element={<Ingest/>}/>
-                    <Route path="/dashboard" element={<Ingest />} />
+                    <Route path="/ingest" element={<Ingest/>}/>
                   </Routes>
                 </MiniDrawer>
               </ProtectedRoute>
