@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { createContext, useEffect, useState } from 'react';
+=======
+import {createContext, useEffect, useState } from 'react';
+>>>>>>> ced7a272030c98e8072dc65ff6c9215310b33896
 
 export const AuthContext = createContext();
 

@@ -6,7 +6,11 @@ exports.up = function (knex) {
     table.string('status', 50);
     table.integer('item_id').unsigned();
     table.integer('user_id').unsigned();
+<<<<<<< HEAD
     table.decimal('cost');
+=======
+    table.varchar('cost');
+>>>>>>> ced7a272030c98e8072dc65ff6c9215310b33896
     table
       .foreign('item_id')
       .references('id')
