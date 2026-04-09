@@ -5,6 +5,7 @@ exports.up = function (knex) {
     table.text('location');
     table.timestamp('last_seen');
     table.timestamp('archived_at').defaultTo(knex.fn.now()).notNullable();
+    table.integer('count_current');
     table.integer('user_id').unsigned();
     table.integer('end_item_id').unsigned();
     table.integer('count_current').unsigned();

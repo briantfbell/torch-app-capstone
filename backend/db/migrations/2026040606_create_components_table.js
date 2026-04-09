@@ -7,7 +7,7 @@ exports.up = function (knex) {
     table.integer('auth_qty', 50).defaultTo(1);
     table.string('image');
     table.string('arc');
-    table.decimal('cost');
+    table.varchar('cost');
     table.varchar('serial_number', 50).unique();
     table.integer('end_item_id').unsigned();
     table

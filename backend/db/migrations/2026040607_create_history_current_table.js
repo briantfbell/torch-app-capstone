@@ -4,9 +4,9 @@ exports.up = function (knex) {
     table.boolean('seen').defaultTo(false).notNullable();
     table.text('location');
     table.timestamp('last_seen');
+    table.integer('count_current');
     table.integer('user_id').unsigned();
     table.integer('end_item_id').unsigned();
-    table.integer('count_current').unsigned();
     table
       .foreign('user_id')
       .references('id')

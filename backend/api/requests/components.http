@@ -15,7 +15,7 @@ Content-Type: application/json
   "auth_qty": "4",
   "image": "image",
   "arc": "B",
-  "end_item_lin": "J05026"
+  "end_item_lin": "C06935"
 }
 
 ### Update component by id

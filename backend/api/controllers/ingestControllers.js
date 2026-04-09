@@ -5,8 +5,8 @@ exports.ingestComponents = async (req, res) => {
     return res.status(400).json({ message: 'No file uploaded.' });
   }
 
-  if (req.user.role.toLowerCase() !== 'hrc') {
-    return res.status(403).json({ message: 'Only HRCs can upload files.' });
+  if (req.user.role.toLowerCase() !== 'hrh') {
+    return res.status(403).json({ message: 'Only HRHs can upload files.' });
   }
 
   try {
@@ -25,8 +25,8 @@ exports.ingestSerialItems = async (req, res) => {
     return res.status(400).json({ message: 'No file uploaded.' });
   }
 
-  if (req.user.role.toLowerCase() !== 'hrc') {
-    return res.status(403).json({ message: 'Only HRCs can upload files.' });
+  if (req.user.role.toLowerCase() !== 'hrh') {
+    return res.status(403).json({ message: 'Only HRHs can upload files.' });
   }
 
   try {

@@ -12,7 +12,7 @@ const schema = {
     required: true,
   },
   niin: {
-    column: 'Material',
+    column: 'Material / NIIN',
     type: String,
   },
   description: {
