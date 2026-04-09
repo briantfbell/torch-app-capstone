@@ -43,7 +43,6 @@ export default function MainRouter({ mode, onToggleTheme }) {
                     <Route path="/user-settings" element={<UserSettings />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/ingest" element={<Ingest />} />
-                    <Route path="/dashboard" element={<Ingest />} />
                   </Routes>
                 </MiniDrawer>
               </ProtectedRoute>
