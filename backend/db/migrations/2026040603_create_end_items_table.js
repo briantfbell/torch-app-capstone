@@ -4,7 +4,7 @@ exports.up = function (knex) {
     table.integer('fsc', 50);
     table.text('description');
     table.integer('niin', 50).notNullable();
-    table.integer('auth_qty', 50);
+    table.integer('auth_qty', 50).defaultTo('1');
     table.varchar('lin');
     table.string('image');
   });
