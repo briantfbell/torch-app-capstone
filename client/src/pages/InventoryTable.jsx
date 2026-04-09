@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import {
   Paper,
   Table,
@@ -15,13 +16,19 @@ import {
 } from "@mui/material";
 
 function InventoryTable() {
+  const { endItemId } = useParams();
+
   const [items, setItems] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [saveStatus, setSaveStatus] = useState(null);
   const [apiError, setApiError] = useState("");
+  const [completionWarning, setCompletionWarning] = useState("");
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/inventory-records`)
+    console.log("endItemId:", endItemId);
+    fetch(`http://localhost:8080/components?end_item_id=${endItemId}`, {
+      credentials: "include",
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}`);
@@ -31,15 +38,17 @@ function InventoryTable() {
       .then((data) => {
         console.log("API data:", data);
 
-        const mappedItems = Array.isArray(data)
-          ? data.map((item) => ({
-              id: item.id,
-              niin: item.niin,
-              partNumber: item.part_number || "",
-              displayName: item.description || "",
-              authQty: item.auth_qty ?? "",
-            }))
+        const components = Array.isArray(data.allComponents)
+          ? data.allComponents
           : [];
+
+        const mappedItems = components.map((item) => ({
+          id: item.id,
+          niin: item.niin,
+          partNumber: item.part_number || "",
+          displayName: item.description || "",
+          authQty: item.auth_qty ?? "",
+        }));
 
         setItems(mappedItems);
         setApiError("");
@@ -47,11 +56,9 @@ function InventoryTable() {
       .catch((err) => {
         console.error("Failed to fetch inventory:", err);
         setItems([]);
-        setApiError(
-          "Inventory API is not ready yet. Frontend is scaffolded and waiting for backend data.",
-        );
+        setApiError("Failed to load inventory data. Please try again.");
       });
-  }, []);
+  }, [endItemId]);
 
   useEffect(() => {
     const savedQuantities = localStorage.getItem("inventoryQuantities");
@@ -67,6 +74,7 @@ function InventoryTable() {
       ...prev,
       [id]: numeric,
     }));
+    setCompletionWarning("");
   };
 
   const handleSave = () => {
@@ -79,6 +87,28 @@ function InventoryTable() {
     } finally {
       setTimeout(() => setSaveStatus(null), 4000);
     }
+  };
+
+  const handleMarkComplete = () => {
+    if (apiError || items.length === 0) {
+      setCompletionWarning(
+        "Inventory records are not loaded yet, so this end item cannot be marked complete.",
+      );
+      return;
+    }
+
+    const hasUnfilledRows = items.some((item) => {
+      const value = quantities[item.id];
+      return value === undefined || value === "";
+    });
+
+    if (hasUnfilledRows) {
+      setCompletionWarning("There are still rows that have not been counted.");
+      return;
+    }
+
+    setCompletionWarning("");
+    console.log("All rows filled. Ready to mark inventory complete.");
   };
 
   return (
@@ -147,6 +177,14 @@ function InventoryTable() {
           Save
         </Button>
 
+        <Button
+          variant="contained"
+          color="success"
+          onClick={handleMarkComplete}
+        >
+          Mark Complete
+        </Button>
+
         {saveStatus === "success" && (
           <Alert severity="success">Inventory saved successfully.</Alert>
         )}
@@ -154,6 +192,9 @@ function InventoryTable() {
           <Alert severity="error">
             Failed to save inventory. Please try again.
           </Alert>
+        )}
+        {completionWarning && (
+          <Alert severity="warning">{completionWarning}</Alert>
         )}
       </Box>
     </div>
