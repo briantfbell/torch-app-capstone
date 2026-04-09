@@ -19,7 +19,7 @@ Content-Type: application/json
 }
 
 ### Update component by id
-PATCH http://localhost:8080/components/2
+PATCH http://localhost:8080/components/1
 Content-Type: application/json
 
 {
