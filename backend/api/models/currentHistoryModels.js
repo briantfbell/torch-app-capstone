@@ -10,7 +10,7 @@ exports.getAllCurrentHistory = async query => {
 };
 
 exports.getCurrentHistoryById = async id => {
-  return await baseQuery().where('currentHistory.id', id).first();
+  return await baseQuery().where('history_current.id', id).first();
 };
 
 exports.createCurrentHistory = async currentHistoryData => {

@@ -9,13 +9,12 @@ POST http://localhost:8080/current-history
 Content-Type: application/json
 
 {
-  "niin": 123456789,
-  "description": "example component",
-  "ui": "EA",
-  "auth_qty": "4",
-  "image": "image",
-  "arc": "B",
-  "end_item_lin": "pyropZ"
+  "end_item_id": 1,
+  "user_id": 1,
+  "seen": true,
+  "location": "test",
+  "last_seen": "2019-12-01",
+  "count_current": 1
 }
 
 ### Update component by id
@@ -23,7 +22,7 @@ PATCH http://localhost:8080/current-history/2
 Content-Type: application/json
 
 {
-  "auth_qty": 2
+  "seen": false
 }
 
 ### Delete component by id
