@@ -13,6 +13,10 @@ exports.getEndItemById = async id => {
   return await baseQuery().where('end_items.id', id).first();
 };
 
+exports.getEndItemByLin = async lin => {
+  return await baseQuery().where('end_items.lin', lin).first();
+};
+
 exports.createEndItem = async endItemData => {
   const [endItem] = await db('end_items').insert(endItemData).returning('*');
 

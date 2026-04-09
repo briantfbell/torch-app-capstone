@@ -12,8 +12,9 @@ exports.ingestComponents = async (req, res) => {
   try {
     await ingestServices.ingestComponents(req.file, req.user);
 
-    res.status(201).json({ message: 'Success.' });
+    res.status(201).json({ message: 'Upload successful.' });
   } catch (err) {
+    console.log(err);
     res
       .status(err.status || 500)
       .send('Error parsing Excel file: ' + err.message);
@@ -32,9 +33,8 @@ exports.ingestEndItems = async (req, res) => {
   try {
     await ingestServices.ingestEndItems(req.file, req.user);
 
-    res.status(201).json({ message: 'Success.' });
+    res.status(201).json({ message: 'Upload successful.' });
   } catch (err) {
-    console.log(err);
     res
       .status(err.status || 500)
       .send('Error parsing Excel file: ' + err.message);

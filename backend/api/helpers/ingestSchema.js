@@ -6,7 +6,6 @@ const schema = {
   fsc: {
     column: 'FSC',
     type: Number,
-    required: true,
   },
   niin: {
     column: 'Material / NIIN',
@@ -15,21 +14,22 @@ const schema = {
   description: {
     column: 'Material Description',
     type: String,
-    required: true,
   },
   auth_qty: {
     column: 'Stock',
     type: Number,
-    required: true,
   },
   ui: {
     column: 'Unit of Measure',
     type: String,
-    required: true,
   },
   serial_number: {
     column: 'Serial Number',
     type: Number,
+  },
+  end_item_lin: {
+    column: 'END ITEM LIN',
+    type: String,
   },
 };
 

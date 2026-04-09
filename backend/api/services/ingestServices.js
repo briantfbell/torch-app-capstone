@@ -4,7 +4,7 @@ const componentsModels = require('../models/componentsModels');
 const { readSheet, parseData } = require('read-excel-file/node');
 const { schema } = require('../helpers/ingestSchema');
 
-exports.ingestComponent = async (file, user) => {
+exports.ingestComponents = async (file, user) => {
   const data = await readSheet(file.buffer);
   const results = parseData(data, schema);
 
@@ -24,21 +24,23 @@ exports.ingestComponent = async (file, user) => {
   }
 
   for (const obj of objects) {
+    if (!obj.niin || !obj.end_item_lin) continue;
+
     if (obj.serial_number) {
       const match = await componentsModels.getComponentBySn(obj.serial_number);
-
       if (match) {
         errors.push(obj);
-
-        if (objects.length === errors.length) {
-          const error = Error('No new data.');
-          error.status = 400;
-          throw error;
-        }
-      } else {
-        await ingestModels.insertComponent(obj);
+        continue;
       }
     }
+
+    await ingestModels.insertComponent(obj);
+  }
+
+  if (objects.length > 0 && errors.length === objects.length) {
+    const error = Error('No new data.');
+    error.status = 400;
+    throw error;
   }
 };
 
@@ -76,7 +78,7 @@ exports.ingestEndItems = async (file, user) => {
           throw error;
         }
       } else {
-        await ingestModels.insertSerializedItem(obj);
+        await ingestModels.insertSerializedItem(obj, user.id);
       }
     }
   }
