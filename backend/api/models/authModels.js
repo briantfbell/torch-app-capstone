@@ -17,6 +17,7 @@ const baseQuery = () =>
       'users.role',
       'users.dodid',
       'users.uic_id',
+      'users.rank_id',
       'ranks.rank',
       'uics.uic',
     );
@@ -39,7 +40,6 @@ exports.createUser = async (user, { rank }, { uic }) => {
       'role',
       'uic_id',
       'rank_id',
-      'dodid',
     ]);
 };
 
@@ -57,4 +57,12 @@ exports.findUserByEmail = async email => {
 
 exports.findUserByUsername = async username => {
   return await baseQuery().where('username', username).first();
+};
+
+exports.findRankById = async id => {
+  return await db('ranks').where('id', id).first();
+};
+
+exports.findRankByRank = async rank => {
+  return await db('ranks').where('rank', rank).first();
 };

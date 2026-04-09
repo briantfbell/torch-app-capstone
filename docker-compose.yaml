@@ -9,7 +9,6 @@ services:
       - "5173:5173"
     volumes:
       - ./client:/app
-      - /app/node_modules
     depends_on:
       - backend
 
@@ -25,10 +24,9 @@ services:
       - "8080:8080"
     volumes:
       - ./backend:/app
-      - /app/node_modules
+    command: sh -c "npx knex migrate:latest --knexfile ./db/knexfile.js && npx knex seed:run --knexfile ./db/knexfile.js && npm start"
     depends_on:
       - db
-    command: sh -c "npx knex migrate:latest --knexfile ./db/knexfile.js && npx knex seed:run --knexfile ./db/knexfile.js && npm start"
 
   db:
     container_name: db

@@ -1,0 +1,24 @@
+### GET all history
+GET http://localhost:8080/history
+
+### GET history by id
+GET http://localhost:8080/history/1
+
+### Create history
+POST http://localhost:8080/history
+Content-Type: application/json
+
+{
+
+}
+
+### Update history by id
+PATCH http://localhost:8080/history/4
+Content-Type: application/json
+
+{
+
+}
+
+### Delete history by id
+DELETE http://localhost:8080/history/4

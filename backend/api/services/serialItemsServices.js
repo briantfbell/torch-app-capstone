@@ -17,20 +17,22 @@ exports.getSerialItemById = async id => {
 };
 
 exports.createSerialItem = async serialItemData => {
-  const { item_id, serial_number, user_id, status } = serialItemData;
+  const { end_item_lin, serial_number, user_dodid, status } = serialItemData;
 
-  if (!serial_number || !user_id || !status || !item_id) {
+  if (!serial_number || !user_dodid || !status || !end_item_lin) {
     const error = new Error('All fields are required.');
     error.status = 400;
     throw error;
   }
 
-  return await serialItemsModels.createSerialItem({
-    item_id,
-    serial_number,
-    user_id,
-    status,
-  });
+  return await serialItemsModels.createSerialItem(
+    {
+      serial_number,
+      status,
+    },
+    end_item_lin,
+    user_dodid,
+  );
 };
 
 exports.updateSerialItem = async (serialItemId, serialItemData) => {
