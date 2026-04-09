@@ -21,7 +21,7 @@ export default function MainRouter({ mode, onToggleTheme }) {
 
                 <Route path='/*' element={
                     <ProtectedRoute>
-                        <MiniDrawer>
+                        <MiniDrawer mode={mode} onToggleTheme={onToggleTheme}>
                             <Routes>
                                 <Route path="/equipment" element={<EquipmentPage/>}/>
                                 <Route path="/equipment/sub-hand-receipt" element={<SHRViewPage/>}/>
