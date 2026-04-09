@@ -6,7 +6,6 @@ exports.up = function (knex) {
     table.string('status', 50);
     table.integer('item_id').unsigned();
     table.integer('user_id').unsigned();
-    table.decimal('cost');
     table
       .foreign('item_id')
       .references('id')

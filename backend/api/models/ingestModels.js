@@ -30,7 +30,6 @@ exports.insertSerializedItem = async (obj, userId) => {
         serial_number: obj.serial_number,
         user_id: userId,
         status: 'serviceable',
-        cost: endItem.cost,
       }),
     ];
 
