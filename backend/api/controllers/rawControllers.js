@@ -2,27 +2,12 @@ const rawServices = require('../services/rawServices');
 
 exports.createRaw = async (req, res) => {
   try {
-    const {
-      usersData,
-      uicsData,
-      endItemsData,
-      componentsData,
-      serialItemsData,
-    } = req.body;
-    const raw = await rawServices.createRaw(
-      usersData,
-      uicsData,
-      endItemsData,
-      componentsData,
-      serialItemsData,
-    );
+    await rawServices.createRaw(req);
 
-    res.status(201).json({
-      raw: raw,
-    });
+    res.status(201).json({ message: 'Successfully uploaded.' });
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ message: err.message || 'Internal server error.' });
+      .send('Error parsing Excel file: ' + err.message);
   }
 };

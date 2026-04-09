@@ -1,4 +1,5 @@
 const authModels = require('../models/authModels');
+const uicsModels = require('../models/uicsModels');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 require('dotenv').config()
@@ -30,6 +31,9 @@ exports.getMe = async token => {
     throw error;
   }
 
+  // const userRank = await authModels.findRankById(user.rank_id);
+  // const userUIC = await uicsModels.getUicById(user.uic_id);
+
   return {
     id: user.id,
     username: user.username,
@@ -40,12 +44,14 @@ exports.getMe = async token => {
     created_at: user.created_at,
     updated_at: user.updated_at,
     rank_id: user.rank_id,
+    rank: user.rank,
+    uic_id: user.uic_id,
     uic: user.uic,
     role: user.role,
   };
 };
 
-exports.registerUser = async (
+exports.registerUser = async ({
   username,
   name_first,
   name_last,
@@ -56,7 +62,7 @@ exports.registerUser = async (
   uic,
   role,
   dodid,
-) => {
+}) => {
   if (
     !username ||
     !name_first ||
@@ -77,8 +83,11 @@ exports.registerUser = async (
   const normalizedEmail = email.trim().toLowerCase();
   const normalizedUic = uic.trim().toUpperCase();
   const normalizedRank = rank.trim().toUpperCase();
+
   const matchEmail = await authModels.findUserByEmail(normalizedEmail);
   const matchUsername = await authModels.findUserByUsername(username);
+  const matchUic = await uicsModels.getUicByUic(normalizedUic);
+  const matchRank = await authModels.findRankByRank(normalizedRank);
 
   if (matchEmail) {
     const error = new Error('This email is already in use.');
@@ -88,6 +97,22 @@ exports.registerUser = async (
 
   if (matchUsername) {
     const error = new Error('This username is already in use.');
+    error.status = 400;
+    throw error;
+  }
+
+  if (!matchUic) {
+    const error = new Error(
+      'This UIC is either incorrect or not in the database yet.',
+    );
+    error.status = 400;
+    throw error;
+  }
+
+  if (!matchRank) {
+    const error = new Error(
+      'This rank is either incorrect or not in the database yet.',
+    );
     error.status = 400;
     throw error;
   }
@@ -118,7 +143,9 @@ exports.registerUser = async (
     email: newUser.email,
     phone: newUser.phone,
     rank_id: newUser.rank_id,
-    uic: newUser.uic_id,
+    rank,
+    uic_id: newUser.uic_id,
+    uic,
     role: newUser.role,
     dodid: newUser.dodid,
   };
