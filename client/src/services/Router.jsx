@@ -28,7 +28,7 @@ export default function MainRouter() {
                                 <Route path="/equipment/sub-hand-receipt" element={<SHRViewPage/>}/>
                                 <Route path="/shortages" element={<ShortageTrackerPage/>}/>
                                 <Route path="/InventoryTable" element={<InventoryTable/>}/>
-                                <Route path="/enditem/:id" element={<EndItemPage/>}/>
+                                <Route path="/equipment/:id" element={<EndItemPage/>}/>
                                 <Route path="/user-settings" element={<UserSettings/>}/>
                                 <Route path="/dashboard" element={<Dashboard/>}/>
                             </Routes>
