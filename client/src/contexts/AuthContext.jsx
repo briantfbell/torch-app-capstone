@@ -32,8 +32,16 @@ export function AuthProvider({children}) {
         fetchin()
     }, [])
 
+    const logoutFunc = async () => {
+        await fetch('http://localhost:8080/auth/logout', {
+            method: 'POST',
+            credentials: 'include',
+        })
+        setUser(null)
+    }
+
     return (
-        <AuthContext.Provider value={{user, loading, refreshUser: fetchin}}>
+        <AuthContext.Provider value={{user, loading, refreshUser: fetchin, logoutFunc}}>
             {children}
         </AuthContext.Provider>
     )

@@ -29,12 +29,7 @@ const parseJsonSafely = async (res) => {
 export const getToken = () => localStorage.getItem("token");
 
 export const logout = () => localStorage.removeItem("token");
-export const logoutFunc = async () => {
-    await fetch('http://localhost:8080/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-    })
-}
+
 
 export const getCurrentUser = () => {
     const token = localStorage.getItem("token");

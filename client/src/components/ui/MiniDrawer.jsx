@@ -17,7 +17,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import {BarChart, Dashboard, RunningWithErrors, Settings, Logout} from '@mui/icons-material';
 import {useNavigate} from 'react-router-dom';
-import {logout, logoutFunc} from '../../api/auth'
+import {logout} from '../../api/auth'
+import { useAuth } from '../../hooks/useAuth';
 
 const drawerWidth = 240;
 
@@ -82,7 +83,9 @@ export default function MiniDrawer({children}) {
         setOpen(false);
     };
 
+    const { logoutFunc } = useAuth();
     const handleLogout = async () => {
+        if(!window.confirm('You sure?')) return;
         await logoutFunc();
         logout();
 

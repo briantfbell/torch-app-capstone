@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import Button from '@mui/material/Button';
 import LoginForm from '../components/LoginForm';
@@ -9,9 +9,11 @@ import { useAuth } from '../hooks/useAuth';
 
 export default function SplashPage() {
     const url = 'http://localhost:8080/';
+
     //Navigation
     const navigate = useNavigate()
     const { refreshUser } = useAuth()
+
 
     //Login state
     const [isLogin, setIsLogin] = useState(true);
@@ -69,6 +71,21 @@ export default function SplashPage() {
 
     }
 
+    //Check if user, if they are a user, kick them to the dashboard
+    const {user, loading} = useAuth()
+    useEffect(() => {
+        if (user) {
+            navigate('/dashboard')
+        }
+    }, [user, navigate])
+    if (loading) {
+        return <div>Loading...</div>
+    }
+    if(user) {
+        return null;
+    }
+
+ 
 
     if(isLogin) {
         return (

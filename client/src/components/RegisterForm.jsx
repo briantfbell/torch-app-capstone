@@ -164,6 +164,7 @@ export default function RegisterForm({onSubmit, error}){
                     />
                 </Stack>
                 <Stack spacing={2}>
+                    
                     {/*Form for ranks, one select box for the type, the other changes based on the type chosen*/}
                     <FormControl required>
                         <FormLabel id="rank-type">Select Rank Type</FormLabel>
@@ -188,6 +189,7 @@ export default function RegisterForm({onSubmit, error}){
                             {rankType === 'civilian' && civilianRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
                         </Select>
                     </FormControl>
+                    
                     {/*Form for account control, has checkbox and radio control*/}
                     <FormControl required>
                         <FormLabel id="role">Account Type</FormLabel>
