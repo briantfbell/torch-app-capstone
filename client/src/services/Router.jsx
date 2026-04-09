@@ -13,30 +13,43 @@ import UserSettings from '../pages/UserSettings.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 
 export default function MainRouter() {
-    return (
-        <AuthProvider>
-            <Router>
-            <Routes>
-                <Route path="/" element={<SplashPage/>}/>
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<SplashPage />} />
 
-                <Route path='/*' element={
-                    <ProtectedRoute>
-                        <MiniDrawer>
-                            <Routes>
-                                <Route path="/Ingest" element={<Ingest/>}/>
-                                <Route path="/equipment" element={<EquipmentPage/>}/>
-                                <Route path="/equipment/sub-hand-receipt" element={<SHRViewPage/>}/>
-                                <Route path="/shortages" element={<ShortageTrackerPage/>}/>
-                                <Route path="/InventoryTable" element={<InventoryTable/>}/>
-                                <Route path="/equipment/:id" element={<EndItemPage/>}/>
-                                <Route path="/user-settings" element={<UserSettings/>}/>
-                                <Route path="/dashboard" element={<Dashboard/>}/>
-                            </Routes>
-                        </MiniDrawer>
-                    </ProtectedRoute>
-                }/>
-            </Routes>
-        </Router>
-        </AuthProvider>
-        );
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <MiniDrawer>
+                  <Routes>
+                    <Route path="/Ingest" element={<Ingest />} />
+                    <Route path="/equipment" element={<EquipmentPage />} />
+                    <Route
+                      path="/equipment/sub-hand-receipt"
+                      element={<SHRViewPage />}
+                    />
+                    <Route
+                      path="/shortages"
+                      element={<ShortageTrackerPage />}
+                    />
+                    <Route
+                      path="/InventoryTable"
+                      element={<InventoryTable />}
+                    />
+                    <Route path="/equipment/:id" element={<EndItemPage />} />
+                    <Route path="/user-settings" element={<UserSettings />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/dashboard" element={<Ingest />} />
+                  </Routes>
+                </MiniDrawer>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
 }
