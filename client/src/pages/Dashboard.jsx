@@ -1,7 +1,15 @@
-import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { BarChart, PieChart, useDrawingArea } from '@mui/x-charts';
+import {Box, Card, CardContent, Stack, Typography} from '@mui/material';
+import {styled} from '@mui/material/styles';
+import {BarChart, PieChart, useDrawingArea} from '@mui/x-charts';
 import ShortageDataGrid from '../components/dashboard/ShortageDataGrid.jsx';
+import {tryGetEndItems, tryGetSerialItems} from '../api/data.js';
+
+//DATA TESTERS
+const endItemList = await tryGetEndItems()
+const serialItemList = await tryGetSerialItems()
+
+
+console.log(endItemList, serialItemList)
 
 // MOCK DATA
 
@@ -107,23 +115,23 @@ const Dashboard = () => {
                           <Typography variant={'h3'} color={'primary'}>
                             XX%
                           </Typography>
-                          <Typography>On Hand</Typography>
+                          <Typography>Inventory Completed</Typography>
                         </CardContent>
                       </Card>
-                      <Card sx={{ flex: 1 }}>
-                        <CardContent>
-                          <Typography variant={'h3'} color={'success'}>
-                            ##
-                          </Typography>
-                          <Typography>Verified</Typography>
-                        </CardContent>
-                      </Card>
+                      {/*<Card sx={{ flex: 1 }}>*/}
+                      {/*  <CardContent>*/}
+                      {/*    <Typography variant={'h3'} color={'success'}>*/}
+                      {/*      ##*/}
+                      {/*    </Typography>*/}
+                      {/*    <Typography>Verified</Typography>*/}
+                      {/*  </CardContent>*/}
+                      {/*</Card>*/}
                       <Card sx={{ flex: 1 }}>
                         <CardContent>
                           <Typography variant={'h3'} color={'error'}>
                             ##
                           </Typography>
-                          <Typography>Issues</Typography>
+                          <Typography>Shortages</Typography>
                         </CardContent>
                       </Card>
                     </Stack>
@@ -212,7 +220,7 @@ const Dashboard = () => {
                     alignItems={{ xs: 'flex-start', sm: 'center' }}
                     spacing={2}
                   >
-                    <Stack spacing={2}>
+                    <Stack spacing={2} width={'100%'}>
                       <Stack>
                         <Typography
                           variant="overline"
@@ -231,6 +239,7 @@ const Dashboard = () => {
                         borderLeft={3}
                         borderColor={'red'}
                         paddingLeft={2}
+                        borderRadius={2}
                       >
                         <Typography variant={'overline'}>
                           Total Shortage Value

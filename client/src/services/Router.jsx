@@ -13,7 +13,7 @@ import {AuthProvider} from '../contexts/AuthContext.jsx';
 import Dashboard from '../pages/Dashboard.jsx';
 import Ingest from '../components/Ingest.jsx';
 
-export default function MainRouter() {
+export default function MainRouter({ mode, onToggleTheme }) {
     return (
         <AuthProvider>
             <Router>
@@ -22,7 +22,7 @@ export default function MainRouter() {
 
                 <Route path='/*' element={
                     <ProtectedRoute>
-                        <MiniDrawer>
+                        <MiniDrawer mode={mode} onToggleTheme={onToggleTheme}>
                             <Routes>
                                 <Route path="/equipment" element={<EquipmentPage/>}/>
                                 <Route path="/equipment/sub-hand-receipt" element={<SHRViewPage/>}/>
@@ -31,6 +31,7 @@ export default function MainRouter() {
                                 <Route path="/enditem/:id" element={<EndItemPage/>}/>
                                 <Route path="/user-settings" element={<UserSettings/>}/>
                                 <Route path="/dashboard" element={<Dashboard/>}/>
+                                <Route path="/ingest" element={<Ingest/>}/>
                             </Routes>
                         </MiniDrawer>
                     </ProtectedRoute>
