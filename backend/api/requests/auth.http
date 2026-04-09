@@ -23,8 +23,8 @@ POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
-  "email": "1",
-  "password": "5"
+  "email": "latoya_erdman13@hotmail.com",
+  "password": "password"
 }
 
 ### Logout and removes cookie

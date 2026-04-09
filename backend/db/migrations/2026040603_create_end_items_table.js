@@ -7,6 +7,7 @@ exports.up = function (knex) {
     table.integer('auth_qty', 50);
     table.varchar('lin');
     table.string('image');
+    table.varchar('cost');
   });
 };
 

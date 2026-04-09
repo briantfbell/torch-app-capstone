@@ -3,8 +3,9 @@ import { useState } from 'react';
 export default function Ingest() {
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState('initial');
+  const [message, setMessage] = useState('');
 
-  const handleFileChange = (e) => {
+  const handleFileChange = e => {
     if (e.target.files) {
       setFile(e.target.files[0]);
     }
@@ -21,15 +22,22 @@ export default function Ingest() {
       const response = await fetch('http://localhost:8080/ingest/excel', {
         method: 'POST',
         body: formData,
+        credentials: 'include',
       });
 
       if (response.ok) {
+        console.log(response);
         setStatus('success');
+        setMessage(response.message);
       } else {
+        console.log(response);
         setStatus('fail');
+        setMessage(response.message);
       }
     } catch (error) {
+      console.log(error);
       setStatus('fail');
+      setMessage(error.message);
     }
   };
 
@@ -50,8 +58,8 @@ export default function Ingest() {
       {file && <button onClick={handleUpload}>Upload the file</button>}
 
       {status === 'success' && <p>Upload successful!</p>}
-      {status === 'fail' && <p>Upload failed.</p>}
-      {status === 'uploading' && <p>Uploading...</p>}
+      {status === 'fail' && <p>{message}</p>}
+      {status === 'uploading' && <p>{message}</p>}
     </div>
   );
-};
+}
