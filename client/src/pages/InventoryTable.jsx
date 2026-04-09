@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Paper,
   Table,
@@ -17,6 +17,7 @@ import {
 
 function InventoryTable() {
   const { endItemId } = useParams();
+  const navigate = useNavigate();
 
   const [items, setItems] = useState([]);
   const [quantities, setQuantities] = useState({});
@@ -89,7 +90,7 @@ function InventoryTable() {
     }
   };
 
-  const handleMarkComplete = () => {
+  const handleMarkComplete = async () => {
     if (apiError || items.length === 0) {
       setCompletionWarning(
         "Inventory records are not loaded yet, so this end item cannot be marked complete.",
@@ -107,8 +108,32 @@ function InventoryTable() {
       return;
     }
 
-    setCompletionWarning("");
-    console.log("All rows filled. Ready to mark inventory complete.");
+    try {
+      setCompletionWarning("");
+
+      const res = await fetch(
+        `http://localhost:8080/end-items/${endItemId}/complete`,
+        {
+          method: "PATCH",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+
+      console.log("End item marked complete.");
+      navigate("/equipment");
+    } catch (err) {
+      console.error("Failed to mark inventory complete:", err);
+      setCompletionWarning(
+        "Unable to mark this end item complete right now. Please try again.",
+      );
+    }
   };
 
   return (
