@@ -1,13 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import Button from '@mui/material/Button';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { tryLogin } from '../api/auth.js';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import {Stack} from '@mui/material';
-import {tryLogin} from '../api/auth.js';
 import { useAuth } from '../hooks/useAuth';
 
 export default function SplashPage() {

@@ -14,7 +14,7 @@ export default function RegisterForm({onSubmit, error}){
         name_last: '',
         phone: '',
         rank: '',
-        DoDID: '',
+        dodid: '',
         uic: ''
     }
     const [form, setForm] = useState(initialFormState)
@@ -100,7 +100,7 @@ export default function RegisterForm({onSubmit, error}){
             phone: form.phone.trim(),
             rank: form.rank.trim(),
             role: roles,
-            DoDID: form.DoDID.trim()
+            dodid: form.dodid.trim()
         }
         console.log(payload)
         onSubmit(payload)
@@ -157,9 +157,9 @@ export default function RegisterForm({onSubmit, error}){
                     <TextField id='outlined-basic'  label='name_first' required value={form.name_first} onChange={handleChange} name='name_first' placeholder="First Name"/>
                     <TextField id='outlined-basic'  label='name_last' required value={form.name_last} onChange={handleChange} name='name_last' placeholder="Last Name"/>
                     <TextField id='outlined-basic'  label='phone' required value={form.phone} onChange={handleChange} name='phone' placeholder="Phone Number" />
-                    <TextField id='outlined-basic'  label='DoDID' required value={form.DoDID}
+                    <TextField id='outlined-basic'  label='DoDID' required value={form.dodid}
                         onChange={handleChange}
-                        name='DoDID'
+                        name='dodid'
                         placeholder="DoDID"
                     />
                 </Stack>
