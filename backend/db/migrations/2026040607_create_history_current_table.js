@@ -3,7 +3,7 @@ exports.up = function(knex) {
     table.increments('id');
     table.boolean('seen').defaultTo(false).notNullable();
     table.text('location');
-    table.timetamp('last_seen');
+    table.timestamp('last_seen');
     table.integer('user_id').unsigned();
     table.integer('end_item_id').unsigned();
     table
