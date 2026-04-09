@@ -26,6 +26,7 @@ export default function Ingest() {
 
       if (response.ok) {
         setStatus('success');
+        setFile(null);
       } else {
         setStatus('fail');
       }
@@ -50,6 +51,7 @@ export default function Ingest() {
 
       if (response.ok) {
         setStatus('success');
+        setFile(null);
       } else {
         setStatus('fail');
       }
@@ -72,9 +74,18 @@ export default function Ingest() {
         </section>
       )}
 
-      {file && <button onClick={handleUploadEndItems}>Upload end items</button>}
       {file && (
-        <button onClick={handleUploadComponents}>Upload components</button>
+        <button onClick={handleUploadEndItems} disabled={status === 'uploading'}>
+          Upload end items
+        </button>
+      )}
+      {file && (
+        <button
+          onClick={handleUploadComponents}
+          disabled={status === 'uploading'}
+        >
+          Upload components
+        </button>
       )}
 
       {status === 'success' && <p>Upload successful!</p>}
