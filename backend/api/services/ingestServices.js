@@ -36,7 +36,7 @@ const schema = {
   },
 };
 
-exports.ingest = async (file, user) => {
+exports.ingestComponent = async (file, user) => {
   const data = await readSheet(file.buffer);
   const results = parseData(data, schema);
 
@@ -71,10 +71,45 @@ exports.ingest = async (file, user) => {
   }
 
   for (const obj of objects) {
-    if (obj.serial_number) {
-      await ingestModels.insertSerializedItem(obj, user.id);
+    await ingestModels.insertComponent(obj);
+  }
+};
+
+exports.ingestSerialItems = async (file, user) => {
+  const data = await readSheet(file.buffer);
+  const results = parseData(data, schema);
+
+  const errors = [];
+  const objects = [];
+  let row = 1;
+
+  for (const { errors: errorsInRow, object } of results) {
+    if (errorsInRow) {
+      for (const error of errorsInRow) {
+        errors.push({ error, row });
+      }
     } else {
-      await ingestModels.insertComponent(obj);
+      objects.push(object);
     }
+    row++;
+  }
+
+  if (errors.length > 0) {
+    for (const { error, row } of errors) {
+      console.error(
+        'Error in data row',
+        row,
+        'column',
+        error.column,
+        ':',
+        error.error,
+        error.reason || '',
+      );
+    }
+    return;
+  }
+
+  for (const obj of objects) {
+    await ingestModels.insertSerializedItem(obj);
   }
 };

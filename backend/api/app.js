@@ -51,7 +51,7 @@ app.use('/serial-items', serialItemsRoutes);
 app.use('/components', componentsRoutes);
 app.use('/end-items', endItemsRoutes);
 app.use('/ingest', ingestRoutes);
-app.use('/history', currentHistoryRoutes);
+app.use('/current-history', currentHistoryRoutes);
 
 // future dev
 // app.use('/inventory-records', inventoryRecordsRoutes);
