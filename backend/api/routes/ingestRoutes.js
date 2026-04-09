@@ -27,7 +27,6 @@ router.post('/excel', upload.single('file'), async (req, res) => {
       niin: {
         column: 'Material',
         type: String,
-        required: true,
       },
       description: {
         column: 'Material Description',
@@ -39,16 +38,16 @@ router.post('/excel', upload.single('file'), async (req, res) => {
         type: Number,
         required: true,
       },
-      // ui: {
-      //   column: 'Unit of Measure',
-      //   type: String,
-      //   required: true,
-      // },
-      // serial_number: {
-      //   column: 'Serial Number',
-      //   type: Number,
-      //   required: true,
-      // },
+      ui: {
+        column: 'Unit of Measure',
+        type: String,
+        required: true,
+      },
+      serial_number: {
+        column: 'Serial Number',
+        type: Number,
+        required: true,
+      },
     };
 
     const results = parseData(data, schema);
@@ -83,10 +82,9 @@ router.post('/excel', upload.single('file'), async (req, res) => {
     } else {
       // console.log('Objects:', objects);
       for (let obj of objects) {
-        const match = await db('end_items')
+        const match = await db('serial_items')
           .where({
-            niin: obj.niin,
-            fsc: obj.fsc,
+            serial_number: obj.serial_number,
           })
           .select('id')
           .first();
@@ -94,7 +92,22 @@ router.post('/excel', upload.single('file'), async (req, res) => {
         if (match) {
           errors.push(obj);
         } else {
-          await db('end_items').insert(obj);
+          await db('end_items').insert({
+            lin: obj.lin,
+            fsc: obj.fsc,
+            niin: obj.niin,
+            description: obj.description,
+          });
+
+          await db('serial_items').insert({
+            serial_number: obj.serial_number,
+          });
+
+          await db('components').insert({
+            ui: obj.ui,
+            niin: obj.niin,
+            description: obj.description,
+          });
         }
       }
     }
