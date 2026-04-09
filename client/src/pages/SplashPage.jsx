@@ -5,11 +5,13 @@ import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import {Stack} from '@mui/material';
 import {tryLogin} from '../api/auth.js';
+import { useAuth } from '../hooks/useAuth';
 
 export default function SplashPage() {
     const url = 'http://localhost:8080/';
     //Navigation
     const navigate = useNavigate()
+    const { refreshUser } = useAuth()
 
     //Login state
     const [isLogin, setIsLogin] = useState(true);
@@ -30,10 +32,17 @@ export default function SplashPage() {
 
     //Submission handling
     const handleLoginSubmit = async (e) => {
-        e.preventDefault()
-        await tryLogin(email, password);
-        setTimeout(() => navigate('/dashboard'), 200);
-        //Login submission, tokens, context, navigate to next page, etc
+        e.preventDefault();
+
+        const result = await tryLogin(email, password)
+
+        if(result?.token) {
+            await refreshUser()
+            navigate('/dashboard')
+        } else {
+            alert(result.message || 'Login failed, do it again.')
+        }
+        
     }
 
     const [registerError, setRegisterError] = useState('')
