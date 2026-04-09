@@ -18,7 +18,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import {BarChart, Dashboard, Logout, RunningWithErrors, Settings} from '@mui/icons-material';
 import {useNavigate} from 'react-router-dom';
-import {logout, logoutFunc} from '../../api/auth';
+import {logout} from '../../api/auth';
+import {useAuth} from '../../hooks/useAuth';
 import {FormControlLabel, FormGroup, Stack, Switch} from '@mui/material';
 
 const drawerWidth = 240;
