@@ -1,40 +1,8 @@
 const ingestModels = require('../models/ingestModels');
+const serialItemsModels = require('../models/serialItemsModels');
+const componentsModels = require('../models/componentsModels');
 const { readSheet, parseData } = require('read-excel-file/node');
-
-const schema = {
-  lin: {
-    column: 'LIN Number / DODIC',
-    type: String,
-  },
-  fsc: {
-    column: 'FSC',
-    type: Number,
-    required: true,
-  },
-  niin: {
-    column: 'Material / NIIN',
-    type: String,
-  },
-  description: {
-    column: 'Material Description',
-    type: String,
-    required: true,
-  },
-  auth_qty: {
-    column: 'Stock',
-    type: Number,
-    required: true,
-  },
-  ui: {
-    column: 'Unit of Measure',
-    type: String,
-    required: true,
-  },
-  serial_number: {
-    column: 'Serial Number',
-    type: Number,
-  },
-};
+const { schema } = require('../helpers/ingestSchema');
 
 exports.ingestComponent = async (file, user) => {
   const data = await readSheet(file.buffer);
@@ -55,27 +23,26 @@ exports.ingestComponent = async (file, user) => {
     row++;
   }
 
-  if (errors.length > 0) {
-    for (const { error, row } of errors) {
-      console.error(
-        'Error in data row',
-        row,
-        'column',
-        error.column,
-        ':',
-        error.error,
-        error.reason || '',
-      );
-    }
-    return;
-  }
-
   for (const obj of objects) {
-    await ingestModels.insertComponent(obj);
+    if (obj.serial_number) {
+      const match = await componentsModels.getComponentBySn(obj.serial_number);
+
+      if (match) {
+        errors.push(obj);
+
+        if (objects.length === errors.length) {
+          const error = Error('No new data.');
+          error.status = 400;
+          throw error;
+        }
+      } else {
+        await ingestModels.insertComponent(obj);
+      }
+    }
   }
 };
 
-exports.ingestSerialItems = async (file, user) => {
+exports.ingestEndItems = async (file, user) => {
   const data = await readSheet(file.buffer);
   const results = parseData(data, schema);
 
@@ -94,22 +61,23 @@ exports.ingestSerialItems = async (file, user) => {
     row++;
   }
 
-  if (errors.length > 0) {
-    for (const { error, row } of errors) {
-      console.error(
-        'Error in data row',
-        row,
-        'column',
-        error.column,
-        ':',
-        error.error,
-        error.reason || '',
-      );
-    }
-    return;
-  }
-
   for (const obj of objects) {
-    await ingestModels.insertSerializedItem(obj);
+    if (obj.serial_number) {
+      const match = await serialItemsModels.getSerialItemBySn(
+        obj.serial_number,
+      );
+
+      if (match) {
+        errors.push(obj);
+
+        if (objects.length === errors.length) {
+          const error = Error('No new data.');
+          error.status = 400;
+          throw error;
+        }
+      } else {
+        await ingestModels.insertSerializedItem(obj);
+      }
+    }
   }
 };

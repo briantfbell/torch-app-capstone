@@ -34,6 +34,30 @@ export default function Ingest() {
     }
   };
 
+  const handleUploadComponents = async () => {
+    if (!file) return;
+
+    setStatus('uploading');
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('http://localhost:8080/ingest/components', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      });
+
+      if (response.ok) {
+        setStatus('success');
+      } else {
+        setStatus('fail');
+      }
+    } catch {
+      setStatus('fail');
+    }
+  };
+
   return (
     <div>
       <input type="file" onChange={handleFileChange} />
@@ -49,6 +73,9 @@ export default function Ingest() {
       )}
 
       {file && <button onClick={handleUploadEndItems}>Upload end items</button>}
+      {file && (
+        <button onClick={handleUploadComponents}>Upload components</button>
+      )}
 
       {status === 'success' && <p>Upload successful!</p>}
       {status === 'fail' && <p>Upload failed.</p>}

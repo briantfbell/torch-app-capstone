@@ -8,7 +8,6 @@ exports.up = function (knex) {
     table.integer('count_current');
     table.integer('user_id').unsigned();
     table.integer('end_item_id').unsigned();
-    table.integer('count_current').unsigned();
     table
       .foreign('user_id')
       .references('id')

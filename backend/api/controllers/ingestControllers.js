@@ -20,7 +20,7 @@ exports.ingestComponents = async (req, res) => {
   }
 };
 
-exports.ingestSerialItems = async (req, res) => {
+exports.ingestEndItems = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded.' });
   }
@@ -30,10 +30,11 @@ exports.ingestSerialItems = async (req, res) => {
   }
 
   try {
-    await ingestServices.ingestSerialItems(req.file, req.user);
+    await ingestServices.ingestEndItems(req.file, req.user);
 
     res.status(201).json({ message: 'Success.' });
   } catch (err) {
+    console.log(err);
     res
       .status(err.status || 500)
       .send('Error parsing Excel file: ' + err.message);
