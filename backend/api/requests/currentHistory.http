@@ -1,0 +1,30 @@
+### GET all current-history
+GET http://localhost:8080/current-history
+
+### GET component by id
+GET http://localhost:8080/current-history/5
+
+### Create a component
+POST http://localhost:8080/current-history
+Content-Type: application/json
+
+{
+  "niin": 123456789,
+  "description": "example component",
+  "ui": "EA",
+  "auth_qty": "4",
+  "image": "image",
+  "arc": "B",
+  "end_item_lin": "pyropZ"
+}
+
+### Update component by id
+PATCH http://localhost:8080/current-history/2
+Content-Type: application/json
+
+{
+  "auth_qty": 2
+}
+
+### Delete component by id
+DELETE http://localhost:8080/current-history/1

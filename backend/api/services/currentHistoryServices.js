@@ -18,26 +18,33 @@ exports.getCurrentHistoryById = async id => {
 };
 
 exports.createCurrentHistory = async ({
-  fsc,
-  description,
-  niin,
-  image,
-  auth_qty,
-  lin,
+  end_item_id,
+  user_id,
+  seen,
+  location,
+  last_seen,
+  count_current,
 }) => {
-  if (!fsc || !description || !niin || !image || !auth_qty || !lin) {
+  if (
+    !end_item_id ||
+    !user_id ||
+    !seen ||
+    !location ||
+    !last_seen ||
+    !count_current
+  ) {
     const error = new Error('All fields are required.');
     error.status = 400;
     throw error;
   }
 
   return await currentHistoryModels.createCurrentHistory({
-    fsc,
-    description,
-    niin,
-    image,
-    auth_qty,
-    lin,
+    end_item_id,
+    user_id,
+    seen,
+    location,
+    last_seen,
+    count_current,
   });
 };
 
