@@ -4,7 +4,7 @@ export default function Ingest() {
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState('initial');
 
-  const handleFileChange = (e) => {
+  const handleFileChange = e => {
     if (e.target.files) {
       setFile(e.target.files[0]);
     }
@@ -20,6 +20,7 @@ export default function Ingest() {
     try {
       const response = await fetch('http://localhost:8080/ingest/excel', {
         method: 'POST',
+        credentials: 'include',
         body: formData,
       });
 
@@ -28,7 +29,7 @@ export default function Ingest() {
       } else {
         setStatus('fail');
       }
-    } catch (error) {
+    } catch {
       setStatus('fail');
     }
   };
@@ -54,4 +55,4 @@ export default function Ingest() {
       {status === 'uploading' && <p>Uploading...</p>}
     </div>
   );
-};
+}
