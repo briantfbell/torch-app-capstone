@@ -44,7 +44,6 @@ function ShortageTrackerPage() {
   const navigate = useNavigate();
   const shortages = mockShortages;
 
-
   return (
     // Whole thing felt too big on SHRViewPage and I wanted them to match, if it's messing things up change the below line back to: <Stack spacing={2} sx={{ width: "100%", p: 3 }}>
     <Stack spacing={2} sx={{ width: "100%", p: 3, maxWidth: 1200, mx: "auto" }}>
@@ -81,7 +80,7 @@ function ShortageTrackerPage() {
         >
           {/* Table headers & columns */}
           <Table aria-label="shortage tracker table">
-            <TableHead sx={{ backgroundColor: "grey.100" }}>
+            <TableHead sx={{ backgroundColor: "primary.main" }}>
               <TableRow>
                 <TableCell>End Item</TableCell>
                 <TableCell>Component NIIN</TableCell>
