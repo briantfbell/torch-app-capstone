@@ -38,6 +38,7 @@ const componentsRoutes = require('./routes/componentsRoutes');
 const endItemsRoutes = require('./routes/endItemsRoutes');
 const ingestRoutes = require('./routes/ingestRoutes');
 const currentHistoryRoutes = require('./routes/currentHistoryRoutes');
+const archivedHistoryRoutes = require('./routes/archivedHistoryRoutes');
 
 // future dev
 // const inventoryRecordsRoutes = require('./routes/inventoryRecordsRoutes');
@@ -52,6 +53,7 @@ app.use('/components', componentsRoutes);
 app.use('/end-items', endItemsRoutes);
 app.use('/ingest', ingestRoutes);
 app.use('/current-history', currentHistoryRoutes);
+app.use('/archived-history', archivedHistoryRoutes);
 
 // future dev
 // app.use('/inventory-records', inventoryRecordsRoutes);

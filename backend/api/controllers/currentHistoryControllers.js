@@ -1,11 +1,12 @@
 const currentHistoryServices = require('../services/currentHistoryServices');
+const archivedHistoryModels = require('../models/archivedHistoryModels');
 
-exports.getAllCurrentHistory = async (req, res) => {
+exports.getCurrentHistory = async (req, res) => {
   try {
     const { query } = req;
-    const data = await currentHistoryServices.getAllCurrentHistory(query);
+    const data = await currentHistoryServices.getCurrentHistory(query);
 
-    res.status(200).json({ allCurrentHistory: data });
+    res.status(200).json({ currentHistory: data });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -16,9 +17,10 @@ exports.getAllCurrentHistory = async (req, res) => {
 exports.getCurrentHistoryById = async (req, res) => {
   try {
     const { id } = req.params;
-    const endItem = await currentHistoryServices.getCurrentHistoryById(id);
+    const currentHistory =
+      await currentHistoryServices.getCurrentHistoryById(id);
 
-    res.status(200).json({ endItem: endItem });
+    res.status(200).json({ currentHistory: currentHistory });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -28,6 +30,15 @@ exports.getCurrentHistoryById = async (req, res) => {
 
 exports.createCurrentHistory = async (req, res) => {
   try {
+    const { query } = req;
+    const [data] = await currentHistoryServices.getCurrentHistory(query);
+    console.log(data);
+
+    if (data) {
+      await archivedHistoryModels.createArchivedHistory(data);
+      await currentHistoryServices.deleteCurrentHistory(data.id);
+    }
+
     const newCurrentHistory = await currentHistoryServices.createCurrentHistory(
       req.body,
     );
@@ -37,6 +48,7 @@ exports.createCurrentHistory = async (req, res) => {
       message: `ID: ${newCurrentHistory.id} has been successfully created.`,
     });
   } catch (err) {
+    console.log(err);
     res
       .status(err.status || 500)
       .json({ message: err.message || 'Internal server error.' });

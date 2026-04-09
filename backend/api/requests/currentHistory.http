@@ -1,10 +1,10 @@
-### GET all current-history
+### GET current history
 GET http://localhost:8080/current-history
 
-### GET component by id
-GET http://localhost:8080/current-history/5
+### GET current history by id
+GET http://localhost:8080/current-history/1
 
-### Create a component
+### Create a current history
 POST http://localhost:8080/current-history
 Content-Type: application/json
 
@@ -17,13 +17,13 @@ Content-Type: application/json
   "count_current": 1
 }
 
-### Update component by id
-PATCH http://localhost:8080/current-history/2
+### Update current history by id
+PATCH http://localhost:8080/current-history/1
 Content-Type: application/json
 
 {
   "seen": false
 }
 
-### Delete component by id
+### Delete current history by id
 DELETE http://localhost:8080/current-history/1

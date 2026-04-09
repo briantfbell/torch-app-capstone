@@ -5,14 +5,14 @@ const router = express.Router();
 
 const {
   getCurrentHistoryById,
-  getAllCurrentHistory,
+  getCurrentHistory,
   createCurrentHistory,
   updateCurrentHistory,
   deleteCurrentHistory,
 } = require('../controllers/currentHistoryControllers');
 
 router.get('/:id', auth, getCurrentHistoryById);
-router.get('/', auth, getAllCurrentHistory);
+router.get('/', auth, getCurrentHistory);
 router.post('/', auth, createCurrentHistory);
 router.patch('/:id', auth, updateCurrentHistory);
 router.delete('/:id', auth, deleteCurrentHistory);

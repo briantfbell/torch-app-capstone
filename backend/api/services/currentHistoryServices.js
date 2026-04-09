@@ -1,7 +1,7 @@
 const currentHistoryModels = require('../models/currentHistoryModels');
 
-exports.getAllCurrentHistory = async query => {
-  return await currentHistoryModels.getAllCurrentHistory(query);
+exports.getCurrentHistory = async query => {
+  return await currentHistoryModels.getCurrentHistory(query);
 };
 
 exports.getCurrentHistoryById = async id => {

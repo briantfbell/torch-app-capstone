@@ -3,7 +3,7 @@ const { applyQueryFilters } = require('../helpers/applyQueryFilters');
 
 const baseQuery = () => db('history_current').select('*');
 
-exports.getAllCurrentHistory = async query => {
+exports.getCurrentHistory = async query => {
   const currentHistory = await applyQueryFilters(baseQuery(), query);
 
   return currentHistory;
