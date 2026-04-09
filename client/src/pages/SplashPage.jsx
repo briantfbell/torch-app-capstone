@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-=======
-import { Stack } from '@mui/material';
->>>>>>> origin/main
 import Button from '@mui/material/Button';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
