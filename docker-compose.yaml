@@ -6,7 +6,7 @@ services:
     env_file:
       - ./client/.env
     ports:
-      - "5173:5173"
+      - '5173:5173'
     volumes:
       - ./client:/app
       - client_node_modules:/app/node_modules
@@ -23,7 +23,7 @@ services:
     environment:
       - POSTGRES_HOST=db
     ports:
-      - "8080:8080"
+      - '8080:8080'
     volumes:
       - ./backend:/app
       - backend_node_modules:/app/node_modules
@@ -41,11 +41,11 @@ services:
     environment:
       - POSTGRES_HOST=db
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
       interval: 5s
       timeout: 5s
       retries: 12

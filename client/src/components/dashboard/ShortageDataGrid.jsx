@@ -63,6 +63,12 @@ export default function ShortageDataGrid() {
                 pageSizeOptions={[5]}
                 disableRowSelectionOnClick
                 sx={{border: 'none'}}
+                autosizeOnMount
+                autosizeOptions={{
+                    includeHeaders: true,
+                    includeOutliers: true,
+                    expand: true, // If content is small, stretch to fill the grid width
+                }}
             />
         </Box>
     );
