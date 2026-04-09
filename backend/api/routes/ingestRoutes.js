@@ -12,9 +12,9 @@ router.post('/excel', auth, upload.single('file'), async (req, res) => {
     return res.status(400).json({ message: 'No file uploaded.' });
   }
 
-  // if (req.user.role !== 'hrh') {
-  //   return res.status(403).json({ message: 'Only HRHs can upload files.' });
-  // }
+  if (req.user.role !== 'hrc') {
+    return res.status(403).json({ message: 'Only HRCs can upload files.' });
+  }
 
   try {
     const data = await readSheet(req.file.buffer);

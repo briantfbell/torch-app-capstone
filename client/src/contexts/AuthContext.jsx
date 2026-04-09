@@ -1,40 +1,38 @@
-import { createContext, useContext, useState, useEffect } from "react"
+import { createContext, useEffect, useState } from 'react';
 
-export const AuthContext = createContext()
+export const AuthContext = createContext();
 
-export function AuthProvider({children}) {
-    const [user, setUser] = useState(null)
-    const [loading, setLoading] = useState(true)
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    
-    const fetchin = async () => {
-            try {
-                const res = await fetch('http://localhost:8080/auth/me', {
-                    credentials: 'include',
-                })
+  const fetchin = async () => {
+    try {
+      const res = await fetch('http://localhost:8080/auth/me', {
+        credentials: 'include',
+      });
 
-                const data = await res.json()
-                if(res.ok) {
-                    console.log('made it to res ok')
-                    setUser(data.user)
-                } else {
-                    setUser(null)
-                }
+      const data = await res.json();
+      if (res.ok) {
+        console.log('made it to res ok');
+        setUser(data.user);
+      } else {
+        setUser(null);
+      }
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            }catch {
-                setUser(null)
-            } finally {
-                setLoading(false)
-            }
-        }
-    
-    useEffect(() => {
-        fetchin()
-    }, [])
+  useEffect(() => {
+    fetchin();
+  }, []);
 
-    return (
-        <AuthContext.Provider value={{user, loading, refreshUser: fetchin}}>
-            {children}
-        </AuthContext.Provider>
-    )
+  return (
+    <AuthContext.Provider value={{ user, loading, refreshUser: fetchin }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
