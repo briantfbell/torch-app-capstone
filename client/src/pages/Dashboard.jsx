@@ -118,14 +118,6 @@ const Dashboard = () => {
                           <Typography>Inventory Completed</Typography>
                         </CardContent>
                       </Card>
-                      {/*<Card sx={{ flex: 1 }}>*/}
-                      {/*  <CardContent>*/}
-                      {/*    <Typography variant={'h3'} color={'success'}>*/}
-                      {/*      ##*/}
-                      {/*    </Typography>*/}
-                      {/*    <Typography>Verified</Typography>*/}
-                      {/*  </CardContent>*/}
-                      {/*</Card>*/}
                       <Card sx={{ flex: 1 }}>
                         <CardContent>
                           <Typography variant={'h3'} color={'error'}>

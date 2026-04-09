@@ -24,11 +24,12 @@ export default function MainRouter({ mode, onToggleTheme }) {
                     <ProtectedRoute>
                         <MiniDrawer mode={mode} onToggleTheme={onToggleTheme}>
                             <Routes>
+                                <Route path="/Ingest" element={<Ingest/>}/>
                                 <Route path="/equipment" element={<EquipmentPage/>}/>
                                 <Route path="/equipment/sub-hand-receipt" element={<SHRViewPage/>}/>
                                 <Route path="/shortages" element={<ShortageTrackerPage/>}/>
                                 <Route path="/InventoryTable" element={<InventoryTable/>}/>
-                                <Route path="/enditem/:id" element={<EndItemPage/>}/>
+                                <Route path="/equipment/:id" element={<EndItemPage/>}/>
                                 <Route path="/user-settings" element={<UserSettings/>}/>
                                 <Route path="/dashboard" element={<Dashboard/>}/>
                                 <Route path="/ingest" element={<Ingest/>}/>
