@@ -9,7 +9,7 @@ const {
   createArchivedHistory,
   updateArchivedHistory,
   deleteArchivedHistory,
-} = require('../controllers/currentHistoryControllers');
+} = require('../controllers/archivedHistoryControllers');
 
 router.get('/:id', auth, getArchivedHistoryById);
 router.get('/', auth, getArchivedHistory);

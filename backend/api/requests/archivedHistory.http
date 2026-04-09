@@ -1,0 +1,29 @@
+### GET archived history
+GET http://localhost:8080/archived-history
+
+### GET archived history by id
+GET http://localhost:8080/archived-history/1
+
+### Create a archived history
+POST http://localhost:8080/archived-history
+Content-Type: application/json
+
+{
+  "end_item_id": 1,
+  "user_id": 1,
+  "seen": true,
+  "location": "test",
+  "last_seen": "2019-12-01",
+  "count_current": 1
+}
+
+### Update archived history by id
+PATCH http://localhost:8080/archived-history/1
+Content-Type: application/json
+
+{
+  "seen": false
+}
+
+### Delete archived history by id
+DELETE http://localhost:8080/archived-history/1

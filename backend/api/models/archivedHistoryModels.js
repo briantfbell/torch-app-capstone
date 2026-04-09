@@ -21,18 +21,18 @@ exports.createArchivedHistory = async archivedHistoryData => {
   return archivedHistory;
 };
 
-exports.updateArchivedHistory = async (
-  archivedHistoryId,
-  archivedHistoryData,
-) => {
-  const [archivedHistory] = await baseQuery()
-    .where('id', archivedHistoryId)
-    .update(archivedHistoryData)
-    .returning('*');
+// exports.updateArchivedHistory = async (
+//   archivedHistoryId,
+//   archivedHistoryData,
+// ) => {
+//   const [archivedHistory] = await baseQuery()
+//     .where('id', archivedHistoryId)
+//     .update(archivedHistoryData)
+//     .returning('*');
 
-  return archivedHistory;
-};
+//   return archivedHistory;
+// };
 
-exports.deleteArchivedHistory = async id => {
-  return await baseQuery().where('id', id).del().returning('*');
-};
+// exports.deleteArchivedHistory = async id => {
+//   return await baseQuery().where('id', id).del().returning('*');
+// };
