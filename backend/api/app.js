@@ -37,7 +37,7 @@ const serialItemsRoutes = require('./routes/serialItemsRoutes');
 const componentsRoutes = require('./routes/componentsRoutes');
 const endItemsRoutes = require('./routes/endItemsRoutes');
 const ingestRoutes = require('./routes/ingestRoutes');
-const historyRoutes = require('./routes/historyRoutes');
+const currentHistoryRoutes = require('./routes/currentHistoryRoutes');
 
 // future dev
 // const inventoryRecordsRoutes = require('./routes/inventoryRecordsRoutes');
@@ -51,7 +51,7 @@ app.use('/serial-items', serialItemsRoutes);
 app.use('/components', componentsRoutes);
 app.use('/end-items', endItemsRoutes);
 app.use('/ingest', ingestRoutes);
-app.use('/history', historyRoutes);
+app.use('/history', currentHistoryRoutes);
 
 // future dev
 // app.use('/inventory-records', inventoryRecordsRoutes);
