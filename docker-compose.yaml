@@ -6,7 +6,7 @@ services:
     env_file:
       - ./client/.env
     ports:
-      - '5173:5173'
+      - "5173:5173"
     volumes:
       - ./client:/app
     depends_on:
@@ -21,7 +21,7 @@ services:
     environment:
       - POSTGRES_HOST=db
     ports:
-      - '8080:8080'
+      - "8080:8080"
     volumes:
       - ./backend:/app
     command: sh -c "npx knex migrate:latest --knexfile ./db/knexfile.js && npx knex seed:run --knexfile ./db/knexfile.js && npm start"
@@ -37,6 +37,6 @@ services:
     environment:
       - POSTGRES_HOST=db
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - ./docker_db:/var/lib/postgresql/
