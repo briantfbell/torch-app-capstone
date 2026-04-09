@@ -19,7 +19,7 @@ exports.insertSerializedItem = async (obj, userId) => {
           niin: obj.niin,
           description: obj.description,
           auth_qty: obj.auth_qty || 1,
-          cost: `$${((Math.random() * 100000000) / 100).toFixed(2)}`,
+          cost: ((Math.random() * 100000000) / 100).toFixed(2),
         })
         .returning(['id', 'cost']),
     ]);
@@ -44,6 +44,6 @@ exports.insertComponent = async obj => {
     niin: obj.niin,
     description: obj.description,
     auth_qty: obj.auth_qty || 1,
-    cost: `$${Math.round(Math.random() * 100000000)}`,
+    cost: ((Math.random() * 100000000) / 100).toFixed(2),
   });
 };

@@ -8,7 +8,7 @@ exports.up = function (knex) {
     table.string('image');
     table.string('arc');
     table.integer('end_item_id').unsigned();
-    table.varchar('cost');
+    table.decimal('cost');
     table
       .foreign('end_item_id')
       .references('id')
