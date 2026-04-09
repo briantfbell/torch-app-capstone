@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8080";
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
 
 const parseJsonSafely = async (res) => {
     const text = await res.text();
@@ -29,12 +29,6 @@ const parseJsonSafely = async (res) => {
 export const getToken = () => localStorage.getItem("token");
 
 export const logout = () => localStorage.removeItem("token");
-export const logoutFunc = async () => {
-    await fetch('http://localhost:8080/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-    })
-}
 
 export const getCurrentUser = () => {
     const token = localStorage.getItem("token");

@@ -6,7 +6,6 @@ export default function ProtectedRoute({children}) {
     if (loading) return <div>Authenticating...</div>
 
     if(!user) {
-        window.alert("Authentication failed, log in and try again")
         return <Navigate to="/" replace />
     }
 

@@ -1,4 +1,4 @@
-exports.up = function(knex) {
+exports.up = function (knex) {
   return knex.schema.createTable('serial_items', table => {
     table.increments('id');
     table.varchar('serial_number', 50).unique();
@@ -7,19 +7,20 @@ exports.up = function(knex) {
     table.text('common_name');
     table.integer('item_id').unsigned();
     table.integer('user_id').unsigned();
+    table.varchar('cost');
     table
       .foreign('item_id')
       .references('id')
       .inTable('end_items')
-      .onDelete("CASCADE")
+      .onDelete('CASCADE');
     table
       .foreign('user_id')
       .references('id')
       .inTable('users')
-      .onDelete("CASCADE")
+      .onDelete('CASCADE');
   });
 };
 
-exports.down = function(knex) {
+exports.down = function (knex) {
   return knex.schema.dropTableIfExists('serial_items');
 };

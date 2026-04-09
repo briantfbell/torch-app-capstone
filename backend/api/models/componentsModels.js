@@ -13,9 +13,14 @@ exports.getComponentById = async id => {
   return await baseQuery().where('components.id', id).first();
 };
 
-exports.createComponent = async componentData => {
+exports.createComponent = async (componentData, end_item_lin) => {
+  const end_item_id = await db('end_items')
+    .where('lin', end_item_lin)
+    .select('id')
+    .first();
+
   const [component] = await db('components')
-    .insert(componentData)
+    .insert({ ...componentData, end_item_id: end_item_id.id })
     .returning('*');
 
   return component;

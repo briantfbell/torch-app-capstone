@@ -37,89 +37,809 @@ cd server && npm run dev
 
 ## API Endpoints
 
-All protected routes require a valid session cookie set by `POST /auth/login`.
+**Base URL:** `http://localhost:8080`
+
+All protected routes require a valid JWT session cookie set by `POST /auth/login`. The cookie is `httpOnly`, expires after 7 days, and is named `token`.
+
+---
 
 ### Auth — `/auth`
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/auth/me` | Yes | Get current authenticated user |
-| POST | `/auth/register` | No | Register a new user |
-| POST | `/auth/login` | No | Login and receive session cookie |
-| POST | `/auth/logout` | Yes | Logout and clear session cookie |
+#### `GET /auth/me` — Auth required
+Get the currently authenticated user's profile.
 
-**Register body:** `username`, `name_first`, `name_last`, `email`, `password`, `phone`, `rank`, `uic_id`, `role`, `DoDID`
+**Request:** No body.
 
-**Login body:** `email`, `password`
+**Response `200`:**
+```json
+{
+  "user": {
+    "id": 1,
+    "username": "jsmith",
+    "name_first": "John",
+    "name_last": "Smith",
+    "email": "jsmith@example.com",
+    "phone": "555-1234",
+    "role": "user",
+    "rank_id": 7,
+    "rank": "E-7",
+    "uic_id": 1,
+    "uic": "WCAEB1",
+    "created_at": "timestamp",
+    "updated_at": "timestamp"
+  }
+}
+```
+
+---
+
+#### `POST /auth/register` — No auth required
+Create a new user account.
+
+**Request body:**
+```json
+{
+  "username": "jsmith",
+  "name_first": "John",
+  "name_last": "Smith",
+  "email": "jsmith@example.com",
+  "password": "secret",
+  "phone": "555-1234",
+  "rank": "E-7",
+  "uic": "WCAEB1",
+  "role": "user",
+  "dodid": "1234567890"
+}
+```
+All fields required. `rank` must match an existing rank (e.g. `"E-7"`). `uic` must match an existing UIC code.
+
+**Response `201`:**
+```json
+{
+  "newUser": {
+    "username": "jsmith",
+    "name_first": "John",
+    "name_last": "Smith",
+    "email": "jsmith@example.com",
+    "phone": "555-1234",
+    "rank_id": 7,
+    "rank": "E-7",
+    "uic_id": 1,
+    "uic": "WCAEB1",
+    "role": "user",
+    "dodid": "1234567890"
+  }
+}
+```
+
+**Errors `400`:** Missing fields, email/username already in use, invalid rank or UIC.
+
+---
+
+#### `POST /auth/login` — No auth required
+Authenticate and receive a session cookie.
+
+**Request body:**
+```json
+{
+  "email": "jsmith@example.com",
+  "password": "secret"
+}
+```
+
+**Response `200`:** Sets `httpOnly` cookie `token` (7-day expiry) and returns the token in the body.
+```json
+{ "token": "<jwt>" }
+```
+
+**Errors `401`:** User not found, or email/password mismatch.
+
+---
+
+#### `POST /auth/logout` — Auth required
+Clear the session cookie.
+
+**Request:** No body.
+
+**Response `200`:**
+```json
+{ "message": "Logged out." }
+```
 
 ---
 
 ### Users — `/users`
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/users` | Yes | Get all users |
-| GET | `/users/:id` | Yes | Get user by ID |
-| PATCH | `/users/:id` | Yes | Update a user |
-| DELETE | `/users/:id` | Yes | Delete a user |
+All endpoints require authentication.
 
-**Update body:** `username`, `name_first`, `name_last`, `email`, `password`, `phone`, `rank`, `uic_id`, `role`, `DoDID`
+#### `GET /users`
+Get all users. Supports filtering, sorting, and pagination via query params.
+
+**Query params:**
+| Param | Description |
+|-------|-------------|
+| `q` | Search across text fields |
+| `sort_by` | Field to sort by (default: `id`) |
+| `order` | `asc` or `desc` (default: `asc`) |
+| `limit` | Max results (1–100) |
+| `offset` | Pagination offset (default: `0`) |
+
+**Response `200`:**
+```json
+{
+  "allUsers": [
+    {
+      "id": 1,
+      "username": "jsmith",
+      "name_first": "John",
+      "name_last": "Smith",
+      "email": "jsmith@example.com",
+      "phone": "555-1234",
+      "dodid": "1234567890",
+      "role": "user",
+      "rank": "E-7",
+      "uic": "WCAEB1",
+      "unit_name": "1st Battalion",
+      "parent_uic": "W1A1AB",
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    }
+  ]
+}
+```
 
 ---
 
-### UIC — `/uic`
+#### `GET /users/:id`
+Get a single user by ID.
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/uic` | Yes | Get all UICs |
-| GET | `/uic/:id` | Yes | Get UIC by ID |
-| POST | `/uic` | Yes | Create a UIC |
-| PATCH | `/uic/:id` | Yes | Update a UIC |
-| DELETE | `/uic/:id` | Yes | Delete a UIC |
+**Response `200`:**
+```json
+{
+  "user": { "/* same shape as GET /users item */" }
+}
+```
 
-**Create body:** `uic`, `unit_name`, `parent_uic`
+---
+
+#### `PATCH /users/:id`
+Update a user. All fields optional.
+
+**Request body:**
+```json
+{
+  "username": "jsmith2",
+  "name_first": "John",
+  "name_last": "Smith",
+  "email": "jsmith2@example.com",
+  "phone": "555-9999",
+  "rank": "E-7",
+  "uic_id": 1,
+  "role": "hrc",
+  "DoDID": "0987654321"
+}
+```
+
+**Response `200`:**
+```json
+{
+  "updatedUser": { "/* updated user object */" },
+  "message": "'jsmith2' has been successfully updated."
+}
+```
+
+**Errors `400`:** No changes detected.
+
+---
+
+#### `DELETE /users/:id`
+Delete a user by ID.
+
+**Response `200`:**
+```json
+{
+  "deletedUser": { "/* deleted user object */" },
+  "message": "'jsmith' was successfully deleted."
+}
+```
+
+---
+
+### UICs — `/uics`
+
+No authentication required on any UIC endpoint.
+
+#### `GET /uics`
+Get all UICs. Supports filtering, sorting, and pagination.
+
+**Query params:**
+| Param | Description |
+|-------|-------------|
+| `q` | Search the `uic` field |
+| `sort_by` | Field to sort by |
+| `order` | `asc` or `desc` |
+| `limit` | Max results |
+| `offset` | Pagination offset |
+
+**Response `200`:**
+```json
+{
+  "allUics": [
+    {
+      "id": 1,
+      "uic": "WCAEB1",
+      "unit_name": "1st Battalion",
+      "parent_uic": "W1A1AB",
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    }
+  ]
+}
+```
+
+---
+
+#### `GET /uics/:id`
+Get a single UIC by ID.
+
+**Response `200`:**
+```json
+{
+  "uic": { "/* same shape as GET /uics item */" }
+}
+```
+
+---
+
+#### `POST /uics`
+Create a new UIC.
+
+**Request body:**
+```json
+{
+  "uic": "W1A1AA",
+  "unit_name": "1st Battalion",
+  "parent_uic": "W1A1AB"
+}
+```
+All fields required.
+
+**Response `201`:**
+```json
+{
+  "newUic": { "/* uic object */" },
+  "message": "UIC 'W1A1AA' has been successfully created."
+}
+```
+
+---
+
+#### `PATCH /uics/:id`
+Update a UIC. All fields optional.
+
+**Request body:**
+```json
+{
+  "uic": "W1A1AA",
+  "unit_name": "2nd Battalion",
+  "parent_uic": "W1A1AC"
+}
+```
+
+**Response `200`:**
+```json
+{
+  "updatedUic": { "/* updated uic object */" },
+  "message": "UIC 'W1A1AA' has been successfully updated."
+}
+```
+
+---
+
+#### `DELETE /uics/:id`
+Delete a UIC by ID.
+
+**Response `200`:**
+```json
+{
+  "deletedUic": { "/* deleted uic object */" },
+  "message": "UIC 'W1A1AA' was successfully deleted."
+}
+```
 
 ---
 
 ### End Items — `/end-items`
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/end-items` | Yes | Get all end items |
-| GET | `/end-items/:id` | Yes | Get end item by ID |
-| POST | `/end-items` | Yes | Create an end item |
-| PATCH | `/end-items/:id` | Yes | Update an end item |
-| DELETE | `/end-items/:id` | Yes | Delete an end item |
+All endpoints require authentication.
 
-**Create body:** `fsc`, `description`, `niin`, `image`, `auth_qty`, `lin`
+#### `GET /end-items`
+Get all end items. Supports filtering, sorting, and pagination.
+
+**Query params:**
+| Param | Description |
+|-------|-------------|
+| `id` | Filter by ID |
+| `description` | Substring match on description |
+| `niin` | Substring match on NIIN |
+| `fsc` | Substring match on FSC |
+| `lin` | Substring match on LIN |
+| `q` | General text search |
+| `sort_by` | Field to sort by |
+| `order` | `asc` or `desc` |
+| `limit` | Max results |
+| `offset` | Pagination offset |
+
+**Response `200`:**
+```json
+{
+  "allEndItems": [
+    {
+      "id": 1,
+      "fsc": "1005",
+      "description": "RIFLE,5.56 MILLIMETER",
+      "niin": "016191936",
+      "image": "url-or-path",
+      "auth_qty": "1",
+      "lin": "R97777",
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    }
+  ]
+}
+```
+
+---
+
+#### `GET /end-items/:id`
+Get a single end item by ID.
+
+**Response `200`:**
+```json
+{
+  "endItem": { "/* same shape as GET /end-items item */" }
+}
+```
+
+---
+
+#### `POST /end-items`
+Create a new end item.
+
+**Request body:**
+```json
+{
+  "fsc": "1005",
+  "description": "RIFLE,5.56 MILLIMETER",
+  "niin": "016191936",
+  "image": "url-or-path",
+  "auth_qty": "1",
+  "lin": "R97777"
+}
+```
+All fields required.
+
+**Response `201`:**
+```json
+{
+  "newEndItem": { "/* end item object */" },
+  "message": "LIN: R97777 has been successfully created."
+}
+```
+
+---
+
+#### `PATCH /end-items/:id`
+Update an end item. All fields optional.
+
+**Request body:**
+```json
+{
+  "fsc": "1005",
+  "description": "RIFLE,5.56 MILLIMETER",
+  "niin": "016191936",
+  "image": "url-or-path",
+  "auth_qty": "2",
+  "lin": "R97777"
+}
+```
+
+**Response `200`:**
+```json
+{
+  "updatedEndItem": { "/* updated end item object */" },
+  "message": "LIN: R97777 has been successfully updated."
+}
+```
+
+---
+
+#### `DELETE /end-items/:id`
+Delete an end item by ID.
+
+**Response `200`:**
+```json
+{
+  "deletedEndItem": { "/* deleted end item object */" },
+  "message": "LIN: R97777 was successfully deleted."
+}
+```
 
 ---
 
 ### Components — `/components`
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/components` | Yes | Get all components |
-| GET | `/components/:id` | Yes | Get component by ID |
-| POST | `/components` | Yes | Create a component |
-| PATCH | `/components/:id` | Yes | Update a component |
-| DELETE | `/components/:id` | Yes | Delete a component |
+All endpoints require authentication.
 
-**Create body:** `niin`, `description`, `ui`, `auth_qty`, `image`, `arc`, `end_item_id`
+#### `GET /components`
+Get all components. Supports filtering, sorting, and pagination.
+
+**Query params:**
+| Param | Description |
+|-------|-------------|
+| `id` | Filter by ID |
+| `description` | Substring match on description |
+| `niin` | Substring match on NIIN |
+| `arc` | Substring match on ARC |
+| `end_item_id` | Filter by end item ID |
+| `q` | General text search |
+| `sort_by` | Field to sort by |
+| `order` | `asc` or `desc` |
+| `limit` | Max results |
+| `offset` | Pagination offset |
+
+**Response `200`:**
+```json
+{
+  "allComponents": [
+    {
+      "id": 1,
+      "niin": "123456789",
+      "description": "MAGAZINE,30-ROUND",
+      "ui": "EA",
+      "auth_qty": "6",
+      "image": "url-or-path",
+      "arc": "B",
+      "end_item_id": 1,
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    }
+  ]
+}
+```
+
+---
+
+#### `GET /components/:id`
+Get a single component by ID.
+
+**Response `200`:**
+```json
+{
+  "component": { "/* same shape as GET /components item */" }
+}
+```
+
+---
+
+#### `POST /components`
+Create a new component. Associates the component to an end item via LIN.
+
+**Request body:**
+```json
+{
+  "niin": "123456789",
+  "description": "MAGAZINE,30-ROUND",
+  "ui": "EA",
+  "auth_qty": "6",
+  "image": "url-or-path",
+  "arc": "B",
+  "end_item_lin": "R97777"
+}
+```
+All fields required. `end_item_lin` must match an existing end item's LIN.
+
+**Response `201`:**
+```json
+{
+  "newComponent": { "/* component object */" },
+  "message": "NIIN: 123456789 has been successfully created."
+}
+```
+
+---
+
+#### `PATCH /components/:id`
+Update a component. All fields optional.
+
+**Request body:**
+```json
+{
+  "niin": "123456789",
+  "description": "MAGAZINE,30-ROUND",
+  "ui": "EA",
+  "auth_qty": "4",
+  "image": "url-or-path",
+  "arc": "B",
+  "end_item_id": 1
+}
+```
+
+**Response `200`:**
+```json
+{
+  "updatedComponent": { "/* updated component object */" },
+  "message": "NIIN: 123456789 has been successfully updated."
+}
+```
+
+**Errors `400`:** No changes detected.
+
+---
+
+#### `DELETE /components/:id`
+Delete a component by ID.
+
+**Response `200`:**
+```json
+{
+  "deletedComponent": { "/* deleted component object */" },
+  "message": "NIIN: 123456789 was successfully deleted."
+}
+```
 
 ---
 
 ### Serial Items — `/serial-items`
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/serial-items` | Yes | Get all serial items |
-| GET | `/serial-items/:id` | Yes | Get serial item by ID |
-| POST | `/serial-items` | Yes | Create a serial item |
-| PATCH | `/serial-items/:id` | Yes | Update a serial item |
-| DELETE | `/serial-items/:id` | Yes | Delete a serial item |
+All endpoints require authentication.
 
-**Create body:** `item_id`, `serial_number`, `signed_to`, `assigned_at`, `status`
+#### `GET /serial-items`
+Get all serial items. Supports filtering, sorting, and pagination.
+
+**Query params:**
+| Param | Description |
+|-------|-------------|
+| `id` | Filter by ID |
+| `serial_number` | Substring match on serial number |
+| `status` | Comma-separated status values (e.g. `serviceable,unserviceable`) |
+| `item_id` | Filter by end item ID |
+| `signed_to` | Filter by signed_to field |
+| `q` | General text search |
+| `sort_by` | Field to sort by |
+| `order` | `asc` or `desc` |
+| `limit` | Max results |
+| `offset` | Pagination offset |
+
+**Response `200`:**
+```json
+{
+  "allSerialItems": [
+    {
+      "id": 1,
+      "serial_number": "SN-012",
+      "status": "serviceable",
+      "item_id": 1,
+      "user_id": 3,
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    }
+  ]
+}
+```
+
+---
+
+#### `GET /serial-items/:id`
+Get a single serial item by ID.
+
+**Response `200`:**
+```json
+{
+  "serialItem": { "/* same shape as GET /serial-items item */" }
+}
+```
+
+---
+
+#### `POST /serial-items`
+Create a new serial item. Associates to an end item via LIN and a user via DoDID.
+
+**Request body:**
+```json
+{
+  "serial_number": "SN-012",
+  "status": "serviceable",
+  "end_item_lin": "R97777",
+  "user_dodid": "1234567890"
+}
+```
+All fields required. `end_item_lin` must match an existing end item's LIN. `user_dodid` must match an existing user's DoDID.
+
+**Response `201`:**
+```json
+{
+  "newSerialItem": { "/* serial item object */" },
+  "message": "SN: SN-012 has been successfully posted."
+}
+```
+
+---
+
+#### `PATCH /serial-items/:id`
+Update a serial item. All fields optional.
+
+**Request body:**
+```json
+{
+  "serial_number": "SN-013",
+  "status": "unserviceable",
+  "item_id": 2,
+  "user_id": 5
+}
+```
+
+**Response `200`:**
+```json
+{
+  "updatedSerialItem": { "/* updated serial item object */" },
+  "message": "SN: SN-013 has been successfully updated."
+}
+```
+
+---
+
+#### `DELETE /serial-items/:id`
+Delete a serial item by ID.
+
+**Response `200`:**
+```json
+{
+  "deletedSerialItem": { "/* deleted serial item object */" },
+  "message": "SN: SN-012 was successfully deleted."
+}
+```
+
+---
+
+### History — `/history`
+
+All endpoints require authentication.
+
+#### `GET /history`
+Get all history records. Supports filtering, sorting, and pagination via query params.
+
+**Response `200`:**
+```json
+{
+  "allHistory": [
+    {
+      "id": 1,
+      "fsc": "1005",
+      "description": "RIFLE,5.56 MILLIMETER",
+      "niin": "016191936",
+      "image": "url-or-path",
+      "auth_qty": "1",
+      "lin": "R97777",
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    }
+  ]
+}
+```
+
+---
+
+#### `GET /history/:id`
+Get a single history record by ID.
+
+**Response `200`:**
+```json
+{
+  "endItem": { "/* same shape as GET /history item */" }
+}
+```
+
+---
+
+#### `POST /history`
+Create a new history record.
+
+**Request body:**
+```json
+{
+  "fsc": "1005",
+  "description": "RIFLE,5.56 MILLIMETER",
+  "niin": "016191936",
+  "image": "url-or-path",
+  "auth_qty": "1",
+  "lin": "R97777"
+}
+```
+All fields required.
+
+**Response `201`:**
+```json
+{
+  "newHistory": { "/* history object */" },
+  "message": "ID: 1 has been successfully created."
+}
+```
+
+---
+
+#### `PATCH /history/:id`
+Update a history record. All fields optional.
+
+**Request body:**
+```json
+{
+  "fsc": "1005",
+  "description": "RIFLE,5.56 MILLIMETER",
+  "niin": "016191936",
+  "image": "url-or-path",
+  "auth_qty": "2",
+  "lin": "R97777"
+}
+```
+
+**Response `200`:**
+```json
+{
+  "updatedHistory": { "/* updated history object */" },
+  "message": "ID: 1 has been successfully updated."
+}
+```
+
+---
+
+#### `DELETE /history/:id`
+Delete a history record by ID.
+
+**Response `200`:**
+```json
+{
+  "deletedHistory": { "/* deleted history object */" },
+  "message": "ID: 1 was successfully deleted."
+}
+```
+
+---
+
+### Ingest — `/ingest`
+
+#### `POST /ingest/ingest-backup` — Auth required (role: `hrc`)
+Upload an Excel file to bulk-ingest property records. Only users with the `hrc` role can use this endpoint.
+
+**Content-Type:** `multipart/form-data`
+
+**Request:** Form field `file` containing an `.xlsx` file. The file must include the following columns:
+
+| Excel Column | Required | Type | Maps To |
+|---|---|---|---|
+| `DoD Activity Address Code` | Yes | String | UIC |
+| `LIN Number / DODIC` | No | String | LIN |
+| `FSC` | Yes | Number | FSC |
+| `Material` | No | String | NIIN |
+| `Material Description` | Yes | String | Description |
+| `Stock` | Yes | Number | Authorized Quantity |
+| `Unit of Measure` | Yes | String | UI |
+| `Serial Number` | No | Number | Serial Number |
+
+**Behavior:**
+- Rows **with** a serial number → inserted into `end_items` + `serial_items`. Duplicate serial numbers are skipped.
+- Rows **without** a serial number → inserted into `components`.
+- If the UIC in the row doesn't exist, it is created automatically.
+
+**Response `201`:**
+```json
+{ "message": "Success." }
+```
+
+**Errors:**
+- `400` — No file uploaded.
+- `403` — Requesting user does not have the `hrc` role.
+- `500` — `"Error parsing Excel file: {error message}"`
 
 ---
 

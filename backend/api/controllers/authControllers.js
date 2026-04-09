@@ -15,18 +15,7 @@ exports.getMe = async (req, res) => {
 
 exports.registerUser = async (req, res) => {
   try {
-    const newUser = await authServices.registerUser(
-      req.body.username,
-      req.body.name_first,
-      req.body.name_last,
-      req.body.email,
-      req.body.password,
-      req.body.phone,
-      req.body.rank,
-      req.body.uic,
-      req.body.role,
-      req.body.DoDID,
-    );
+    const newUser = await authServices.registerUser(req.body);
 
     res.status(201).json({
       newUser: newUser,
@@ -43,7 +32,7 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     const token = await authServices.login(email, password);
-    
+
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -51,7 +40,7 @@ exports.login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json({token});
+    return res.status(200).json({ token });
   } catch (err) {
     res.status(err.status || 500).json({
       message: err.message || 'Internal server error.',

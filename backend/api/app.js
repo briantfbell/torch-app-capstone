@@ -36,23 +36,27 @@ const uicsRoutes = require('./routes/uicsRoutes');
 const serialItemsRoutes = require('./routes/serialItemsRoutes');
 const componentsRoutes = require('./routes/componentsRoutes');
 const endItemsRoutes = require('./routes/endItemsRoutes');
-const rawRoutes = require('./routes/rawRoutes');
+const ingestRoutes = require('./routes/ingestRoutes');
+const historyRoutes = require('./routes/historyRoutes');
+
+// future dev
 // const inventoryRecordsRoutes = require('./routes/inventoryRecordsRoutes');
 // const sectionsRoutes = require('./routes/sectionsRoutes');
 // const shortagesRoutes = require('./routes/shortagesRoutes');
-const ingestRoutes = require('./routes/ingestRoutes');
 
 app.use('/auth', authRoutes);
 app.use('/users', usersRoutes);
+app.use('/uics', uicsRoutes);
 app.use('/serial-items', serialItemsRoutes);
 app.use('/components', componentsRoutes);
 app.use('/end-items', endItemsRoutes);
-app.use('/uics', uicsRoutes);
-app.use('/raw', rawRoutes);
+app.use('/ingest', ingestRoutes);
+app.use('/history', historyRoutes);
+
+// future dev
 // app.use('/inventory-records', inventoryRecordsRoutes);
 // app.use('/sections', sectionsRoutes);
 // app.use('/shortages', shortagesRoutes);
-app.use('/ingest', ingestRoutes);
 
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Working for now...' });

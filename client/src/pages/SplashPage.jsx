@@ -1,34 +1,36 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import Button from '@mui/material/Button';
+import { tryLogin } from '../api/auth.js';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 import {Stack} from '@mui/material';
-import {tryLogin} from '../api/auth.js';
 import { useAuth } from '../hooks/useAuth';
 
 export default function SplashPage() {
     const url = 'http://localhost:8080/';
+
     //Navigation
     const navigate = useNavigate()
     const { refreshUser } = useAuth()
 
-    //Login state
-    const [isLogin, setIsLogin] = useState(true);
-    const handleLoginState = () => {
-        setIsLogin(!isLogin)
-    }
 
-    //Username input
-    const [email, setEmail] = useState('')
-    const handleEmailInput = (e) => {
-        setEmail(e.target.value)
-    }
-    //Password input
-    const [password, setPassword] = useState('')
-    const handlePasswordInput = (e) => {
-        setPassword(e.target.value)
-    }
+  //Login state
+  const [isLogin, setIsLogin] = useState(true);
+  const handleLoginState = () => {
+    setIsLogin(!isLogin);
+  };
+
+  //Username input
+  const [email, setEmail] = useState('');
+  const handleEmailInput = e => {
+    setEmail(e.target.value);
+  };
+  //Password input
+  const [password, setPassword] = useState('');
+  const handlePasswordInput = e => {
+    setPassword(e.target.value);
+  };
 
     //Submission handling
     const handleLoginSubmit = async (e) => {
@@ -47,7 +49,6 @@ export default function SplashPage() {
 
     const [registerError, setRegisterError] = useState('')
     const handleRegisterSubmit = async (data) => {
-        console.log(data)
         try{
             const res = await fetch(`${url}auth/register`, {
                 method: 'POST',
@@ -58,7 +59,7 @@ export default function SplashPage() {
             const result = await res.json()
 
             if (!res.ok){
-                setRegisterError(result.message || result.error)
+                return setRegisterError(result.message || 'Registration failed, try again. (Check your inputs)')
             }
 
             //If success, go back to login
@@ -70,6 +71,21 @@ export default function SplashPage() {
 
     }
 
+    //Check if user, if they are a user, kick them to the dashboard
+    const {user, loading} = useAuth()
+    useEffect(() => {
+        if (user) {
+            navigate('/dashboard')
+        }
+    }, [user, navigate])
+    if (loading) {
+        return <div>Loading...</div>
+    }
+    if(user) {
+        return null;
+    }
+
+ 
 
     if(isLogin) {
         return (

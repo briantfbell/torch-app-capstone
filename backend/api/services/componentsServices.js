@@ -23,7 +23,7 @@ exports.createComponent = async ({
   auth_qty,
   image,
   arc,
-  end_item_id,
+  end_item_lin,
 }) => {
   if (
     !niin ||
@@ -32,22 +32,26 @@ exports.createComponent = async ({
     !auth_qty ||
     !image ||
     !arc ||
-    !end_item_id
+    !end_item_lin
   ) {
     const error = new Error('All fields are required.');
     error.status = 400;
     throw error;
   }
 
-  return await componentsModels.createComponent({
-    niin,
-    description,
-    ui,
-    auth_qty,
-    image,
-    arc,
-    end_item_id,
-  });
+  // const normalizedLin = end_item_lin.trim().toLowerCase();
+
+  return await componentsModels.createComponent(
+    {
+      niin,
+      description,
+      ui,
+      auth_qty,
+      image,
+      arc,
+    },
+    end_item_lin,
+  );
 };
 
 exports.updateComponent = async (id, componentData) => {

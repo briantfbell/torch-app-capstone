@@ -13,9 +13,23 @@ exports.getSerialItemById = async id => {
   return await baseQuery().where('serial_items.id', id).first();
 };
 
-exports.createSerialItem = async serialItemData => {
+exports.createSerialItem = async (serialItemData, end_item_lin, user_dodid) => {
+  const end_item_id = await db('end_items')
+    .where('lin', end_item_lin)
+    .select('id')
+    .first();
+
+  const user_id = await db('users')
+    .where('dodid', user_dodid)
+    .select('id')
+    .first();
+
   const [serialItem] = await db('serial_items')
-    .insert(serialItemData)
+    .insert({
+      ...serialItemData,
+      item_id: end_item_id.id,
+      user_id: user_id.id,
+    })
     .returning('*');
 
   return serialItem;
