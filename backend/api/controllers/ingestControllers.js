@@ -1,20 +1,21 @@
-const postIngestItem = require('../services/ingestServices');
-const multer  = require('multer');
-const upload = multer({ storage: multer.memoryStorage() });
+const ingestServices = require('../services/ingestServices');
 
-exports.postIngestItem = async (req, res) => {
+exports.ingest = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded.' });
+  }
+
+  if (req.user.role !== 'hrc') {
+    return res.status(403).json({ message: 'Only HRCs can upload files.' });
+  }
+
   try {
-    if (!req.file) {
-      return res.status(400).send('No file uploaded.');
-    };
+    await ingestServices.ingest(req.file, req.user);
 
-    // postIngestItem(req.file)
-
-    res.status(200).json({message: "You at least made it this far..."});
+    res.status(201).json({ message: 'Success.' });
   } catch (err) {
-    console.log('error')
-    // res
-    //   .status(err.status || 500)
-    //   .json({ message: err.message || 'Internal server error.' });
+    res
+      .status(err.status || 500)
+      .send('Error parsing Excel file: ' + err.message);
   }
 };

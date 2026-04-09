@@ -29,7 +29,7 @@ export default function Ingest() {
       } else {
         setStatus('fail');
       }
-    } catch (error) {
+    } catch {
       setStatus('fail');
     }
   };
