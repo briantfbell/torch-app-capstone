@@ -7,6 +7,7 @@ import "react-pdf/dist/Page/TextLayer.css";
 import { Box, Button, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
+
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
   import.meta.url,
@@ -20,6 +21,7 @@ export default function SHRViewPage() {
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
   };
+
 
   return (
     <Box sx={styles.page}>

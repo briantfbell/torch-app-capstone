@@ -14,8 +14,8 @@ const {
 
 router.get('/', getAllUics);
 router.get('/:id', getUicById);
-router.post('/', auth, createUic);
-router.patch('/:id', auth, updateUic);
-router.delete('/:id', auth, deleteUic);
+router.post('/', createUic);
+router.patch('/:id', updateUic);
+router.delete('/:id', deleteUic);
 
 module.exports = router;

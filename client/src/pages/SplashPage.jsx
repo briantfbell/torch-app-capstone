@@ -32,6 +32,7 @@ export default function SplashPage() {
   const handleLoginSubmit = async e => {
     e.preventDefault();
     await tryLogin(email, password);
+    setTimeout(() => navigate('/dashboard'), 200);
     //Login submission, tokens, context, navigate to next page, etc
   };
 
@@ -39,7 +40,7 @@ export default function SplashPage() {
   const handleRegisterSubmit = async data => {
     console.log(data);
     try {
-      const res = await fetch(`${url}/auth/register`, {
+      const res = await fetch(`${url}auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -80,11 +81,13 @@ export default function SplashPage() {
   } else if (!isLogin) {
     return (
       <div className="registerContainer">
-        <RegisterForm onSubmit={handleRegisterSubmit} error={registerError} />
-        <p>Already have an account? Click here!</p>
-        <Button variant="contained" onClick={() => handleLoginState()}>
-          Return to Login
-        </Button>
+        <Stack sx={{ justifySelf: 'center' }}>
+          <RegisterForm onSubmit={handleRegisterSubmit} error={registerError} />
+          <p>Already have an account? Click here!</p>
+          <Button variant="contained" onClick={() => handleLoginState()}>
+            Return to Login
+          </Button>
+        </Stack>
       </div>
     );
   }

@@ -2,6 +2,7 @@ const authModels = require('../models/authModels');
 const uicsModels = require('../models/uicsModels');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+require('dotenv').config()
 
 const SALT_ROUNDS = 10;
 
@@ -174,7 +175,7 @@ exports.login = async (email, password) => {
     error.status = 401;
     throw error;
   }
-
+  console.log('JWT = ', process.env.JWT)
   const token = jwt.sign(
     {
       id: user.id,
