@@ -5,7 +5,7 @@ exports.ingest = async (req, res) => {
     return res.status(400).json({ message: 'No file uploaded.' });
   }
 
-  if (req.user.role !== 'hrc') {
+  if (req.user.role.toLowerCase() !== 'hrc') {
     return res.status(403).json({ message: 'Only HRCs can upload files.' });
   }
 
