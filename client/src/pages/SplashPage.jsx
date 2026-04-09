@@ -47,7 +47,6 @@ export default function SplashPage() {
 
     const [registerError, setRegisterError] = useState('')
     const handleRegisterSubmit = async (data) => {
-        console.log(data)
         try{
             const res = await fetch(`${url}auth/register`, {
                 method: 'POST',
@@ -58,7 +57,7 @@ export default function SplashPage() {
             const result = await res.json()
 
             if (!res.ok){
-                setRegisterError(result.message || result.error)
+                return setRegisterError(result.message || 'Registration failed, try again. (Check your inputs)')
             }
 
             //If success, go back to login

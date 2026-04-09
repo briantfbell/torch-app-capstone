@@ -102,7 +102,7 @@ export default function RegisterForm({onSubmit, error}){
             role: roles,
             DoDID: form.DoDID.trim()
         }
-
+        console.log(payload)
         onSubmit(payload)
     }
 
@@ -131,22 +131,63 @@ export default function RegisterForm({onSubmit, error}){
         fetchUics()
     }, [])
 
+    //Create the damn ranks
+    const enlistedRanks = ['E-1', 'E-2', 'E-3', 'E-4', 'E-5', 'E-6', 'E-7', 'E-8', 'E-9']
+    const officerRanks = ['O-1', 'O-2', 'O-3', 'O-4', 'O-5', 'O-6', 'O-7', 'O-8', 'O-9', 'O-10']
+    const warrantRanks = ['W-1', 'W-2', 'W-3', 'W-4', 'W-5']
+    const civilianRanks = ['GS-1', 'GS-2', 'GS-3', 'GS-4', 'GS-5', 'GS-6', 'GS-7', 'GS-8', 'GS-9', 'GS-10', 'GS-11', 'GS-12', 'GS-13', 'GS-14', 'GS-15']
+
+    const [rankType, setRankType] = useState('');
+    const handleRankTypeChange = (e) => {
+        const value = e.target.value;
+        setRankType(value);
+    };
+
 
     return(
         <form className='registerFormContainer' onSubmit={handleSubmit}>
             <Stack spacing={2} direction="row" justifyContent="center">
-                <Stack spacing={2}>
+                <Stack spacing={3}>
                     <TextField id='outlined-basic'  value={form.username} label='username' required onChange={handleChange} name='username' type='text' placeholder="Username"/>
                     <TextField id='outlined-basic'  value={form.password} label='password' required onChange={handleChange} name='password' type='password' placeholder="Password"/>
                     <TextField id='outlined-basic'  value={form.confirmPass} label='confirmPass' required onChange={handleChange} name='confirmPass' type='password' placeholder="Confirm Password"/>
+                    
                     {/* etc info, */}
                     <TextField id='outlined-basic'  label='email' required value={form.email} onChange={handleChange} name='email' placeholder="Email Address" />
                     <TextField id='outlined-basic'  label='name_first' required value={form.name_first} onChange={handleChange} name='name_first' placeholder="First Name"/>
                     <TextField id='outlined-basic'  label='name_last' required value={form.name_last} onChange={handleChange} name='name_last' placeholder="Last Name"/>
                     <TextField id='outlined-basic'  label='phone' required value={form.phone} onChange={handleChange} name='phone' placeholder="Phone Number" />
+                    <TextField id='outlined-basic'  label='DoDID' required value={form.DoDID}
+                        onChange={handleChange}
+                        name='DoDID'
+                        placeholder="DoDID"
+                    />
                 </Stack>
                 <Stack spacing={2}>
-                    <TextField id='outlined-basic'  label='rank' required value={form.rank} onChange={handleChange} name='rank' placeholder="Rank" />
+                    {/*Form for ranks, one select box for the type, the other changes based on the type chosen*/}
+                    <FormControl required>
+                        <FormLabel id="rank-type">Select Rank Type</FormLabel>
+                        <RadioGroup value={rankType} onChange={handleRankTypeChange}>
+                            <FormControlLabel value="enlisted" control={<Radio />} label="Enlisted" />
+                            <FormControlLabel value="officer" control={<Radio />} label="Officer" />
+                            <FormControlLabel value="warrant" control={<Radio />} label="Warrant Officer" />
+                            <FormControlLabel value="civilian" control={<Radio />} label="Civilian" />
+                        </RadioGroup>
+                        <FormLabel id="rank">Select Rank</FormLabel>
+                        <Select
+                            labelId="rank"
+                            id="rank"
+                            value={form.rank}
+                            label="Rank"
+                            onChange={handleChange}
+                            name='rank'
+                        >
+                            {rankType === 'enlisted' && enlistedRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+                            {rankType === 'officer' && officerRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+                            {rankType === 'warrant' && warrantRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+                            {rankType === 'civilian' && civilianRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+                        </Select>
+                    </FormControl>
                     {/*Form for account control, has checkbox and radio control*/}
                     <FormControl required>
                         <FormLabel id="role">Account Type</FormLabel>
@@ -162,11 +203,6 @@ export default function RegisterForm({onSubmit, error}){
                         </FormGroup>
                     </FormControl>
 
-                    <TextField id='outlined-basic'  label='DoDID' required value={form.DoDID}
-                        onChange={handleChange}
-                        name='DoDID'
-                        placeholder="DoDID"
-                    />
                     {/*UIC input with drop down, from upper fetch*/}
                     <FormControl fullWidth>
                         <InputLabel id='uic'>UIC</InputLabel>
@@ -190,7 +226,7 @@ export default function RegisterForm({onSubmit, error}){
                 <Button type="button" variant="outlined" color="secondary" onClick={handleClear}>Clear Form</Button>
             </Stack>
 
-            {(localError || error)}
+            {(localError || error) && <p>{localError || error}</p>}
         </form>
     )
 }
