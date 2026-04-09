@@ -1,224 +1,245 @@
-import {Box, Button, Chip, Divider, Paper, Typography} from '@mui/material';
-import {useState} from 'react';
-import PdfModalViewer from '../components/PdfModalViewer';
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-
+import {
+    Alert,
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Chip,
+    Container,
+    Divider,
+    Stack,
+    Typography,
+    CircularProgress,
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import PdfModalViewer from "../components/PdfModalViewer";
 
 export default function EndItemPage() {
-  const [openPdf, setOpenPdf] = useState(false);
+    const { id } = useParams();
+    const navigate = useNavigate();
 
-  const item = {
-    inventoryName: "AN/PRC-117G",
-    nsn: "5820-01-598-1234",
-    commonName: "Radio Set",
-    ui: "EA",
-    aac: "AAC-12",
-    description: "Multi-band manpack radio used for tactical communications.",
-    lastSeen: "Warehouse A - Shelf 4",
-    imageUrl: "/radio-photo.png",
-    pdfUrl: "/pdfs/P05049 PUBLIC A 1.pdf",
-  };
+    const [item, setItem] = useState(null);
+    const [openPdf, setOpenPdf] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
-  return (
-    <Box sx={styles.page}>
-      <Box sx={styles.header}>
-        <Box>
-          <Typography variant="h4" fontWeight={700}>
-            End Item Details
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Detailed equipment information
-          </Typography>
-        </Box>
+    useEffect(() => {
+        fetch(`http://localhost:8080/end-items/${id}`)
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error("Failed to fetch item");
+                }
+                return res.json();
+            })
+            .then((data) => {
+                setItem(data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error("Fetch error:", err);
+                setError("Error loading item");
+                setLoading(false);
+            });
+    }, [id]);
 
-        <Chip label={`NSN: ${item.nsn}`} variant="outlined" color="primary" />
-      </Box>
+    if (loading) {
+        return (
+            <Container maxWidth="lg" sx={{ py: 4 }}>
+                <Stack
+                    spacing={2}
+                    alignItems="center"
+                    justifyContent="center"
+                    sx={{ minHeight: "60vh" }}
+                >
+                    <CircularProgress />
+                    <Typography>Loading end item...</Typography>
+                </Stack>
+            </Container>
+        );
+    }
 
-      <Divider sx={{ width: "100%" }} />
+    if (error) {
+        return (
+            <Container maxWidth="lg" sx={{ py: 4 }}>
+                <Alert severity="error">{error}</Alert>
+            </Container>
+        );
+    }
 
-      <Paper elevation={1} sx={styles.mainCard}>
-        <Box sx={styles.titleSection}>
-          <Typography variant="h5" fontWeight={600}>
-            {item.inventoryName}
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            {item.nsn}
-          </Typography>
-        </Box>
+    if (!item || !item.endItem) {
+        return (
+            <Container maxWidth="lg" sx={{ py: 4 }}>
+                <Alert severity="warning">Item not found</Alert>
+            </Container>
+        );
+    }
 
-        <Box sx={styles.topGrid}>
-          <Box sx={styles.leftColumn}>
-            <Button
-              variant="outlined"
-              startIcon={<PictureAsPdfIcon />}
-              onClick={() => setOpenPdf(true)}
-              sx={styles.pdfButton}
-            >
-              Open End Item BOM PDF
-            </Button>
+    const endItem = item.endItem;
+    const imageUrl = endItem.image || "/no_image_found_placeholder.png";
 
-            <Paper variant="outlined" sx={styles.infoCard}>
-              <Typography
-                variant="subtitle2"
-                color="text.secondary"
-                gutterBottom
-              >
-                Common Name / Nickname
-              </Typography>
-              <Typography variant="body1" fontWeight={500}>
-                {item.commonName}
-              </Typography>
-            </Paper>
+    return (
+        <Container maxWidth="lg" sx={{ py: 4 }}>
+            <Stack spacing={3}>
+                <Stack
+                    direction={{ xs: "column", md: "row" }}
+                    justifyContent="space-between"
+                    alignItems={{ xs: "flex-start", md: "center" }}
+                    spacing={2}
+                >
+                    <Button
+                        startIcon={<ArrowBackIcon />}
+                        onClick={() => navigate("/equipment")}
+                        variant="outlined"
+                    >
+                        Back to Equipment
+                    </Button>
 
-            <Box sx={styles.smallInfoGrid}>
-              <Paper variant="outlined" sx={styles.smallInfoCard}>
-                <Typography variant="subtitle2" color="text.secondary">
-                  UI
-                </Typography>
-                <Typography variant="h6" fontWeight={600}>
-                  {item.ui}
-                </Typography>
-              </Paper>
+                    <Box>
+                        <Typography variant="h4" fontWeight={700}>
+                            End Item Details
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Detailed equipment information
+                        </Typography>
+                    </Box>
 
-              <Paper variant="outlined" sx={styles.smallInfoCard}>
-                <Typography variant="subtitle2" color="text.secondary">
-                  AAC
-                </Typography>
-                <Typography variant="h6" fontWeight={600}>
-                  {item.aac}
-                </Typography>
-              </Paper>
-            </Box>
-          </Box>
+                    <Chip
+                        label={`NIIN: ${endItem.niin}`}
+                        variant="outlined"
+                        color="primary"
+                    />
+                </Stack>
 
-          <Paper variant="outlined" sx={styles.imageCard}>
-            <Box
-              component="img"
-              src={item.imageUrl}
-              alt={item.commonName}
-              sx={styles.image}
-            />
-          </Paper>
-        </Box>
+                <Divider />
 
-        <Paper variant="outlined" sx={styles.sectionCard}>
-          <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-            Description
-          </Typography>
-          <Typography variant="body1">{item.description}</Typography>
-        </Paper>
+                <Card variant="outlined">
+                    <CardContent>
+                        <Stack spacing={3}>
+                            <Box>
+                                <Typography variant="h5" fontWeight={600}>
+                                    {endItem.description}
+                                </Typography>
+                                <Typography variant="body1" color="text.secondary">
+                                    LIN: {endItem.lin}
+                                </Typography>
+                            </Box>
 
-        <Paper variant="outlined" sx={styles.sectionCard}>
-          <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-            Last Seen
-          </Typography>
-          <Typography variant="body1">{item.lastSeen}</Typography>
-        </Paper>
+                            <Stack
+                                direction={{ xs: "column", md: "row" }}
+                                spacing={3}
+                                alignItems="stretch"
+                            >
+                                <Stack spacing={2} sx={{ flex: 1.2 }}>
+                                    <Button
+                                        variant="outlined"
+                                        startIcon={<PictureAsPdfIcon />}
+                                        onClick={() => setOpenPdf(true)}
+                                        sx={{ alignSelf: "flex-start" }}
+                                    >
+                                        Open End Item BOM PDF
+                                    </Button>
 
-        <Button variant="contained" size="large" sx={styles.actionButton}>
-          Start / Open Inventory
-        </Button>
-      </Paper>
+                                    <Card variant="outlined">
+                                        <CardContent>
+                                            <Typography
+                                                variant="subtitle2"
+                                                color="text.secondary"
+                                                gutterBottom
+                                            >
+                                                Description
+                                            </Typography>
+                                            <Typography variant="body1" fontWeight={500}>
+                                                {endItem.description}
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
 
-      <PdfModalViewer
-        open={openPdf}
-        onClose={() => setOpenPdf(false)}
-        pdfUrl={item.pdfUrl}
-      />
-    </Box>
-  );
+                                    <Stack
+                                        direction={{ xs: "column", sm: "row" }}
+                                        spacing={2}
+                                    >
+                                        <Card variant="outlined" sx={{ flex: 1 }}>
+                                            <CardContent sx={{ textAlign: "center" }}>
+                                                <Typography variant="subtitle2" color="text.secondary">
+                                                    FSC
+                                                </Typography>
+                                                <Typography variant="h6" fontWeight={600}>
+                                                    {endItem.fsc}
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+
+                                        <Card variant="outlined" sx={{ flex: 1 }}>
+                                            <CardContent sx={{ textAlign: "center" }}>
+                                                <Typography variant="subtitle2" color="text.secondary">
+                                                    Auth Qty
+                                                </Typography>
+                                                <Typography variant="h6" fontWeight={600}>
+                                                    {endItem.auth_qty}
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                    </Stack>
+                                </Stack>
+
+                                <Card
+                                    variant="outlined"
+                                    sx={{
+                                        flex: 1,
+                                        minHeight: 280,
+                                        overflow: "hidden",
+                                        bgcolor: "grey.50",
+                                    }}
+                                >
+                                    <Box
+                                        component="img"
+                                        src={imageUrl}
+                                        alt={endItem.description}
+                                        sx={{
+                                            width: "100%",
+                                            height: "100%",
+                                            minHeight: 280,
+                                            objectFit: "cover",
+                                            display: "block",
+                                        }}
+                                    />
+                                </Card>
+                            </Stack>
+
+                            <Card variant="outlined">
+                                <CardContent>
+                                    <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                                        NIIN
+                                    </Typography>
+                                    <Typography variant="body1">{endItem.niin}</Typography>
+                                </CardContent>
+                            </Card>
+
+                            <Card variant="outlined">
+                                <CardContent>
+                                    <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                                        LIN
+                                    </Typography>
+                                    <Typography variant="body1">{endItem.lin}</Typography>
+                                </CardContent>
+                            </Card>
+
+                            <Button variant="contained" size="large" fullWidth>
+                                Start / Open Inventory
+                            </Button>
+                        </Stack>
+                    </CardContent>
+                </Card>
+
+                <PdfModalViewer
+                    open={openPdf}
+                    onClose={() => setOpenPdf(false)}
+                    pdfUrl="/pdfs/DET10_FWD_SHR_OCT25_FLAT.pdf"
+                />
+            </Stack>
+        </Container>
+    );
 }
-
-const styles = {
-  page: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 3,
-    p: 3,
-    width: "100%",
-    maxWidth: 1200,
-    mx: "auto",
-  },
-
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: { xs: "flex-start", sm: "center" },
-    flexDirection: { xs: "column", sm: "row" },
-    gap: 2,
-    width: "100%",
-  },
-
-  mainCard: {
-    p: { xs: 2, md: 3 },
-    borderRadius: 2,
-    display: "flex",
-    flexDirection: "column",
-    gap: 3,
-  },
-
-  titleSection: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 0.5,
-  },
-
-  topGrid: {
-    display: "grid",
-    gridTemplateColumns: { xs: "1fr", md: "1.2fr 1fr" },
-    gap: 3,
-    alignItems: "stretch",
-  },
-
-  leftColumn: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 2,
-  },
-
-  pdfButton: {
-    alignSelf: "flex-start",
-  },
-
-  infoCard: {
-    p: 2,
-    borderRadius: 2,
-  },
-
-  smallInfoGrid: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: 2,
-  },
-
-  smallInfoCard: {
-    p: 2,
-    borderRadius: 2,
-    textAlign: "center",
-  },
-
-  imageCard: {
-    minHeight: 280,
-    borderRadius: 2,
-    overflow: "hidden",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    bgcolor: "grey.50",
-  },
-
-  image: {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-  },
-
-  sectionCard: {
-    p: 2,
-    borderRadius: 2,
-  },
-
-  actionButton: {
-    alignSelf: "stretch",
-  },
-};
