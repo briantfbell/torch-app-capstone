@@ -26,5 +26,7 @@ exports.seed = async function (knex) {
   const endItems = await knex('end_items').select('id');
   const endItemIds = endItems.map(row => row.id);
 
-  await knex('components').insert([...(await createComponents(60, endItemIds))]);
+  await knex('components').insert([
+    ...(await createComponents(60, endItemIds)),
+  ]);
 };

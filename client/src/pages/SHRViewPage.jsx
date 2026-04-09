@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Document, Page, pdfjs } from "react-pdf";
-// remember to npm install react-pdf
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
-import { Box, Button, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 
@@ -17,6 +16,19 @@ export default function SHRViewPage() {
   const navigate = useNavigate();
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
+  const [containerWidth, setContainerWidth] = useState(null);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new ResizeObserver((entries) => {
+      setContainerWidth(entries[0].contentRect.width);
+    });
+
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
@@ -24,8 +36,19 @@ export default function SHRViewPage() {
 
 
   return (
-    <Box sx={styles.page}>
-      <Box sx={styles.header}>
+    // Whole thing felt too big, if it's messing things up change the below line back to: <Stack spacing={2} sx={{ width: "100%", p: 3 }}>
+    <Stack spacing={2} sx={{ width: "100%", p: 3, maxWidth: 1200, mx: "auto" }}>
+      {/* Header bar - if we wind up moving it into the MiniDrawer so be it */}
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        width="100%"
+      >
+        <Typography variant="h5" fontWeight={700}>
+          Sub Hand Receipt
+        </Typography>
+
         <Button
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate("/equipment")}
@@ -33,21 +56,33 @@ export default function SHRViewPage() {
         >
           Back to Equipment
         </Button>
-        <Typography variant="h5" fontWeight={700}>
-          Sub Hand Receipt
-        </Typography>
-      </Box>
+      </Stack>
 
-      <Box sx={styles.pdfContainer}>
+      {/* PDF container */}
+      <Stack
+        ref={containerRef}
+        alignItems="center"
+        sx={{ width: "100%", border: "1px solid", borderColor: "divider" }}
+      >
+        {/* IMPORTANT! This is hard-coded to a specific PDF; if we are going to do it by UIC it will need to be changed and probably the source will not be /Public */}
         <Document
           file="/pdfs/1B10_SHR_flat.pdf"
           onLoadSuccess={onDocumentLoadSuccess}
         >
-          <Page pageNumber={pageNumber} scale={1.4} />
+          <Page
+            pageNumber={pageNumber}
+            width={containerWidth ? containerWidth : undefined}
+          />
         </Document>
-      </Box>
+      </Stack>
 
-      <Box sx={styles.controls}>
+      {/* Page navigation bar for PDF */}
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="center"
+        spacing={2}
+      >
         <Button
           variant="outlined"
           disabled={pageNumber <= 1}
@@ -65,47 +100,7 @@ export default function SHRViewPage() {
         >
           Next Page
         </Button>
-      </Box>
-    </Box>
+      </Stack>
+    </Stack>
   );
 }
-
-// ============================================================
-// ALL STYLES IN ONE PLACE
-// ============================================================
-// To change how something looks, find its key here and edit the sx values
-// MUI sx props use the same names as CSS but camelCased (e.g. marginBottom = mb)
-
-const styles = {
-  page: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 2,
-    p: 3,
-    maxWidth: 900,
-    mx: "auto",
-    width: "100%",
-  },
-
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "122%",
-  },
-
-  pdfContainer: {
-    width: "100%",
-    display: "flex",
-    justifyContent: "center",
-    border: "2px solid #d9d9d9",
-  },
-
-  controls: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 2,
-  },
-};

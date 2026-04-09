@@ -1,79 +1,101 @@
 const rawModels = require('../models/rawModels');
+const { readSheet, parseData } = require('read-excel-file/node');
 
-exports.createRaw = async (
-  {
-    name_first: users_data_name_first,
-    name_last: users_data_name_last,
-    email: users_data_email,
-    phone: users_data_phone,
-    rank: users_data_rank,
-    uic_id: users_data_uic_id,
-    role: users_data_role,
-    dodid: users_data_dodid,
-  },
-  { uic: uics_uic, unit_name: uics_unit_name, parent_uic: uics_parent_uic },
-  {
-    fsc: end_items_fsc,
-    description: end_items_description,
-    niin: end_items_niin,
-    image: end_items_image,
-    auth_qty: end_items_auth_qty,
-    lin: end_items_lin,
-  },
-  {
-    niin: components_niin,
-    description: components_description,
-    ui: components_ui,
-    auth_qty: components_auth_qty,
-    image: components_image,
-    arc: components_arc,
-    end_item_id: components_end_item_id,
-  },
-  {
-    item_id: serial_items_item_id,
-    serial_number: serial_items_serial_number,
-    user_id: serial_items_user_id,
-    status: serial_items_status,
-  },
-) => {
-  return await rawModels.createRaw({
-    users: {
-      users_data_name_first,
-      users_data_name_last,
-      users_data_email,
-      users_data_phone,
-      users_data_rank,
-      users_data_uic_id,
-      users_data_role,
-      users_data_dodid,
-    },
-    uics: {
-      uics_uic,
-      uics_unit_name,
-      uics_parent_uic,
-    },
-    endItems: {
-      end_items_fsc,
-      end_items_description,
-      end_items_niin,
-      end_items_image,
-      end_items_auth_qty,
-      end_items_lin,
-    },
-    components: {
-      components_niin,
-      components_description,
-      components_ui,
-      components_auth_qty,
-      components_image,
-      components_arc,
-      components_end_item_id,
-    },
-    serialItems: {
-      serial_items_item_id,
-      serial_items_serial_number,
-      serial_items_user_id,
-      serial_items_status,
-    },
-  });
+exports.createRaw = async ({ file }) => {
+  if (!file) {
+    return res.status(400).send('No file uploaded.');
+  }
+
+  try {
+    const data = await readSheet(file.buffer);
+
+    const schema = {
+      lin: {
+        column: 'LIN Number / DODIC',
+        type: String,
+      },
+      fsc: {
+        column: 'FSC',
+        type: Number,
+        required: true,
+      },
+      niin: {
+        column: 'Material',
+        type: String,
+        required: true,
+      },
+      description: {
+        column: 'Material Description',
+        type: String,
+        required: true,
+      },
+      auth_qty: {
+        column: 'Stock',
+        type: Number,
+        required: true,
+      },
+      // ui: {
+      //   column: 'Unit of Measure',
+      //   type: String,
+      //   required: true,
+      // },
+      // serial_number: {
+      //   column: 'Serial Number',
+      //   type: Number,
+      //   required: true,
+      // },
+    };
+
+    const results = parseData(data, schema);
+    const errors = [];
+    const objects = [];
+
+    let row = 1;
+
+    for (const { errors: errorsInRow, object } of results) {
+      if (errorsInRow) {
+        for (const error of errorsInRow) {
+          errors.push({ error, row });
+        }
+      } else {
+        objects.push(object);
+      }
+      row++;
+    }
+
+    if (errors.length > 0) {
+      for (const { error, row } of errors) {
+        console.error(
+          'Error in data row',
+          row,
+          'column',
+          error.column,
+          ':',
+          error.error,
+          error.reason || '',
+        );
+      }
+    } else {
+      // console.log('Objects:', objects);
+      for (let obj of objects) {
+        const match = await db('end_items')
+          .where({
+            niin: obj.niin,
+            fsc: obj.fsc,
+          })
+          .select('id')
+          .first();
+
+        if (match) {
+          errors.push(obj);
+        } else {
+          await db('end_items').insert(obj);
+        }
+      }
+    }
+  } catch (err) {
+    res
+      .status(err.status || 500)
+      .send('Error parsing Excel file: ' + err.message);
+  }
 };
