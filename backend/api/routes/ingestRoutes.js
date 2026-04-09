@@ -3,6 +3,7 @@ const multer = require('multer');
 const { readSheet, parseData } = require('read-excel-file/node');
 const auth = require('../middleware/auth');
 const db = require('../../db/knex');
+const authServices = require('../services/authServices');
 
 const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
@@ -11,6 +12,16 @@ router.post('/excel', upload.single('file'), async (req, res) => {
   if (!req.file) {
     return res.status(400).send('No file uploaded.');
   }
+
+  const token = req.cookies.token;
+  const user = await authServices.getMe(token);
+
+  console.log(user.role);
+
+  if (user.role.includes(r => r !== 'hrh')) {
+    return res.status(400).send('Only HRHs can upload files.');
+  }
+
   try {
     const data = await readSheet(req.file.buffer);
 
@@ -92,7 +103,7 @@ router.post('/excel', upload.single('file'), async (req, res) => {
         if (match) {
           errors.push(obj);
         } else {
-          await db.transaction(async (trx) => {
+          await db.transaction(async trx => {
             await Promise.all([
               trx('end_items').insert({
                 lin: obj.lin,
@@ -102,6 +113,7 @@ router.post('/excel', upload.single('file'), async (req, res) => {
               }),
               trx('serial_items').insert({
                 serial_number: obj.serial_number,
+                user_id: req.user.id,
               }),
               trx('components').insert({
                 ui: obj.ui,

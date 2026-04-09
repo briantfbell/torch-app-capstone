@@ -2,7 +2,7 @@ const authModels = require('../models/authModels');
 const uicsModels = require('../models/uicsModels');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-require('dotenv').config()
+require('dotenv').config();
 
 const SALT_ROUNDS = 10;
 
@@ -152,7 +152,6 @@ exports.registerUser = async ({
 };
 
 exports.login = async (email, password) => {
-
   if (!email || !password) {
     const error = new Error('Email and password are required.');
     error.status = 400;
@@ -175,7 +174,7 @@ exports.login = async (email, password) => {
     error.status = 401;
     throw error;
   }
-  console.log('JWT = ', process.env.JWT)
+  console.log('JWT = ', process.env.JWT);
   const token = jwt.sign(
     {
       id: user.id,

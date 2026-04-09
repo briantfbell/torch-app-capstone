@@ -14,7 +14,7 @@ Content-Type: application/json
   "phone": "6",
   "rank": "E-7",
   "uic": "WCAEB1",
-  "role": "[user, hrh]",
+  "role": "['user', 'hrh']",
   "dodid": "101"
 }
 
