@@ -6,6 +6,7 @@ exports.seed = async function(knex) {
 
   await knex('uics').insert([
     {uic: 'WCAEB1', unit_name: '1st PSYOP'},
-    {uic: 'WDSLC0', unit_name: '1SFG(A)'}
+    {uic: 'WDSLC0', unit_name: '1SFG(A), TISC'},
+    {uic: 'WJQ1D0', unit_name: '1SFG(A), MDSOC'},
   ]);
 };
