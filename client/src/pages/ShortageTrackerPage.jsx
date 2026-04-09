@@ -80,7 +80,7 @@ function ShortageTrackerPage() {
         >
           {/* Table headers & columns */}
           <Table aria-label="shortage tracker table">
-            <TableHead sx={{ backgroundColor: "primary.main" }}>
+            <TableHead sx={{ backgroundColor: "action.selected" }}>
               <TableRow>
                 <TableCell>End Item</TableCell>
                 <TableCell>Component NIIN</TableCell>
