@@ -5,17 +5,17 @@ import {
     Card,
     CardContent,
     Chip,
+    CircularProgress,
     Container,
     Divider,
     Stack,
     Typography,
-    CircularProgress,
-} from "@mui/material";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import PdfModalViewer from "../components/PdfModalViewer";
+} from '@mui/material';
+import {useEffect, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import PdfModalViewer from '../components/PdfModalViewer';
 
 export default function EndItemPage() {
     const { id } = useParams();
@@ -27,7 +27,9 @@ export default function EndItemPage() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        fetch(`http://localhost:8080/end-items/${id}`)
+        fetch(`http://localhost:8080/end-items/${id}`, {
+            credentials: 'include'
+        })
             .then((res) => {
                 if (!res.ok) {
                     throw new Error("Failed to fetch item");

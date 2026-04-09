@@ -36,7 +36,7 @@ const uicsRoutes = require('./routes/uicsRoutes');
 const serialItemsRoutes = require('./routes/serialItemsRoutes');
 const componentsRoutes = require('./routes/componentsRoutes');
 const endItemsRoutes = require('./routes/endItemsRoutes');
-const ingestRoutes = require('./routes/ingestRoutesBackup');
+const ingestRoutes = require('./routes/ingestRoutes');
 const historyRoutes = require('./routes/historyRoutes');
 
 // future dev

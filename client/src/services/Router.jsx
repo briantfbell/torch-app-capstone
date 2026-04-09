@@ -12,7 +12,7 @@ import SplashPage from '../pages/SplashPage';
 import UserSettings from '../pages/UserSettings.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 
-export default function MainRouter() {
+export default function MainRouter({ mode, onToggleTheme }) {
   return (
     <AuthProvider>
       <Router>
@@ -23,7 +23,7 @@ export default function MainRouter() {
             path="/*"
             element={
               <ProtectedRoute>
-                <MiniDrawer>
+                <MiniDrawer mode={mode} onToggleTheme={onToggleTheme}>
                   <Routes>
                     <Route path="/Ingest" element={<Ingest />} />
                     <Route path="/equipment" element={<EquipmentPage />} />
@@ -42,6 +42,7 @@ export default function MainRouter() {
                     <Route path="/equipment/:id" element={<EndItemPage />} />
                     <Route path="/user-settings" element={<UserSettings />} />
                     <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/ingest" element={<Ingest/>}/>
                     <Route path="/dashboard" element={<Ingest />} />
                   </Routes>
                 </MiniDrawer>
