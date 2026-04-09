@@ -11,8 +11,7 @@ exports.insertSerializedItem = async (obj, userId) => {
   }
 
   await db.transaction(async trx => {
-    const [existingUic, [endItem]] = await Promise.all([
-      trx('uics').where({ uic: obj.uic }).select('id').first(),
+    const [[endItem]] = await Promise.all([
       trx('end_items')
         .insert({
           lin: obj.lin,
@@ -34,10 +33,6 @@ exports.insertSerializedItem = async (obj, userId) => {
         cost: endItem.cost,
       }),
     ];
-
-    if (!existingUic) {
-      inserts.push(trx('uics').insert({ uic: obj.uic }));
-    }
 
     await Promise.all(inserts);
   });

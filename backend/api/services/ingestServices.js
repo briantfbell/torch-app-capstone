@@ -2,11 +2,6 @@ const ingestModels = require('../models/ingestModels');
 const { readSheet, parseData } = require('read-excel-file/node');
 
 const schema = {
-  uic: {
-    column: 'DoD Activity Address Code',
-    type: String,
-    required: true,
-  },
   lin: {
     column: 'LIN Number / DODIC',
     type: String,
