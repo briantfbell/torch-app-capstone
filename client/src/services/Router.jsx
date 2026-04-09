@@ -24,6 +24,7 @@ export default function MainRouter() {
                     <ProtectedRoute>
                         <MiniDrawer>
                             <Routes>
+                                <Route path="/Ingest" element={<Ingest/>}/>
                                 <Route path="/equipment" element={<EquipmentPage/>}/>
                                 <Route path="/equipment/sub-hand-receipt" element={<SHRViewPage/>}/>
                                 <Route path="/shortages" element={<ShortageTrackerPage/>}/>

@@ -7,10 +7,9 @@ import {
     Chip,
     Container,
     Divider,
-    Grid,
-    Skeleton,
     Stack,
     Typography,
+    CircularProgress,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -49,58 +48,14 @@ export default function EndItemPage() {
     if (loading) {
         return (
             <Container maxWidth="lg" sx={{ py: 4 }}>
-                <Stack spacing={3}>
-                    <Stack
-                        direction={{ xs: "column", sm: "row" }}
-                        justifyContent="space-between"
-                        alignItems={{ xs: "flex-start", sm: "center" }}
-                        spacing={2}
-                    >
-                        <Skeleton variant="rounded" width={180} height={40} />
-                        <Box>
-                            <Skeleton variant="text" width={260} height={48} />
-                            <Skeleton variant="text" width={220} height={24} />
-                        </Box>
-                        <Skeleton variant="rounded" width={150} height={32} />
-                    </Stack>
-
-                    <Skeleton variant="rectangular" height={2} />
-
-                    <Card variant="outlined">
-                        <CardContent>
-                            <Stack spacing={3}>
-                                <Box>
-                                    <Skeleton variant="text" width="50%" height={40} />
-                                    <Skeleton variant="text" width="25%" height={28} />
-                                </Box>
-
-                                <Grid container spacing={3}>
-                                    <Grid item xs={12} md={7}>
-                                        <Stack spacing={2}>
-                                            <Skeleton variant="rounded" width={220} height={40} />
-                                            <Skeleton variant="rounded" height={90} />
-                                            <Grid container spacing={2}>
-                                                <Grid item xs={6}>
-                                                    <Skeleton variant="rounded" height={90} />
-                                                </Grid>
-                                                <Grid item xs={6}>
-                                                    <Skeleton variant="rounded" height={90} />
-                                                </Grid>
-                                            </Grid>
-                                        </Stack>
-                                    </Grid>
-
-                                    <Grid item xs={12} md={5}>
-                                        <Skeleton variant="rounded" height={280} />
-                                    </Grid>
-                                </Grid>
-
-                                <Skeleton variant="rounded" height={88} />
-                                <Skeleton variant="rounded" height={88} />
-                                <Skeleton variant="rounded" height={44} />
-                            </Stack>
-                        </CardContent>
-                    </Card>
+                <Stack
+                    spacing={2}
+                    alignItems="center"
+                    justifyContent="center"
+                    sx={{ minHeight: "60vh" }}
+                >
+                    <CircularProgress />
+                    <Typography>Loading end item...</Typography>
                 </Stack>
             </Container>
         );
@@ -172,86 +127,87 @@ export default function EndItemPage() {
                                 </Typography>
                             </Box>
 
-                            <Grid container spacing={3}>
-                                <Grid item xs={12} md={7}>
-                                    <Stack spacing={2}>
-                                        <Button
-                                            variant="outlined"
-                                            startIcon={<PictureAsPdfIcon />}
-                                            onClick={() => setOpenPdf(true)}
-                                            sx={{ alignSelf: "flex-start" }}
-                                        >
-                                            Open End Item BOM PDF
-                                        </Button>
+                            <Stack
+                                direction={{ xs: "column", md: "row" }}
+                                spacing={3}
+                                alignItems="stretch"
+                            >
+                                <Stack spacing={2} sx={{ flex: 1.2 }}>
+                                    <Button
+                                        variant="outlined"
+                                        startIcon={<PictureAsPdfIcon />}
+                                        onClick={() => setOpenPdf(true)}
+                                        sx={{ alignSelf: "flex-start" }}
+                                    >
+                                        Open End Item BOM PDF
+                                    </Button>
 
-                                        <Card variant="outlined">
-                                            <CardContent>
-                                                <Typography
-                                                    variant="subtitle2"
-                                                    color="text.secondary"
-                                                    gutterBottom
-                                                >
-                                                    Description
+                                    <Card variant="outlined">
+                                        <CardContent>
+                                            <Typography
+                                                variant="subtitle2"
+                                                color="text.secondary"
+                                                gutterBottom
+                                            >
+                                                Description
+                                            </Typography>
+                                            <Typography variant="body1" fontWeight={500}>
+                                                {endItem.description}
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
+
+                                    <Stack
+                                        direction={{ xs: "column", sm: "row" }}
+                                        spacing={2}
+                                    >
+                                        <Card variant="outlined" sx={{ flex: 1 }}>
+                                            <CardContent sx={{ textAlign: "center" }}>
+                                                <Typography variant="subtitle2" color="text.secondary">
+                                                    FSC
                                                 </Typography>
-                                                <Typography variant="body1" fontWeight={500}>
-                                                    {endItem.description}
+                                                <Typography variant="h6" fontWeight={600}>
+                                                    {endItem.fsc}
                                                 </Typography>
                                             </CardContent>
                                         </Card>
 
-                                        <Grid container spacing={2}>
-                                            <Grid item xs={12} sm={6}>
-                                                <Card variant="outlined">
-                                                    <CardContent sx={{ textAlign: "center" }}>
-                                                        <Typography variant="subtitle2" color="text.secondary">
-                                                            FSC
-                                                        </Typography>
-                                                        <Typography variant="h6" fontWeight={600}>
-                                                            {endItem.fsc}
-                                                        </Typography>
-                                                    </CardContent>
-                                                </Card>
-                                            </Grid>
-
-                                            <Grid item xs={12} sm={6}>
-                                                <Card variant="outlined">
-                                                    <CardContent sx={{ textAlign: "center" }}>
-                                                        <Typography variant="subtitle2" color="text.secondary">
-                                                            Auth Qty
-                                                        </Typography>
-                                                        <Typography variant="h6" fontWeight={600}>
-                                                            {endItem.auth_qty}
-                                                        </Typography>
-                                                    </CardContent>
-                                                </Card>
-                                            </Grid>
-                                        </Grid>
+                                        <Card variant="outlined" sx={{ flex: 1 }}>
+                                            <CardContent sx={{ textAlign: "center" }}>
+                                                <Typography variant="subtitle2" color="text.secondary">
+                                                    Auth Qty
+                                                </Typography>
+                                                <Typography variant="h6" fontWeight={600}>
+                                                    {endItem.auth_qty}
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
                                     </Stack>
-                                </Grid>
+                                </Stack>
 
-                                <Grid item xs={12} md={5}>
-                                    <Card
-                                        variant="outlined"
+                                <Card
+                                    variant="outlined"
+                                    sx={{
+                                        flex: 1,
+                                        minHeight: 280,
+                                        overflow: "hidden",
+                                        bgcolor: "grey.50",
+                                    }}
+                                >
+                                    <Box
+                                        component="img"
+                                        src={imageUrl}
+                                        alt={endItem.description}
                                         sx={{
+                                            width: "100%",
+                                            height: "100%",
                                             minHeight: 280,
-                                            overflow: "hidden",
-                                            bgcolor: "grey.50",
+                                            objectFit: "cover",
+                                            display: "block",
                                         }}
-                                    >
-                                        <Box
-                                            component="img"
-                                            src={imageUrl}
-                                            alt={endItem.description}
-                                            sx={{
-                                                width: "100%",
-                                                height: 280,
-                                                objectFit: "cover",
-                                                display: "block",
-                                            }}
-                                        />
-                                    </Card>
-                                </Grid>
-                            </Grid>
+                                    />
+                                </Card>
+                            </Stack>
 
                             <Card variant="outlined">
                                 <CardContent>
