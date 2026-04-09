@@ -92,21 +92,23 @@ router.post('/excel', upload.single('file'), async (req, res) => {
         if (match) {
           errors.push(obj);
         } else {
-          await db('end_items').insert({
-            lin: obj.lin,
-            fsc: obj.fsc,
-            niin: obj.niin,
-            description: obj.description,
-          });
-
-          await db('serial_items').insert({
-            serial_number: obj.serial_number,
-          });
-
-          await db('components').insert({
-            ui: obj.ui,
-            niin: obj.niin,
-            description: obj.description,
+          await db.transaction(async (trx) => {
+            await Promise.all([
+              trx('end_items').insert({
+                lin: obj.lin,
+                fsc: obj.fsc,
+                niin: obj.niin,
+                description: obj.description,
+              }),
+              trx('serial_items').insert({
+                serial_number: obj.serial_number,
+              }),
+              trx('components').insert({
+                ui: obj.ui,
+                niin: obj.niin,
+                description: obj.description,
+              }),
+            ]);
           });
         }
       }
