@@ -35,45 +35,6 @@ export default function SplashPage() {
     setPassword(e.target.value);
   };
 
-  //Submission handling
-  const handleLoginSubmit = async e => {
-    e.preventDefault();
-
-    const result = await tryLogin(email, password);
-
-    if (result?.token) {
-      await refreshUser();
-      navigate('/dashboard');
-    } else {
-      alert(result.message || 'Login failed, do it again.');
-    }
-  };
-
-  const [registerError, setRegisterError] = useState('');
-  const handleRegisterSubmit = async data => {
-    console.log(data);
-    try {
-      const res = await fetch(`${url}auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        setRegisterError(result.message || result.error);
-      }
-
-      //If success, go back to login
-      setRegisterError('');
-      setIsLogin(true);
-    } catch (err) {
-      setRegisterError('Something went wrong, please try again!');
-    }
-  };
-
-<<<<<<< HEAD
     //Submission handling
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
@@ -161,37 +122,4 @@ export default function SplashPage() {
         )
     }
     
-=======
-  if (isLogin) {
-    return (
-      <div className="loginContainer">
-        <Stack sx={{ width: 320, justifySelf: 'center' }}>
-          <LoginForm
-            handleLoginSubmit={handleLoginSubmit}
-            handleEmailInput={handleEmailInput}
-            handlePasswordInput={handlePasswordInput}
-            email={email}
-            password={password}
-          />
-          <p>Need an account?</p>
-          <Button variant="contained" onClick={() => handleLoginState()}>
-            Register
-          </Button>
-        </Stack>
-      </div>
-    );
-  } else if (!isLogin) {
-    return (
-      <div className="registerContainer">
-        <Stack sx={{ justifySelf: 'center' }}>
-          <RegisterForm onSubmit={handleRegisterSubmit} error={registerError} />
-          <p>Already have an account? Click here!</p>
-          <Button variant="contained" onClick={() => handleLoginState()}>
-            Return to Login
-          </Button>
-        </Stack>
-      </div>
-    );
-  }
->>>>>>> origin/main
 }

@@ -11,8 +11,6 @@ import ShortageTrackerPage from '../pages/ShortageTrackerPage';
 import SplashPage from '../pages/SplashPage';
 import UserSettings from '../pages/UserSettings.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
-import { AuthProvider } from '../contexts/AuthContext.jsx';
-import Dashboard from '../pages/Dashboard.jsx';
 
 export default function MainRouter() {
     return (
