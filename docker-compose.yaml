@@ -9,8 +9,10 @@ services:
       - "5173:5173"
     volumes:
       - ./client:/app
+      - client_node_modules:/app/node_modules
     depends_on:
-      - backend
+      backend:
+        condition: service_started
 
   backend:
     container_name: backend
@@ -24,13 +26,15 @@ services:
       - "8080:8080"
     volumes:
       - ./backend:/app
+      - backend_node_modules:/app/node_modules
     command: sh -c "npx knex migrate:latest --knexfile ./db/knexfile.js && npx knex seed:run --knexfile ./db/knexfile.js && npm start"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     container_name: db
-    image: postgres:latest
+    image: postgres:18
     restart: unless-stopped
     env_file:
       - ./backend/db/.env
@@ -39,4 +43,14 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./docker_db:/var/lib/postgresql/
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  client_node_modules:
+  backend_node_modules:
+  postgres_data:

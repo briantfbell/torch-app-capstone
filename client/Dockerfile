@@ -1,11 +1,13 @@
-FROM node:latest
+FROM node:20-bookworm
 
 WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
 
 COPY . /app/
 
 EXPOSE 5173
-
-RUN npm install
 
 CMD ["npm", "start"]
