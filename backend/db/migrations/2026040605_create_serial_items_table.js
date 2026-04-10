@@ -7,7 +7,6 @@ exports.up = function (knex) {
     table.text('common_name');
     table.integer('item_id').unsigned();
     table.integer('user_id').unsigned();
-    table.varchar('cost');
     table
       .foreign('item_id')
       .references('id')

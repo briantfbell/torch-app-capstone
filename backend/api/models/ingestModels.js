@@ -1,4 +1,5 @@
 const db = require('../../db/knex');
+const endItemsModels = require('../models/endItemsModels');
 
 exports.insertSerializedItem = async (obj, userId) => {
   const match = await db('serial_items')
@@ -11,8 +12,7 @@ exports.insertSerializedItem = async (obj, userId) => {
   }
 
   await db.transaction(async trx => {
-    const [existingUic, [endItem]] = await Promise.all([
-      trx('uics').where({ uic: obj.uic }).select('id').first(),
+    const [[endItem]] = await Promise.all([
       trx('end_items')
         .insert({
           lin: obj.lin,
@@ -20,7 +20,7 @@ exports.insertSerializedItem = async (obj, userId) => {
           niin: obj.niin,
           description: obj.description,
           auth_qty: obj.auth_qty || 1,
-          cost: `$${((Math.random() * 100000000) / 100).toFixed(2)}`,
+          cost: (Math.random() * 10000).toFixed(2),
         })
         .returning(['id', 'cost']),
     ]);
@@ -31,24 +31,25 @@ exports.insertSerializedItem = async (obj, userId) => {
         serial_number: obj.serial_number,
         user_id: userId,
         status: 'serviceable',
-        cost: endItem.cost,
       }),
     ];
-
-    if (!existingUic) {
-      inserts.push(trx('uics').insert({ uic: obj.uic }));
-    }
 
     await Promise.all(inserts);
   });
 };
 
 exports.insertComponent = async obj => {
+  const end_item = await endItemsModels.getEndItemByLin(obj.end_item_lin);
+
+  if (!end_item) return;
+
   await db('components').insert({
-    ui: obj.ui,
     niin: obj.niin,
     description: obj.description,
+    ui: obj.ui,
     auth_qty: obj.auth_qty || 1,
-    cost: `$${Math.round(Math.random() * 100000000)}`,
+    end_item_id: end_item.id,
+    serial_number: obj.serial_number || null,
+    cost: (Math.random() * 1000).toFixed(2),
   });
 };

@@ -24,6 +24,7 @@ exports.createComponent = async ({
   image,
   arc,
   end_item_lin,
+  serial_number,
 }) => {
   if (
     !niin ||
@@ -34,7 +35,7 @@ exports.createComponent = async ({
     !arc ||
     !end_item_lin
   ) {
-    const error = new Error('All fields are required.');
+    const error = new Error('All fields except serial number are required.');
     error.status = 400;
     throw error;
   }
@@ -49,6 +50,7 @@ exports.createComponent = async ({
       auth_qty,
       image,
       arc,
+      serial_number,
     },
     end_item_lin,
   );

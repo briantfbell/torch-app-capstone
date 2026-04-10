@@ -10,7 +10,7 @@ export default function Ingest() {
     }
   };
 
-  const handleUpload = async () => {
+  const handleUploadEndItems = async () => {
     if (!file) return;
 
     setStatus('uploading');
@@ -18,7 +18,7 @@ export default function Ingest() {
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://localhost:8080/ingest/excel', {
+      const response = await fetch('http://localhost:8080/ingest/end-items', {
         method: 'POST',
         credentials: 'include',
         body: formData,
@@ -26,6 +26,32 @@ export default function Ingest() {
 
       if (response.ok) {
         setStatus('success');
+        setFile(null);
+      } else {
+        setStatus('fail');
+      }
+    } catch {
+      setStatus('fail');
+    }
+  };
+
+  const handleUploadComponents = async () => {
+    if (!file) return;
+
+    setStatus('uploading');
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('http://localhost:8080/ingest/components', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      });
+
+      if (response.ok) {
+        setStatus('success');
+        setFile(null);
       } else {
         setStatus('fail');
       }
@@ -48,7 +74,19 @@ export default function Ingest() {
         </section>
       )}
 
-      {file && <button onClick={handleUpload}>Upload the file</button>}
+      {file && (
+        <button onClick={handleUploadEndItems} disabled={status === 'uploading'}>
+          Upload end items
+        </button>
+      )}
+      {file && (
+        <button
+          onClick={handleUploadComponents}
+          disabled={status === 'uploading'}
+        >
+          Upload components
+        </button>
+      )}
 
       {status === 'success' && <p>Upload successful!</p>}
       {status === 'fail' && <p>Upload failed.</p>}

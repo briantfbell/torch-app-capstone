@@ -1,4 +1,4 @@
-exports.up = function(knex) {
+exports.up = function (knex) {
   return knex.schema.createTable('history_current', table => {
     table.increments('id');
     table.boolean('seen').defaultTo(false).notNullable();
@@ -11,15 +11,15 @@ exports.up = function(knex) {
       .foreign('user_id')
       .references('id')
       .inTable('users')
-      .onDelete("CASCADE")
+      .onDelete('CASCADE');
     table
       .foreign('end_item_id')
       .references('id')
       .inTable('end_items')
-      .onDelete("CASCADE")
-  })
+      .onDelete('CASCADE');
+  });
 };
 
-exports.down = function(knex) {
+exports.down = function (knex) {
   return knex.schema.dropTableIfExists('history_current');
 };

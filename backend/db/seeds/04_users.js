@@ -3,19 +3,19 @@ const bcrypt = require('bcrypt');
 
 const createUsers = async num => {
   const hashWord = await bcrypt.hash('password', 10);
+  const roleArray = ['admin', 'hrh', 'sub-hrh', 'thr'];
 
-  const roleArray = ['admin', 'hrc', 'sub-hrh', 'thr'];
   let temp = [
     {
       username: faker.internet.username(),
       password: hashWord,
       name_first: faker.person.firstName(),
       name_last: faker.person.lastName(),
-      email: 'hrc',
+      email: 'hrh',
       phone: faker.phone.number(),
       rank_id: faker.number.int({ min: 2, max: 21 }),
       uic_id: faker.number.int({ min: 1, max: 2 }),
-      role: 'hrc',
+      role: 'hrh',
       dodid: faker.string.numeric(10),
     },
   ];
