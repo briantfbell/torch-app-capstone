@@ -6,7 +6,7 @@ exports.up = function (knex) {
     table.timestamp('last_seen');
     table.timestamp('archived_at').defaultTo(knex.fn.now()).notNullable();
     table.integer('user_id').unsigned();
-    table.integer('end_item_id').unsigned();
+    table.integer('component_id').unsigned();
     table.integer('serial_number').unsigned();
     table
       .foreign('user_id')
@@ -14,9 +14,9 @@ exports.up = function (knex) {
       .inTable('users')
       .onDelete('CASCADE');
     table
-      .foreign('end_item_id')
+      .foreign('component_id')
       .references('id')
-      .inTable('end_items')
+      .inTable('components')
       .onDelete('CASCADE');
     table
       .foreign('serial_number')
