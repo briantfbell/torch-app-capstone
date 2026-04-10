@@ -1,5 +1,6 @@
 const express = require('express');
 const adminAuth = require('../middleware/adminAuth');
+const hrhAuth = require('../middleware/hrhAuth');
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ const {
 router.get('/uic/:uic_id', getEndItemsByUicId);
 router.get('/:id', getEndItemById);
 router.get('/', getAllEndItems);
-router.post('/', createEndItem);
+router.post('/', hrhAuth, createEndItem);
 router.patch('/:id/complete', adminAuth, markEndItemComplete);
 router.patch('/:id', adminAuth, updateEndItem);
 router.delete('/:id', adminAuth, deleteEndItem);

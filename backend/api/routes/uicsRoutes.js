@@ -1,6 +1,7 @@
 const express = require('express');
 const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
+const hrhAuth = require('../middleware/hrhAuth');
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ const {
 
 router.get('/', getAllUics);
 router.get('/:id', getUicById);
-router.post('/', auth, adminAuth, createUic);
+router.post('/', auth, hrhAuth, createUic);
 router.patch('/:id', auth, adminAuth, updateUic);
 router.delete('/:id', auth, adminAuth, deleteUic);
 

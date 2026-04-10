@@ -47,8 +47,9 @@ const archivedHistoryRoutes = require('./routes/archivedHistoryRoutes');
 // const shortagesRoutes = require('./routes/shortagesRoutes');
 
 app.use('/auth', authRoutes);
-app.use('/users', auth, usersRoutes);
 app.use('/uics', uicsRoutes);
+
+app.use('/users', auth, usersRoutes);
 app.use('/serial-items', auth, serialItemsRoutes);
 app.use('/components', auth, componentsRoutes);
 app.use('/end-items', auth, endItemsRoutes);

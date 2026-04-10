@@ -1,5 +1,6 @@
 const express = require('express');
 const adminAuth = require('../middleware/adminAuth');
+const hrhAuth = require('../middleware/hrhAuth');
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ const {
 
 router.get('/:id', getCurrentHistoryById);
 router.get('/', getCurrentHistory);
-router.post('/', createCurrentHistory);
+router.post('/', hrhAuth, createCurrentHistory);
 router.patch('/:id', adminAuth, updateCurrentHistory);
 router.delete('/:id', adminAuth, deleteCurrentHistory);
 

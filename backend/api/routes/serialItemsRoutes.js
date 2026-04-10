@@ -1,5 +1,6 @@
 const express = require('express');
 const adminAuth = require('../middleware/adminAuth');
+const hrhAuth = require('../middleware/hrhAuth');
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ const {
 router.get('/uic/:uic_id', getSerialItemsByUicId);
 router.get('/:id', getSerialItemById);
 router.get('/', getAllSerialItems);
-router.post('/', createSerialItem);
+router.post('/', hrhAuth, createSerialItem);
 router.patch('/:id', adminAuth, updateSerialItem);
 router.delete('/:id', adminAuth, deleteSerialItem);
 
