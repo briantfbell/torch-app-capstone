@@ -21,5 +21,5 @@ exports.seed = async function (knex) {
 
   await knex.raw('ALTER SEQUENCE end_items_id_seq RESTART WITH 1');
 
-  await knex('end_items').insert([...(await createItems(30))]);
+  await knex('end_items').insert([...(await createItems(1))]);
 };

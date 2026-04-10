@@ -222,6 +222,14 @@ export default function MiniDrawer({children, mode, onToggleTheme}) {
                         <ListItemText>User Settings</ListItemText>
                     </ListItemButton>
                 </ListItem>
+                <ListItem disablePadding sx={{display: 'block'}} onClick={() => navigate('/ingest')}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Settings/>
+                        </ListItemIcon>
+                        <ListItemText>Upload Documents</ListItemText>
+                    </ListItemButton>
+                </ListItem>
                 <ListItem disablePadding sx={{display: 'block'}} onClick={handleLogout}>
                     <ListItemButton>
                         <ListItemIcon>
