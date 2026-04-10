@@ -26,7 +26,7 @@ PATCH http://localhost:8080/components/1
 Content-Type: application/json
 
 {
-  "auth_qty": 2
+  "auth_qty": 3
 }
 
 ### Delete component by id

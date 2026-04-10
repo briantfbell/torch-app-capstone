@@ -48,6 +48,7 @@ exports.createSerialItem = async (req, res) => {
       message: `SN: ${newSerialItem.serial_number} has been successfully posted.`,
     });
   } catch (err) {
+    console.log(err);
     res
       .status(err.status || 500)
       .json({ message: err.message || 'Internal server error.' });
