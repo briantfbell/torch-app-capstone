@@ -42,7 +42,18 @@ exports.createCurrentHistory = async currentHistoryData => {
 };
 
 exports.updateCurrentHistory = async (currentHistoryId, currentHistoryData) => {
-  const [currentHistory] = await baseQuery()
+  if (currentHistoryData.serial_number) {
+    serial_end_item = await db('serial_end_items')
+      .where('serial_end_items.serial_number', currentHistoryData.serial_number)
+      .select('id')
+      .first();
+
+    currentHistoryData.serial_number = serial_end_item.id;
+  }
+
+  console.log(currentHistoryData);
+
+  const [currentHistory] = await db('history_end_current')
     .where('id', currentHistoryId)
     .update(currentHistoryData)
     .returning('*');

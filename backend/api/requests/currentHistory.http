@@ -14,19 +14,19 @@ Content-Type: application/json
   "seen": true,
   "location": "test",
   "last_seen": "2019-12-01",
-  "serial_number": 9899208908
+  "serial_number": 817338633
 }
 
 ### Update current history for end item by id
-PATCH http://localhost:8080/current-history/end-items/12
+PATCH http://localhost:8080/current-history/end-items/6
 Content-Type: application/json
 
 {
-  "seen": false
+  "serial_number": 7487540981
 }
 
 ### Delete current history for end item by id
-DELETE http://localhost:8080/current-history/end-items/7
+DELETE http://localhost:8080/current-history/end-items/11
 
 ### GET current history for components
 GET http://localhost:8080/current-history/components
@@ -52,7 +52,7 @@ PATCH http://localhost:8080/current-history/components/1
 Content-Type: application/json
 
 {
-  "seen": false
+  "serial_number": 914733468
 }
 
 ### Delete current history for component by id
