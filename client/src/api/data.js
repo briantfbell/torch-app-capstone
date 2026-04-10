@@ -7,7 +7,7 @@ export const tryGetEndItems = async () => {
             headers: { "Content-type": "application/json; charset=UTF-8" },
             credentials: 'include'
         });
-        const data = res.json();
+        const data = await res.json();
 
         if (!res.ok) {
             return data;
@@ -27,7 +27,7 @@ export const tryGetSerialItems = async () => {
             headers: { "Content-type": "application/json; charset=UTF-8" },
             credentials: 'include'
         });
-        const data = res.json();
+        const data = await res.json();
 
         if (!res.ok) {
             return data;
