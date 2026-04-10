@@ -22,7 +22,7 @@ module.exports = (req, res, next) => {
 
     req.user = decoded; // assign user obj {id, email, role}
 
-    if (req.user.role.toLowerCase().trim() !== 'hrh') {
+    if (req.user.role.includes(r => r.toLowerCase().trim() !== 'hrh')) {
       return res.status(403).json({ message: 'HRH access only.' });
     }
 

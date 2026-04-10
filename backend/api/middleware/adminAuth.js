@@ -22,7 +22,7 @@ module.exports = (req, res, next) => {
 
     req.user = decoded; // assign user obj {id, email, role}
 
-    if (req.user.role.toLowerCase().trim() !== 'admin') {
+    if (req.user.role.includes(r => r.toLowerCase().trim() !== 'hrh')) {
       return res.status(403).json({ message: 'Admin access only.' });
     }
 
