@@ -26,7 +26,7 @@ exports.createArchivedHistory = async ({
   last_seen,
   serial_number,
 }) => {
-  if (!end_item_id || !user_id || !seen || !location || !last_seen || !serial_number) {
+  if (!end_item_id || !user_id || seen == null || !location || !last_seen || !serial_number) {
     const error = new Error('All fields are required.');
     error.status = 400;
     throw error;
@@ -81,7 +81,7 @@ exports.createComponentArchivedHistory = async ({
   last_seen,
   serial_number,
 }) => {
-  if (!component_id || !user_id || !seen || !location || !last_seen) {
+  if (!component_id || !user_id || seen == null || !location || !last_seen) {
     const error = new Error('All fields are required.');
     error.status = 400;
     throw error;

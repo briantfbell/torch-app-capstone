@@ -36,7 +36,7 @@ exports.createCurrentHistory = async ({
   if (
     !end_item_id ||
     !user_id ||
-    !seen ||
+    seen == null ||
     !location ||
     !last_seen ||
     !serial_number
@@ -94,7 +94,15 @@ exports.getComponentCurrentHistory = async query => {
 };
 
 exports.getComponentCurrentHistoryBySn = async serial_number => {
-  return await currentHistoryModels.getComponentCurrentHistoryBySn(serial_number);
+  return await currentHistoryModels.getComponentCurrentHistoryBySn(
+    serial_number,
+  );
+};
+
+exports.getUnserializedComponentCurrentHistory = async component_id => {
+  return await currentHistoryModels.getUnserializedComponentCurrentHistory(
+    component_id,
+  );
 };
 
 exports.getComponentCurrentHistoryById = async id => {
@@ -117,7 +125,7 @@ exports.createComponentCurrentHistory = async ({
   last_seen,
   serial_number,
 }) => {
-  if (!component_id || !user_id || !seen || !location || !last_seen) {
+  if (!component_id || !user_id || seen == null || !location || !last_seen) {
     const error = new Error('All fields are required.');
     error.status = 400;
     throw error;
@@ -125,7 +133,8 @@ exports.createComponentCurrentHistory = async ({
 
   let resolved_serial_number;
   if (serial_number) {
-    const serial_component_item = await serialItemsModels.getSerialComponentItemBySn(serial_number);
+    const serial_component_item =
+      await serialItemsModels.getSerialComponentItemBySn(serial_number);
     resolved_serial_number = serial_component_item.id;
   }
 

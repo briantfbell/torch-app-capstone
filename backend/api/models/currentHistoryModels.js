@@ -19,13 +19,7 @@ exports.getCurrentHistoryBySn = async sn => {
     .select('id')
     .first();
 
-  console.log(serial_end_item.id);
-
-  console.log(
-    await db('history_end_current')
-      .where('history_end_current.serial_number', serial_end_item.id)
-      .select('*'),
-  );
+  if (!serial_end_item) return null;
 
   return await db('history_end_current')
     .where('history_end_current.serial_number', serial_end_item.id)
@@ -43,15 +37,13 @@ exports.createCurrentHistory = async currentHistoryData => {
 
 exports.updateCurrentHistory = async (currentHistoryId, currentHistoryData) => {
   if (currentHistoryData.serial_number) {
-    serial_end_item = await db('serial_end_items')
+    const serial_end_item = await db('serial_end_items')
       .where('serial_end_items.serial_number', currentHistoryData.serial_number)
       .select('id')
       .first();
 
     currentHistoryData.serial_number = serial_end_item.id;
   }
-
-  console.log(currentHistoryData);
 
   const [currentHistory] = await db('history_end_current')
     .where('id', currentHistoryId)
@@ -89,6 +81,14 @@ exports.getComponentCurrentHistoryBySn = async serial_number => {
 
   return await db('history_component_current')
     .where('history_component_current.serial_number', serial_component_item.id)
+    .select('*')
+    .first();
+};
+
+exports.getUnserializedComponentCurrentHistory = async component_id => {
+  return await db('history_component_current')
+    .where('component_id', component_id)
+    .whereNull('serial_number')
     .select('*')
     .first();
 };
