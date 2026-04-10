@@ -34,6 +34,10 @@ const schema = {
     column: 'End Item LIN',
     type: String,
   },
+  // cost: {
+  //   column: 'Cost',
+  //   type: Number
+  // }
 };
 
 module.exports = { schema };
