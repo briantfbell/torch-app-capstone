@@ -1,6 +1,5 @@
 const ingestModels = require('../models/ingestModels');
 const serialItemsModels = require('../models/serialItemsModels');
-const componentsModels = require('../models/componentsModels');
 const { readSheet, parseData } = require('read-excel-file/node');
 const { schema } = require('../helpers/ingestSchema');
 
@@ -27,7 +26,7 @@ exports.ingestComponents = async (file, user) => {
     if (!obj.niin || !obj.end_item_lin) continue;
 
     if (obj.serial_number) {
-      const match = await componentsModels.getComponentBySn(obj.serial_number);
+      const match = await serialItemsModels.getSerialComponentItemBySn(obj.serial_number);
       if (match) {
         errors.push(obj);
         continue;

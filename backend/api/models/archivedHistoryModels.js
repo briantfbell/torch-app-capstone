@@ -1,38 +1,52 @@
 const db = require('../../db/knex');
 const { applyQueryFilters } = require('../helpers/applyQueryFilters');
 
-const baseQuery = () => db('history_archive').select('*');
+// --- history_end_archive ---
+
+const baseEndQuery = () => db('history_end_archive').select('*');
 
 exports.getArchivedHistory = async query => {
-  const archivedHistory = await applyQueryFilters(baseQuery(), query);
-
-  return archivedHistory;
+  return await applyQueryFilters(baseEndQuery(), query);
 };
 
 exports.getArchivedHistoryById = async id => {
-  return await baseQuery().where('history_archive.id', id).first();
+  return await baseEndQuery().where('history_end_archive.id', id).first();
 };
 
 exports.createArchivedHistory = async archivedHistoryData => {
-  const [archivedHistory] = await db('history_archive')
+  const [archivedHistory] = await db('history_end_archive')
     .insert(archivedHistoryData)
     .returning('*');
 
   return archivedHistory;
 };
 
-// exports.updateArchivedHistory = async (
-//   archivedHistoryId,
-//   archivedHistoryData,
-// ) => {
-//   const [archivedHistory] = await baseQuery()
-//     .where('id', archivedHistoryId)
-//     .update(archivedHistoryData)
-//     .returning('*');
+exports.deleteArchivedHistory = async id => {
+  return await baseEndQuery().where('id', id).del().returning('*');
+};
 
-//   return archivedHistory;
-// };
+// --- history_component_archive ---
 
-// exports.deleteArchivedHistory = async id => {
-//   return await baseQuery().where('id', id).del().returning('*');
-// };
+const baseComponentQuery = () => db('history_component_archive').select('*');
+
+exports.getComponentArchivedHistory = async query => {
+  return await applyQueryFilters(baseComponentQuery(), query);
+};
+
+exports.getComponentArchivedHistoryById = async id => {
+  return await baseComponentQuery()
+    .where('history_component_archive.id', id)
+    .first();
+};
+
+exports.createComponentArchivedHistory = async archivedHistoryData => {
+  const [archivedHistory] = await db('history_component_archive')
+    .insert(archivedHistoryData)
+    .returning('*');
+
+  return archivedHistory;
+};
+
+exports.deleteComponentArchivedHistory = async id => {
+  return await baseComponentQuery().where('id', id).del().returning('*');
+};

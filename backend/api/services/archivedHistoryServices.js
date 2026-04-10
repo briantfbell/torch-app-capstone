@@ -1,20 +1,21 @@
 const archivedHistoryModels = require('../models/archivedHistoryModels');
 
+// --- End item history ---
+
 exports.getArchivedHistory = async query => {
   return await archivedHistoryModels.getArchivedHistory(query);
 };
 
 exports.getArchivedHistoryById = async id => {
-  const currentArchivedHistory =
-    await archivedHistoryModels.getArchivedHistoryById(id);
+  const record = await archivedHistoryModels.getArchivedHistoryById(id);
 
-  if (!currentArchivedHistory) {
-    const error = new Error('This current history id does not exist.');
+  if (!record) {
+    const error = new Error('This archived history id does not exist.');
     error.status = 404;
     throw error;
   }
 
-  return currentArchivedHistory;
+  return record;
 };
 
 exports.createArchivedHistory = async ({
@@ -23,16 +24,9 @@ exports.createArchivedHistory = async ({
   seen,
   location,
   last_seen,
-  count_current,
+  serial_number,
 }) => {
-  if (
-    !end_item_id ||
-    !user_id ||
-    !seen ||
-    !location ||
-    !last_seen ||
-    !count_current
-  ) {
+  if (!end_item_id || !user_id || !seen || !location || !last_seen || !serial_number) {
     const error = new Error('All fields are required.');
     error.status = 400;
     throw error;
@@ -44,37 +38,74 @@ exports.createArchivedHistory = async ({
     seen,
     location,
     last_seen,
-    count_current,
+    serial_number,
   });
 };
 
-exports.updateArchivedHistory = async (id, currentArchivedHistoryData) => {
-  const existingArchivedHistory =
-    await archivedHistoryModels.getArchivedHistoryById(id);
+exports.deleteArchivedHistory = async id => {
+  const existing = await archivedHistoryModels.getArchivedHistoryById(id);
 
-  if (!existingArchivedHistory) {
-    const error = new Error('This current history id does not exist.');
+  if (!existing) {
+    const error = new Error('This archived history id does not exist.');
     error.status = 404;
     throw error;
   }
 
-  return await archivedHistoryModels.updateArchivedHistory(
-    id,
-    currentArchivedHistoryData,
-  );
+  const [deleted] = await archivedHistoryModels.deleteArchivedHistory(id);
+  return deleted;
 };
 
-exports.deleteArchivedHistory = async id => {
-  const existingArchivedHistory =
-    await archivedHistoryModels.getArchivedHistoryById(id);
+// --- Component history ---
 
-  if (!existingArchivedHistory) {
-    const error = new Error('This current history id does not exist.');
+exports.getComponentArchivedHistory = async query => {
+  return await archivedHistoryModels.getComponentArchivedHistory(query);
+};
+
+exports.getComponentArchivedHistoryById = async id => {
+  const record = await archivedHistoryModels.getComponentArchivedHistoryById(id);
+
+  if (!record) {
+    const error = new Error('This archived history id does not exist.');
     error.status = 404;
     throw error;
   }
 
-  const [deletedArchivedHistory] =
-    await archivedHistoryModels.deleteArchivedHistory(id);
-  return deletedArchivedHistory;
+  return record;
+};
+
+exports.createComponentArchivedHistory = async ({
+  component_id,
+  user_id,
+  seen,
+  location,
+  last_seen,
+  serial_number,
+}) => {
+  if (!component_id || !user_id || !seen || !location || !last_seen || !serial_number) {
+    const error = new Error('All fields are required.');
+    error.status = 400;
+    throw error;
+  }
+
+  return await archivedHistoryModels.createComponentArchivedHistory({
+    component_id,
+    user_id,
+    seen,
+    location,
+    last_seen,
+    serial_number,
+  });
+};
+
+exports.deleteComponentArchivedHistory = async id => {
+  const existing = await archivedHistoryModels.getComponentArchivedHistoryById(id);
+
+  if (!existing) {
+    const error = new Error('This archived history id does not exist.');
+    error.status = 404;
+    throw error;
+  }
+
+  const [deleted] = await archivedHistoryModels.deleteComponentArchivedHistory(id);
+  return deleted;
 };

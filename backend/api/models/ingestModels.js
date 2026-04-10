@@ -2,7 +2,7 @@ const db = require('../../db/knex');
 const endItemsModels = require('../models/endItemsModels');
 
 exports.insertSerializedItem = async (obj, userId) => {
-  const match = await db('serial_items')
+  const match = await db('serial_end_items')
     .where({ serial_number: obj.serial_number })
     .select('id')
     .first();
@@ -25,16 +25,12 @@ exports.insertSerializedItem = async (obj, userId) => {
         .returning(['id', 'cost']),
     ]);
 
-    const inserts = [
-      trx('serial_items').insert({
-        item_id: endItem.id,
-        serial_number: obj.serial_number,
-        user_id: userId,
-        status: 'serviceable',
-      }),
-    ];
-
-    await Promise.all(inserts);
+    await trx('serial_end_items').insert({
+      end_item_id: endItem.id,
+      serial_number: obj.serial_number,
+      user_id: userId,
+      status: 'serviceable',
+    });
   });
 };
 
@@ -49,7 +45,6 @@ exports.insertComponent = async obj => {
     ui: obj.ui,
     auth_qty: obj.auth_qty || 1,
     end_item_id: end_item.id,
-    serial_number: obj.serial_number || null,
     cost: (Math.random() * 1000).toFixed(2),
   });
 };

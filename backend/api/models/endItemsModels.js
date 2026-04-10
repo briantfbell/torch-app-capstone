@@ -17,8 +17,8 @@ exports.getEndItemsByUicId = async uic_id => {
   return await db('uics')
     .where('uics.id', uic_id)
     .join('users', 'uics.id', 'users.uic_id')
-    .join('serial_items', 'users.id', 'serial_items.user_id')
-    .join('end_items', 'serial_items.item_id', 'end_items.id')
+    .join('serial_end_items', 'users.id', 'serial_end_items.user_id')
+    .join('end_items', 'serial_end_items.end_item_id', 'end_items.id')
     .select('end_items.*');
 };
 
