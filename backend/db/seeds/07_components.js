@@ -3,7 +3,7 @@ const { faker } = require('@faker-js/faker');
 const UI_OPTIONS = ['EA', 'PR', 'BX', 'DZ', 'SE', 'KT'];
 const ARC_OPTIONS = ['A', 'B', 'C', 'X', 'N'];
 
-const createComponents = async (num, endItemIds) => {
+const createComponents = async (num) => {
   let temp = [];
   for (let i = 0; i < num; i++) {
     temp.push({
@@ -12,7 +12,8 @@ const createComponents = async (num, endItemIds) => {
       ui: faker.helpers.arrayElement(UI_OPTIONS),
       auth_qty: faker.number.int({ min: 1, max: 10 }),
       arc: faker.helpers.arrayElement(ARC_OPTIONS),
-      end_item_id: faker.helpers.arrayElement(endItemIds),
+      end_item_id: 1,
+      cost: (Math.random() * 1000).toFixed(2),
     });
   }
   return temp;
@@ -23,10 +24,8 @@ exports.seed = async function (knex) {
 
   await knex.raw('ALTER SEQUENCE components_id_seq RESTART WITH 1');
 
-  const endItems = await knex('end_items').select('id');
-  const endItemIds = endItems.map(row => row.id);
 
   await knex('components').insert([
-    ...(await createComponents(60, endItemIds)),
+    ...(await createComponents(1)),
   ]);
 };

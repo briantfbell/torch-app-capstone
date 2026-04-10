@@ -157,6 +157,7 @@ function InventoryTable() {
               <TableCell>Display Name</TableCell>
               <TableCell>Authorized Qty</TableCell>
               <TableCell>On Hand Qty</TableCell>
+              <TableCell>Variance</TableCell>
             </TableRow>
           </TableHead>
 
@@ -167,6 +168,7 @@ function InventoryTable() {
                 <TableCell>{item.partNumber}</TableCell>
                 <TableCell>{item.displayName}</TableCell>
                 <TableCell>{item.authQty}</TableCell>
+                {/* <TableCell>{item.}</TableCell> */}
                 <TableCell>
                   <TextField
                     type="number"

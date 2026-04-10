@@ -21,6 +21,14 @@ exports.getSerialItemsByUicId = async uic_id => {
     .select('serial_end_items.*');
 };
 
+exports.getSerialItemsByUicId = async uic_id => {
+  return await db('uics')
+    .where('uics.id', uic_id)
+    .join('users', 'uics.id', 'users.uic_id')
+    .join('serial_items', 'users.id', 'serial_items.user_id')
+    .select('serial_items.*');
+};
+
 exports.getSerialItemBySn = async serial_number => {
   return await baseEndQuery()
     .where('serial_end_items.serial_number', serial_number)
