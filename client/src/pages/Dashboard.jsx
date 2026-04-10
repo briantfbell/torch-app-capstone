@@ -2,14 +2,8 @@ import {Box, Card, CardContent, Stack, Typography} from '@mui/material';
 import {styled} from '@mui/material/styles';
 import {BarChart, PieChart, useDrawingArea} from '@mui/x-charts';
 import ShortageDataGrid from '../components/dashboard/ShortageDataGrid.jsx';
+import {useEffect, useState} from 'react';
 import {tryGetEndItems, tryGetSerialItems} from '../api/data.js';
-
-//DATA TESTERS
-const endItemList = await tryGetEndItems()
-const serialItemList = await tryGetSerialItems()
-
-
-console.log(endItemList, serialItemList)
 
 // MOCK DATA
 
@@ -20,23 +14,43 @@ const mockPieData = [
 
 const mockShortageDataset = [
   {
-    name: 'HQ Element',
+    name: '688904280 | 09dZKz',
     percent: 98.0,
   },
   {
-    name: 'Commo Det',
+    name: '939787549 | vXGoej',
     percent: 84.0,
   },
   {
-    name: '1st Platoon',
-    percent: 91.0,
+    name: '607077594 | c3drZu',
+    percent: 56.0,
   },
   {
-    name: '2nd Platoon',
+    name: '513184353 | F3VRnz',
     percent: 76.0,
   },
   {
-    name: 'Maintenance',
+    name: '251475425 | eIwb6z',
+    percent: 20.0,
+  },
+  {
+    name: '688908280 | 09dZKz',
+    percent: 98.0,
+  },
+  {
+    name: '931787549 | vXGoej',
+    percent: 84.0,
+  },
+  {
+    name: '607027597 | c3drZu',
+    percent: 91.0,
+  },
+  {
+    name: '513104314 | F3VRnz',
+    percent: 76.0,
+  },
+  {
+    name: '251474425 | eIwb6z',
     percent: 44.0,
   },
 ];
@@ -52,7 +66,7 @@ const barChartSettings = {
       },
     },
   ],
-  height: 200,
+  height: 300,
   width: 700,
 };
 
@@ -80,6 +94,32 @@ function PieCenterLabel({ children }) {
 }
 
 const Dashboard = () => {
+  const [endItems, setEndItems] = useState([])
+  const [serialItems, setSerialItems] = useState([])
+
+  useEffect(() => {
+    const getInitialData = async () => {
+      const endItemList = await tryGetEndItems()
+      setEndItems(endItemList.allEndItems ?? [])
+
+      const serialItemList = await tryGetSerialItems()
+      setSerialItems(serialItemList.allSerialItems ?? [])
+    }
+    getInitialData()
+  }, []);
+
+  console.log(endItems)
+
+  const completedTotalPie = endItems.filter(item => item.completed).length;
+  const notCompletedTotalPie = endItems.length - completedTotalPie;
+  const completedPercentPie = Math.floor((completedTotalPie / endItems.length) * 100);
+
+  const pieCompletedData = [{
+    value: completedTotalPie, label: "Completed"
+  }, {
+    value: notCompletedTotalPie, label: "Not Complete"
+  }]
+
   return (
     <>
       <Box sx={{ mx: 'auto', width: '100%' }}>
@@ -118,14 +158,14 @@ const Dashboard = () => {
                           <Typography>Inventory Completed</Typography>
                         </CardContent>
                       </Card>
-                      {/*<Card sx={{ flex: 1 }}>*/}
-                      {/*  <CardContent>*/}
-                      {/*    <Typography variant={'h3'} color={'success'}>*/}
-                      {/*      ##*/}
-                      {/*    </Typography>*/}
-                      {/*    <Typography>Verified</Typography>*/}
-                      {/*  </CardContent>*/}
-                      {/*</Card>*/}
+                      <Card sx={{ flex: 1 }}>
+                        <CardContent>
+                          <Typography variant={'h3'} color={'primary'}>
+                            {endItems.length}
+                          </Typography>
+                          <Typography>No. End Items</Typography>
+                        </CardContent>
+                      </Card>
                       <Card sx={{ flex: 1 }}>
                         <CardContent>
                           <Typography variant={'h3'} color={'error'}>
@@ -174,18 +214,27 @@ const Dashboard = () => {
                       </Stack>
 
                       <Stack direction={'column'} spacing={2}>
+                        {/*<PieChart*/}
+                        {/*  series={[{ data: mockPieData, innerRadius: 90 }]}*/}
+                        {/*  {...pieChartSize}*/}
+                        {/*>*/}
+                        {/*  <PieCenterLabel>*/}
+                        {/*    {mockPieData[0].value}*/}
+                        {/*  </PieCenterLabel>*/}
+                        {/*</PieChart>*/}
+                        <Typography variant={'overline'}>End Item Status</Typography>
                         <PieChart
-                          series={[{ data: mockPieData, innerRadius: 90 }]}
+                          series={[{ data: pieCompletedData, innerRadius: 90 }]}
                           {...pieChartSize}
                         >
                           <PieCenterLabel>
-                            {mockPieData[0].value}
+                            {completedPercentPie}
                           </PieCenterLabel>
                         </PieChart>
                         <BarChart
                           dataset={mockShortageDataset}
                           yAxis={[
-                            { scaleType: 'band', dataKey: 'name', width: 100 },
+                            { scaleType: 'band', dataKey: 'name', width: 150 },
                           ]}
                           series={[
                             {
