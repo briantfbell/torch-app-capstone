@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const auth = require('./middleware/auth');
 
 const app = express();
 
@@ -46,14 +47,14 @@ const archivedHistoryRoutes = require('./routes/archivedHistoryRoutes');
 // const shortagesRoutes = require('./routes/shortagesRoutes');
 
 app.use('/auth', authRoutes);
-app.use('/users', usersRoutes);
+app.use('/users', auth, usersRoutes);
 app.use('/uics', uicsRoutes);
-app.use('/serial-items', serialItemsRoutes);
-app.use('/components', componentsRoutes);
-app.use('/end-items', endItemsRoutes);
-app.use('/ingest', ingestRoutes);
-app.use('/current-history', currentHistoryRoutes);
-app.use('/archived-history', archivedHistoryRoutes);
+app.use('/serial-items', auth, serialItemsRoutes);
+app.use('/components', auth, componentsRoutes);
+app.use('/end-items', auth, endItemsRoutes);
+app.use('/ingest', auth, ingestRoutes);
+app.use('/current-history', auth, currentHistoryRoutes);
+app.use('/archived-history', auth, archivedHistoryRoutes);
 
 // future dev
 // app.use('/inventory-records', inventoryRecordsRoutes);
