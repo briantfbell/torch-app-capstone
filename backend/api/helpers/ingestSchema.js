@@ -18,16 +18,19 @@ const schema = {
   auth_qty: {
     column: 'Stock',
     type: Number,
+    value: 1,
   },
   ui: {
     column: 'Unit of Measure',
     type: String,
+    value: 'EA',
   },
   serial_number: {
     column: 'Serial Number',
     type: Number,
   },
   end_item_lin: {
+    // change to real document header
     column: 'END ITEM LIN',
     type: String,
   },

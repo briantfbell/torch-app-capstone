@@ -5,6 +5,7 @@ const {
   ingestEndItems,
 } = require('../controllers/ingestControllers');
 const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/adminAuth');
 
 const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();

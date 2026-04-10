@@ -5,7 +5,7 @@ exports.ingestComponents = async (req, res) => {
     return res.status(400).json({ message: 'No file uploaded.' });
   }
 
-  if (req.user.role.toLowerCase() !== 'hrh') {
+  if (req.user.role.toLowerCase().trim() !== 'hrh') {
     return res.status(403).json({ message: 'Only HRHs can upload files.' });
   }
 
@@ -26,7 +26,7 @@ exports.ingestEndItems = async (req, res) => {
     return res.status(400).json({ message: 'No file uploaded.' });
   }
 
-  if (req.user.role.toLowerCase() !== 'hrh') {
+  if (req.user.role.toLowerCase().trim() !== 'hrh') {
     return res.status(403).json({ message: 'Only HRHs can upload files.' });
   }
 

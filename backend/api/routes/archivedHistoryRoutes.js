@@ -1,5 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/adminAuth');
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ const {
 router.get('/:id', auth, getArchivedHistoryById);
 router.get('/', auth, getArchivedHistory);
 router.post('/', auth, createArchivedHistory);
-// router.patch('/:id', auth, updateArchivedHistory);
-// router.delete('/:id', auth, deleteArchivedHistory);
+// router.patch('/:id', auth, adminAuth, updateArchivedHistory);
+// router.delete('/:id', auth, adminAuth, deleteArchivedHistory);
 
 module.exports = router;

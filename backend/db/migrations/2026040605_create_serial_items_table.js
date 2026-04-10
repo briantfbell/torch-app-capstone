@@ -3,7 +3,7 @@ exports.up = function (knex) {
     table.increments('id');
     table.varchar('serial_number', 50).unique();
     table.timestamp('assigned_at').defaultTo(knex.fn.now());
-    table.string('status', 50);
+    table.string('status', 50).defaultTo('serviceable');
     table.text('common_name');
     table.integer('item_id').unsigned();
     table.integer('user_id').unsigned();
