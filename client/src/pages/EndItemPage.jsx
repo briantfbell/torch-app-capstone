@@ -180,6 +180,7 @@ export default function EndItemPage() {
                           {endItem.auth_qty}
                         </Typography>
                       </CardContent>
+                    </Card>
                   </Stack>
                 </Stack>
 
