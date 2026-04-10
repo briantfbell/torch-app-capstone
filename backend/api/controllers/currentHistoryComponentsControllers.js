@@ -37,9 +37,10 @@ exports.create = async (req, res) => {
         req.body.serial_number,
       );
     } else {
-      existing = await currentHistoryServices.getUnserializedComponentCurrentHistory(
-        req.body.component_id,
-      );
+      existing =
+        await currentHistoryServices.getUnserializedComponentCurrentHistory(
+          req.body.component_id,
+        );
     }
 
     if (existing) {
@@ -55,7 +56,6 @@ exports.create = async (req, res) => {
       message: `ID: ${newCurrentHistory.id} has been successfully created.`,
     });
   } catch (err) {
-    console.log(err);
     res
       .status(err.status || 500)
       .json({ message: err.message || 'Internal server error.' });

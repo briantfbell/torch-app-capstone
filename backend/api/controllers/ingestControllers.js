@@ -10,7 +10,6 @@ exports.ingestComponents = async (req, res) => {
 
     res.status(201).json({ message: 'Upload successful.' });
   } catch (err) {
-    console.log(err);
     res
       .status(err.status || 500)
       .send('Error parsing Excel file: ' + err.message);

@@ -22,7 +22,6 @@ exports.getSerialItemsByUicId = async uic_id => {
 };
 
 exports.getSerialItemBySn = async serial_number => {
-  console.log(serial_number);
   return await baseEndQuery()
     .where('serial_end_items.serial_number', serial_number)
     .first();
