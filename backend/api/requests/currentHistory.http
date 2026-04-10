@@ -2,31 +2,31 @@
 GET http://localhost:8080/current-history/end-items
 
 ### GET current history for end item by id
-GET http://localhost:8080/current-history/end-items/12
+GET http://localhost:8080/current-history/end-items/6
 
 ### Create current history for end item
 POST http://localhost:8080/current-history/end-items
 Content-Type: application/json
 
 {
-  "end_item_id": 2,
+  "end_item_id": 1,
   "user_id": 1,
   "seen": true,
   "location": "test",
   "last_seen": "2019-12-01",
-  "serial_number": 817338633
-}
-
-### Update current history for end item by id
-PATCH http://localhost:8080/current-history/end-items/6
-Content-Type: application/json
-
-{
   "serial_number": 7487540981
 }
 
+### Update current history for end item by id
+PATCH http://localhost:8080/current-history/end-items/12
+Content-Type: application/json
+
+{
+  "seen": false
+}
+
 ### Delete current history for end item by id
-DELETE http://localhost:8080/current-history/end-items/11
+DELETE http://localhost:8080/current-history/end-items/7
 
 ### GET current history for components
 GET http://localhost:8080/current-history/components
@@ -34,7 +34,7 @@ GET http://localhost:8080/current-history/components
 ### GET current history for component by id
 GET http://localhost:8080/current-history/components/1
 
-### Create current history for component
+### Create current history for component (with serial number)
 POST http://localhost:8080/current-history/components
 Content-Type: application/json
 
@@ -44,7 +44,19 @@ Content-Type: application/json
   "seen": true,
   "location": "test",
   "last_seen": "2019-12-01",
-  "serial_number": 817338633
+  "serial_number": "SN-002"
+}
+
+### Create current history for component (without serial number)
+POST http://localhost:8080/current-history/components
+Content-Type: application/json
+
+{
+  "component_id": 1,
+  "user_id": 1,
+  "seen": true,
+  "location": "test",
+  "last_seen": "2019-12-01"
 }
 
 ### Update current history for component by id
@@ -52,7 +64,7 @@ PATCH http://localhost:8080/current-history/components/1
 Content-Type: application/json
 
 {
-  "serial_number": 914733468
+  "seen": false
 }
 
 ### Delete current history for component by id

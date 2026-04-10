@@ -79,6 +79,20 @@ exports.getComponentCurrentHistoryById = async id => {
     .first();
 };
 
+exports.getComponentCurrentHistoryBySn = async serial_number => {
+  const serial_component_item = await db('serial_component_items')
+    .where('serial_component_items.serial_number', serial_number)
+    .select('id')
+    .first();
+
+  if (!serial_component_item) return null;
+
+  return await db('history_component_current')
+    .where('history_component_current.serial_number', serial_component_item.id)
+    .select('*')
+    .first();
+};
+
 exports.createComponentCurrentHistory = async currentHistoryData => {
   const [currentHistory] = await db('history_component_current')
     .insert(currentHistoryData)
@@ -88,6 +102,15 @@ exports.createComponentCurrentHistory = async currentHistoryData => {
 };
 
 exports.updateComponentCurrentHistory = async (id, currentHistoryData) => {
+  if (currentHistoryData.serial_number) {
+    const serial_component_item = await db('serial_component_items')
+      .where('serial_component_items.serial_number', currentHistoryData.serial_number)
+      .select('id')
+      .first();
+
+    currentHistoryData.serial_number = serial_component_item.id;
+  }
+
   const [currentHistory] = await baseComponentQuery()
     .where('id', id)
     .update(currentHistoryData)

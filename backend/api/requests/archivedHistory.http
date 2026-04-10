@@ -32,6 +32,5 @@ Content-Type: application/json
   "user_id": 1,
   "seen": true,
   "location": "test",
-  "last_seen": "2019-12-01",
-  "serial_number": 1
+  "last_seen": "2019-12-01"
 }

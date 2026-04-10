@@ -93,6 +93,10 @@ exports.getComponentCurrentHistory = async query => {
   return await currentHistoryModels.getComponentCurrentHistory(query);
 };
 
+exports.getComponentCurrentHistoryBySn = async serial_number => {
+  return await currentHistoryModels.getComponentCurrentHistoryBySn(serial_number);
+};
+
 exports.getComponentCurrentHistoryById = async id => {
   const record = await currentHistoryModels.getComponentCurrentHistoryById(id);
 
@@ -119,13 +123,19 @@ exports.createComponentCurrentHistory = async ({
     throw error;
   }
 
+  let resolved_serial_number;
+  if (serial_number) {
+    const serial_component_item = await serialItemsModels.getSerialComponentItemBySn(serial_number);
+    resolved_serial_number = serial_component_item.id;
+  }
+
   return await currentHistoryModels.createComponentCurrentHistory({
     component_id,
     user_id,
     seen,
     location,
     last_seen,
-    serial_number,
+    serial_number: resolved_serial_number,
   });
 };
 
