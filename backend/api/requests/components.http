@@ -4,6 +4,9 @@ GET http://localhost:8080/components
 ### GET component by id
 GET http://localhost:8080/components/5
 
+### GET component by uic id
+GET http://localhost:8080/components/uic/1
+
 ### Create a component
 POST http://localhost:8080/components
 Content-Type: application/json

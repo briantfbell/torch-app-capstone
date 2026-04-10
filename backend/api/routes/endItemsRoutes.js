@@ -5,6 +5,7 @@ const adminAuth = require('../middleware/adminAuth');
 const router = express.Router();
 
 const {
+  getEndItemsByUicId,
   getEndItemById,
   getAllEndItems,
   createEndItem,
@@ -13,6 +14,7 @@ const {
   markEndItemComplete,
 } = require('../controllers/endItemsControllers');
 
+router.get('/uic/:uic_id', auth, getEndItemsByUicId);
 router.get('/:id', auth, getEndItemById);
 router.get('/', auth, getAllEndItems);
 router.post('/', auth, createEndItem);
