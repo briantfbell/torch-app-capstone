@@ -8,7 +8,7 @@ const createItems = async num => {
       description: faker.commerce.productDescription(),
       niin: faker.string.numeric(9),
       auth_qty: faker.number.int({ min: 1, max: 3 }),
-      lin: faker.string.alphanumeric(6),
+      lin: faker.string.alphanumeric(6).toUpperCase(),
       cost: (Math.random() * 10000).toFixed(2),
     });
   }

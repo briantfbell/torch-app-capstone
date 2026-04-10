@@ -4,6 +4,9 @@ GET http://localhost:8080/end-items
 ### GET end item by id
 GET http://localhost:8080/end-items/1
 
+### GET end item by uic id
+GET http://localhost:8080/end-items/uic/1
+
 ### Create end item
 POST http://localhost:8080/end-items
 Content-Type: application/json

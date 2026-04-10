@@ -1,6 +1,6 @@
 const express = require('express');
-const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
+const hrhAuth = require('../middleware/hrhAuth');
 
 const router = express.Router();
 
@@ -12,10 +12,10 @@ const {
   // deleteArchivedHistory,
 } = require('../controllers/archivedHistoryControllers');
 
-router.get('/:id', auth, getArchivedHistoryById);
-router.get('/', auth, getArchivedHistory);
-router.post('/', auth, createArchivedHistory);
-// router.patch('/:id', auth, adminAuth, updateArchivedHistory);
-// router.delete('/:id', auth, adminAuth, deleteArchivedHistory);
+router.get('/:id', getArchivedHistoryById);
+router.get('/', getArchivedHistory);
+router.post('/', hrhAuth, createArchivedHistory);
+// router.patch('/:id',  adminAuth, updateArchivedHistory);
+// router.delete('/:id',  adminAuth, deleteArchivedHistory);
 
 module.exports = router;

@@ -1,10 +1,11 @@
 const express = require('express');
-const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
+const hrhAuth = require('../middleware/hrhAuth');
 
 const router = express.Router();
 
 const {
+  getSerialItemsByUicId,
   getSerialItemById,
   getAllSerialItems,
   createSerialItem,
@@ -12,10 +13,11 @@ const {
   deleteSerialItem,
 } = require('../controllers/serialItemsControllers');
 
-router.get('/:id', auth, getSerialItemById);
-router.get('/', auth, getAllSerialItems);
-router.post('/', auth, createSerialItem);
-router.patch('/:id', auth, updateSerialItem);
-router.delete('/:id', auth, deleteSerialItem);
+router.get('/uic/:uic_id', getSerialItemsByUicId);
+router.get('/:id', getSerialItemById);
+router.get('/', getAllSerialItems);
+router.post('/', hrhAuth, createSerialItem);
+router.patch('/:id', adminAuth, updateSerialItem);
+router.delete('/:id', adminAuth, deleteSerialItem);
 
 module.exports = router;
