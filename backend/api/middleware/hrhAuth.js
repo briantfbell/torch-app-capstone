@@ -1,6 +1,6 @@
 // adminAuth middleware — same as auth, but also enforces that the caller
 // has role === 'admin'. Use this instead of auth on routes that should be
-// restricted to admin users only (e.g. deleting users, bulk operations).
+// restricted to admin users only
 //
 // Returns 403 Forbidden (not 401) when the token is valid but the role
 // is insufficient — this lets the frontend distinguish "not logged in"

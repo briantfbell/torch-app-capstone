@@ -5,10 +5,6 @@ exports.ingestComponents = async (req, res) => {
     return res.status(400).json({ message: 'No file uploaded.' });
   }
 
-  if (req.user.role.toLowerCase().trim() !== 'hrh') {
-    return res.status(403).json({ message: 'Only HRHs can upload files.' });
-  }
-
   try {
     await ingestServices.ingestComponents(req.file, req.user);
 
@@ -24,10 +20,6 @@ exports.ingestComponents = async (req, res) => {
 exports.ingestEndItems = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded.' });
-  }
-
-  if (req.user.role.toLowerCase().trim() !== 'hrh') {
-    return res.status(403).json({ message: 'Only HRHs can upload files.' });
   }
 
   try {
