@@ -8,7 +8,6 @@ exports.up = function (knex) {
     table.string('image');
     table.string('arc');
     table.varchar('cost');
-    table.varchar('serial_number', 50).unique();
     table.integer('end_item_id').unsigned();
     table
       .foreign('end_item_id')

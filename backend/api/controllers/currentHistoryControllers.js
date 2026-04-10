@@ -1,5 +1,5 @@
 const currentHistoryServices = require('../services/currentHistoryServices');
-const archivedHistoryModels = require('../models/archivedHistoryModels');
+const archivedHistoryServices = require('../services/archivedHistoryServices');
 
 // --- End item history ---
 
@@ -26,7 +26,7 @@ exports.createCurrentHistory = async (req, res) => {
     const [existing] = await currentHistoryServices.getCurrentHistory(req.query);
 
     if (existing) {
-      await archivedHistoryModels.createArchivedHistory(existing);
+      await archivedHistoryServices.createArchivedHistory(existing);
       await currentHistoryServices.deleteCurrentHistory(existing.id);
     }
 
@@ -94,7 +94,7 @@ exports.createComponentCurrentHistory = async (req, res) => {
     const [existing] = await currentHistoryServices.getComponentCurrentHistory(req.query);
 
     if (existing) {
-      await archivedHistoryModels.createComponentArchivedHistory(existing);
+      await archivedHistoryServices.createComponentArchivedHistory(existing);
       await currentHistoryServices.deleteComponentCurrentHistory(existing.id);
     }
 
