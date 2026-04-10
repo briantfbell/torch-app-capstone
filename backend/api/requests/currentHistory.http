@@ -2,7 +2,7 @@
 GET http://localhost:8080/current-history/end-items
 
 ### GET current history for end item by id
-GET http://localhost:8080/current-history/end-items/1
+GET http://localhost:8080/current-history/end-items/2
 
 ### Create current history for end item
 POST http://localhost:8080/current-history/end-items
@@ -14,11 +14,11 @@ Content-Type: application/json
   "seen": true,
   "location": "test",
   "last_seen": "2019-12-01",
-  "count_current": 1
+  "serial_number": 1
 }
 
 ### Update current history for end item by id
-PATCH http://localhost:8080/current-history/end-items/1
+PATCH http://localhost:8080/current-history/end-items/7
 Content-Type: application/json
 
 {
@@ -26,7 +26,7 @@ Content-Type: application/json
 }
 
 ### Delete current history for end item by id
-DELETE http://localhost:8080/current-history/end-items/1
+DELETE http://localhost:8080/current-history/end-items/7
 
 ### GET current history for components
 GET http://localhost:8080/current-history/components
@@ -44,7 +44,7 @@ Content-Type: application/json
   "seen": true,
   "location": "test",
   "last_seen": "2019-12-01",
-  "count_current": 1
+  "serial_number": 2
 }
 
 ### Update current history for component by id
