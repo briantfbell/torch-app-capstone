@@ -93,7 +93,7 @@ exports.createComponentCurrentHistory = async ({
   last_seen,
   serial_number,
 }) => {
-  if (!component_id || !user_id || !seen || !location || !last_seen || !serial_number) {
+  if (!component_id || !user_id || !seen || !location || !last_seen) {
     const error = new Error('All fields are required.');
     error.status = 400;
     throw error;

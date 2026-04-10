@@ -3,14 +3,14 @@ const { applyQueryFilters } = require('../helpers/applyQueryFilters');
 
 // --- history_end_current ---
 
-const baseEndQuery = () => db('history_end_current').select('*');
+const baseQuery = () => db('history_end_current').select('*');
 
 exports.getCurrentHistory = async query => {
-  return await applyQueryFilters(baseEndQuery(), query);
+  return await applyQueryFilters(baseQuery(), query);
 };
 
 exports.getCurrentHistoryById = async id => {
-  return await baseEndQuery().where('history_end_current.id', id).first();
+  return await baseQuery().where('history_end_current.id', id).first();
 };
 
 exports.createCurrentHistory = async currentHistoryData => {
@@ -22,7 +22,7 @@ exports.createCurrentHistory = async currentHistoryData => {
 };
 
 exports.updateCurrentHistory = async (currentHistoryId, currentHistoryData) => {
-  const [currentHistory] = await baseEndQuery()
+  const [currentHistory] = await baseQuery()
     .where('id', currentHistoryId)
     .update(currentHistoryData)
     .returning('*');
@@ -31,7 +31,7 @@ exports.updateCurrentHistory = async (currentHistoryId, currentHistoryData) => {
 };
 
 exports.deleteCurrentHistory = async id => {
-  return await baseEndQuery().where('id', id).del().returning('*');
+  return await baseQuery().where('id', id).del().returning('*');
 };
 
 // --- history_component_current ---

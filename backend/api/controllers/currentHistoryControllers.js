@@ -29,9 +29,9 @@ exports.getCurrentHistoryById = async (req, res) => {
 
 exports.createCurrentHistory = async (req, res) => {
   try {
-    const [existing] = await currentHistoryServices.getCurrentHistory(
-      req.query,
-    );
+    const [existing] = await currentHistoryServices.getCurrentHistory({
+      serial_number: req.body.serial_number,
+    });
 
     if (existing) {
       await archivedHistoryServices.createArchivedHistory(existing);
@@ -55,6 +55,12 @@ exports.createCurrentHistory = async (req, res) => {
 
 exports.updateCurrentHistory = async (req, res) => {
   try {
+    const existing = await currentHistoryServices.getCurrentHistoryById(
+      req.params.id,
+    );
+
+    await archivedHistoryServices.createArchivedHistory(existing);
+
     const updatedCurrentHistory =
       await currentHistoryServices.updateCurrentHistory(
         req.params.id,
@@ -117,9 +123,11 @@ exports.getComponentCurrentHistoryById = async (req, res) => {
 
 exports.createComponentCurrentHistory = async (req, res) => {
   try {
-    const [existing] = await currentHistoryServices.getComponentCurrentHistory(
-      req.query,
-    );
+    const lookup = req.body.serial_number
+      ? { serial_number: req.body.serial_number }
+      : { component_id: req.body.component_id };
+
+    const [existing] = await currentHistoryServices.getComponentCurrentHistory(lookup);
 
     if (existing) {
       await archivedHistoryServices.createComponentArchivedHistory(existing);
@@ -143,6 +151,13 @@ exports.createComponentCurrentHistory = async (req, res) => {
 
 exports.updateComponentCurrentHistory = async (req, res) => {
   try {
+    const existing =
+      await currentHistoryServices.getComponentCurrentHistoryById(
+        req.params.id,
+      );
+
+    await archivedHistoryServices.createComponentArchivedHistory(existing);
+
     const updatedCurrentHistory =
       await currentHistoryServices.updateComponentCurrentHistory(
         req.params.id,
