@@ -14,7 +14,7 @@ Content-Type: application/json
   "seen": true,
   "location": "test",
   "last_seen": "2019-12-01",
-  "count_current": 1
+  "serial_number": 1
 }
 
 ### GET archived history for components
@@ -33,5 +33,5 @@ Content-Type: application/json
   "seen": true,
   "location": "test",
   "last_seen": "2019-12-01",
-  "count_current": 1
+  "serial_number": 1
 }
