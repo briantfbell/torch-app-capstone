@@ -22,6 +22,7 @@ exports.getSerialItemsByUicId = async uic_id => {
 };
 
 exports.getSerialItemBySn = async serial_number => {
+  console.log(serial_number);
   return await baseEndQuery()
     .where('serial_end_items.serial_number', serial_number)
     .first();
@@ -104,5 +105,8 @@ exports.updateSerialComponentItem = async (id, serialItemData) => {
 };
 
 exports.deleteSerialComponentItem = async id => {
-  return await db('serial_component_items').where('id', id).del().returning('*');
+  return await db('serial_component_items')
+    .where('id', id)
+    .del()
+    .returning('*');
 };

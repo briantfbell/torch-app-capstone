@@ -29,7 +29,7 @@ exports.getCurrentHistoryById = async (req, res) => {
 
 exports.createCurrentHistory = async (req, res) => {
   try {
-    const [existing] = await currentHistoryServices.getCurrentHistory({
+    const existing = await currentHistoryServices.getCurrentHistoryBySn({
       serial_number: req.body.serial_number,
     });
 
@@ -47,6 +47,7 @@ exports.createCurrentHistory = async (req, res) => {
       message: `ID: ${newCurrentHistory.id} has been successfully created.`,
     });
   } catch (err) {
+    console.log(err);
     res
       .status(err.status || 500)
       .json({ message: err.message || 'Internal server error.' });
@@ -127,7 +128,8 @@ exports.createComponentCurrentHistory = async (req, res) => {
       ? { serial_number: req.body.serial_number }
       : { component_id: req.body.component_id };
 
-    const [existing] = await currentHistoryServices.getComponentCurrentHistory(lookup);
+    const [existing] =
+      await currentHistoryServices.getComponentCurrentHistory(lookup);
 
     if (existing) {
       await archivedHistoryServices.createComponentArchivedHistory(existing);

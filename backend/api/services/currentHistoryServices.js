@@ -1,4 +1,5 @@
 const currentHistoryModels = require('../models/currentHistoryModels');
+const serialItemsModels = require('../models/serialItemsModels');
 
 // --- End item history ---
 
@@ -18,6 +19,12 @@ exports.getCurrentHistoryById = async id => {
   return record;
 };
 
+exports.getCurrentHistoryBySn = async sn => {
+  const record = await currentHistoryModels.getCurrentHistoryBySn(sn);
+
+  return record;
+};
+
 exports.createCurrentHistory = async ({
   end_item_id,
   user_id,
@@ -26,11 +33,21 @@ exports.createCurrentHistory = async ({
   last_seen,
   serial_number,
 }) => {
-  if (!end_item_id || !user_id || !seen || !location || !last_seen || !serial_number) {
+  if (
+    !end_item_id ||
+    !user_id ||
+    !seen ||
+    !location ||
+    !last_seen ||
+    !serial_number
+  ) {
     const error = new Error('All fields are required.');
     error.status = 400;
     throw error;
   }
+
+  const serial_end_item =
+    await serialItemsModels.getSerialItemBySn(serial_number);
 
   return await currentHistoryModels.createCurrentHistory({
     end_item_id,
@@ -38,7 +55,7 @@ exports.createCurrentHistory = async ({
     seen,
     location,
     last_seen,
-    serial_number,
+    serial_number: serial_end_item.id,
   });
 };
 
@@ -51,7 +68,10 @@ exports.updateCurrentHistory = async (id, currentHistoryData) => {
     throw error;
   }
 
-  return await currentHistoryModels.updateCurrentHistory(id, currentHistoryData);
+  return await currentHistoryModels.updateCurrentHistory(
+    id,
+    currentHistoryData,
+  );
 };
 
 exports.deleteCurrentHistory = async id => {
@@ -110,7 +130,8 @@ exports.createComponentCurrentHistory = async ({
 };
 
 exports.updateComponentCurrentHistory = async (id, currentHistoryData) => {
-  const existing = await currentHistoryModels.getComponentCurrentHistoryById(id);
+  const existing =
+    await currentHistoryModels.getComponentCurrentHistoryById(id);
 
   if (!existing) {
     const error = new Error('This current history id does not exist.');
@@ -118,11 +139,15 @@ exports.updateComponentCurrentHistory = async (id, currentHistoryData) => {
     throw error;
   }
 
-  return await currentHistoryModels.updateComponentCurrentHistory(id, currentHistoryData);
+  return await currentHistoryModels.updateComponentCurrentHistory(
+    id,
+    currentHistoryData,
+  );
 };
 
 exports.deleteComponentCurrentHistory = async id => {
-  const existing = await currentHistoryModels.getComponentCurrentHistoryById(id);
+  const existing =
+    await currentHistoryModels.getComponentCurrentHistoryById(id);
 
   if (!existing) {
     const error = new Error('This current history id does not exist.');
@@ -130,6 +155,7 @@ exports.deleteComponentCurrentHistory = async id => {
     throw error;
   }
 
-  const [deleted] = await currentHistoryModels.deleteComponentCurrentHistory(id);
+  const [deleted] =
+    await currentHistoryModels.deleteComponentCurrentHistory(id);
   return deleted;
 };

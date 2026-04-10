@@ -13,6 +13,26 @@ exports.getCurrentHistoryById = async id => {
   return await baseQuery().where('history_end_current.id', id).first();
 };
 
+exports.getCurrentHistoryBySn = async sn => {
+  const serial_end_item = await db('serial_end_items')
+    .where('serial_end_items.serial_number', sn.serial_number)
+    .select('id')
+    .first();
+
+  console.log(serial_end_item.id);
+
+  console.log(
+    await db('history_end_current')
+      .where('history_end_current.serial_number', serial_end_item.id)
+      .select('*'),
+  );
+
+  return await db('history_end_current')
+    .where('history_end_current.serial_number', serial_end_item.id)
+    .select('*')
+    .first();
+};
+
 exports.createCurrentHistory = async currentHistoryData => {
   const [currentHistory] = await db('history_end_current')
     .insert(currentHistoryData)

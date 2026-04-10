@@ -14,7 +14,7 @@ Content-Type: application/json
   "seen": true,
   "location": "test",
   "last_seen": "2019-12-01",
-  "serial_number": 2014451391
+  "serial_number": 9899208908
 }
 
 ### Update current history for end item by id
