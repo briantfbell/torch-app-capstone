@@ -21,7 +21,7 @@ exports.getEndItemsByUicId = async uic_id => {
 
   if (!endItems) {
     const error = new Error(
-      'Either the UIC does not exist or there are no end items.',
+      'Either the UIC does not exist or no end items recorded.',
     );
     error.status = 404;
     throw error;

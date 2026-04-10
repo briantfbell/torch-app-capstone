@@ -5,6 +5,7 @@ const adminAuth = require('../middleware/adminAuth');
 const router = express.Router();
 
 const {
+  getSerialItemsByUicId,
   getSerialItemById,
   getAllSerialItems,
   createSerialItem,
@@ -12,6 +13,7 @@ const {
   deleteSerialItem,
 } = require('../controllers/serialItemsControllers');
 
+router.get('/uic/:uic_id', auth, getSerialItemsByUicId);
 router.get('/:id', auth, getSerialItemById);
 router.get('/', auth, getAllSerialItems);
 router.post('/', auth, createSerialItem);
