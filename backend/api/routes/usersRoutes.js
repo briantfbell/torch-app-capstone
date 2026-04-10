@@ -12,7 +12,7 @@ const {
 
 router.get('/:id', getUserById);
 router.get('/', getAllUsers);
-router.patch('/:id', updateUser);
-router.delete('/:id', deleteUser);
+router.patch('/:id', adminAuth, updateUser);
+router.delete('/:id', adminAuth, deleteUser);
 
 module.exports = router;
