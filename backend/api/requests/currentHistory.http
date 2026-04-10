@@ -9,20 +9,21 @@ POST http://localhost:8080/current-history/end-items
 Content-Type: application/json
 
 {
-  "end_item_id": 1,
+  "end_item_id": 2,
   "user_id": 1,
   "seen": true,
   "location": "test",
   "last_seen": "2019-12-01",
-  "serial_number": 7847919940
+  "serial_number": 3122308984
 }
 
 ### Update current history for end item by id
-PATCH http://localhost:8080/current-history/end-items/4
+PATCH http://localhost:8080/current-history/end-items/9
 Content-Type: application/json
 
 {
-  "serial_number": 817338633
+  "end_item_id": 1,
+  "serial_number": 59207533
 }
 
 ### GET current history for components
@@ -49,7 +50,7 @@ POST http://localhost:8080/current-history/components
 Content-Type: application/json
 
 {
-  "component_id": 2,
+  "component_id": 3,
   "user_id": 1,
   "seen": true,
   "location": "test",
@@ -57,9 +58,10 @@ Content-Type: application/json
 }
 
 ### Update current history for component by id
-PATCH http://localhost:8080/current-history/components/13
+PATCH http://localhost:8080/current-history/components/7
 Content-Type: application/json
 
 {
-  "serial_number": "878949779"
+  "component_id": 1,
+  "serial_number": "817338633"
 }

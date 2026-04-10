@@ -68,6 +68,19 @@ exports.updateCurrentHistory = async (id, currentHistoryData) => {
     throw error;
   }
 
+  if (currentHistoryData.serial_number) {
+    const conflict = await currentHistoryModels.getCurrentHistoryBySn({
+      serial_number: currentHistoryData.serial_number,
+    });
+    if (conflict && conflict.id !== id) {
+      const error = new Error(
+        `Serial number ${currentHistoryData.serial_number} already has a current history record.`,
+      );
+      error.status = 409;
+      throw error;
+    }
+  }
+
   return await currentHistoryModels.updateCurrentHistory(
     id,
     currentHistoryData,
@@ -156,6 +169,19 @@ exports.updateComponentCurrentHistory = async (id, currentHistoryData) => {
     const error = new Error('This current history id does not exist.');
     error.status = 404;
     throw error;
+  }
+
+  if (currentHistoryData.serial_number) {
+    const conflict = await currentHistoryModels.getComponentCurrentHistoryBySn(
+      currentHistoryData.serial_number,
+    );
+    if (conflict && conflict.id !== id) {
+      const error = new Error(
+        `Serial number ${currentHistoryData.serial_number} already has a current history record.`,
+      );
+      error.status = 409;
+      throw error;
+    }
   }
 
   return await currentHistoryModels.updateComponentCurrentHistory(
