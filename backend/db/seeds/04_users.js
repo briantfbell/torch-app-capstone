@@ -43,5 +43,5 @@ exports.seed = async function (knex) {
 
   await knex.raw('ALTER SEQUENCE users_id_seq RESTART WITH 1');
 
-  await knex('users').insert([...(await createUsers(30))]);
+  await knex('users').insert([...(await createUsers(1))]);
 };
