@@ -8,6 +8,7 @@ const createSerials = async num => {
       item_id: faker.number.int({ min: 2, max: 21 }),
       serial_number: faker.string.numeric(10),
       user_id: faker.number.int({ min: 1, max: 29 }),
+      status: 'serviceable',
     });
   }
   return temp;
