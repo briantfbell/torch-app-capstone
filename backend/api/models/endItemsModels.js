@@ -13,6 +13,15 @@ exports.getEndItemById = async id => {
   return await baseQuery().where('end_items.id', id).first();
 };
 
+exports.getEndItemsByUicId = async uic_id => {
+  return await db('uics')
+    .where('uics.id', uic_id)
+    .join('users', 'uics.id', 'users.uic_id')
+    .join('serial_items', 'users.id', 'serial_items.user_id')
+    .join('end_items', 'serial_items.item_id', 'end_items.id')
+    .select('end_items.*');
+};
+
 exports.getEndItemByLin = async lin => {
   return await baseQuery().where('end_items.lin', lin).first();
 };

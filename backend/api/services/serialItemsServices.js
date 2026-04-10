@@ -16,6 +16,20 @@ exports.getSerialItemById = async id => {
   return serialItem;
 };
 
+exports.getSerialItemsByUicId = async uic_id => {
+  const serialItems = await serialItemsModels.getSerialItemsByUicId(uic_id);
+
+  if (!serialItems) {
+    const error = new Error(
+      'Either the UIC does not exist or no serial items recorded.',
+    );
+    error.status = 404;
+    throw error;
+  }
+
+  return serialItems;
+};
+
 exports.createSerialItem = async serialItemData => {
   const { end_item_lin, serial_number, user_dodid, status } = serialItemData;
 

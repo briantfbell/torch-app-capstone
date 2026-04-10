@@ -1,10 +1,11 @@
 const express = require('express');
-const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
+const hrhAuth = require('../middleware/hrhAuth');
 
 const router = express.Router();
 
 const {
+  getComponentsByUicId,
   getComponentById,
   getAllComponents,
   createComponent,
@@ -12,10 +13,11 @@ const {
   deleteComponent,
 } = require('../controllers/componentsControllers');
 
-router.get('/:id', auth, getComponentById);
-router.get('/', auth, getAllComponents);
-router.post('/', auth, createComponent);
-router.patch('/:id', auth, updateComponent);
-router.delete('/:id', auth, deleteComponent);
+router.get('/uic/:uic_id', getComponentsByUicId);
+router.get('/:id', getComponentById);
+router.get('/', getAllComponents);
+router.post('/', hrhAuth, createComponent);
+router.patch('/:id', adminAuth, updateComponent);
+router.delete('/:id', adminAuth, deleteComponent);
 
 module.exports = router;

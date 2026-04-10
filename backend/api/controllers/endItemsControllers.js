@@ -1,4 +1,4 @@
-const endItemsServices = require("../services/endItemsServices");
+const endItemsServices = require('../services/endItemsServices');
 
 exports.getAllEndItems = async (req, res) => {
   try {
@@ -9,7 +9,7 @@ exports.getAllEndItems = async (req, res) => {
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ message: err.message || "Internal server error." });
+      .json({ message: err.message || 'Internal server error.' });
   }
 };
 
@@ -22,7 +22,20 @@ exports.getEndItemById = async (req, res) => {
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ message: err.message || "Internal server error." });
+      .json({ message: err.message || 'Internal server error.' });
+  }
+};
+
+exports.getEndItemsByUicId = async (req, res) => {
+  try {
+    const { uic_id } = req.params;
+    const endItems = await endItemsServices.getEndItemsByUicId(uic_id);
+
+    res.status(200).json({ endItems });
+  } catch (err) {
+    res
+      .status(err.status || 500)
+      .json({ message: err.message || 'Internal server error.' });
   }
 };
 
@@ -37,7 +50,7 @@ exports.createEndItem = async (req, res) => {
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ message: err.message || "Internal server error." });
+      .json({ message: err.message || 'Internal server error.' });
   }
 };
 
@@ -54,7 +67,7 @@ exports.updateEndItem = async (req, res) => {
     });
   } catch (err) {
     res.status(err.status || 500).json({
-      message: err.message || "Internal server error.",
+      message: err.message || 'Internal server error.',
     });
   }
 };
@@ -70,9 +83,9 @@ exports.markEndItemComplete = async (req, res) => {
       message: `LIN: ${updatedEndItem.lin} has been marked complete.`,
     });
   } catch (err) {
-    console.error("markEndItemComplete error:", err);
+    console.error('markEndItemComplete error:', err);
     res.status(err.status || 500).json({
-      message: err.message || "Internal server error.",
+      message: err.message || 'Internal server error.',
     });
   }
 };
@@ -88,6 +101,6 @@ exports.deleteEndItem = async (req, res) => {
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ message: err.message || "Internal server error." });
+      .json({ message: err.message || 'Internal server error.' });
   }
 };

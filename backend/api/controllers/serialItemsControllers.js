@@ -26,6 +26,19 @@ exports.getSerialItemById = async (req, res) => {
   }
 };
 
+exports.getSerialItemsByUicId = async (req, res) => {
+  try {
+    const { uic_id } = req.params;
+    const serialItems = await serialItemsServices.getSerialItemsByUicId(uic_id);
+
+    res.status(200).json({ serialItems });
+  } catch (err) {
+    res
+      .status(err.status || 500)
+      .json({ message: err.message || 'Internal server error.' });
+  }
+};
+
 exports.createSerialItem = async (req, res) => {
   try {
     const newSerialItem = await serialItemsServices.createSerialItem(req.body);

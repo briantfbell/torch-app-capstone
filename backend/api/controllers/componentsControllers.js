@@ -26,6 +26,19 @@ exports.getComponentById = async (req, res) => {
   }
 };
 
+exports.getComponentsByUicId = async (req, res) => {
+  try {
+    const { uic_id } = req.params;
+    const components = await componentsServices.getComponentsByUicId(uic_id);
+
+    res.status(200).json({ components });
+  } catch (err) {
+    res
+      .status(err.status || 500)
+      .json({ message: err.message || 'Internal server error.' });
+  }
+};
+
 exports.createComponent = async (req, res) => {
   try {
     const newComponent = await componentsServices.createComponent(req.body);

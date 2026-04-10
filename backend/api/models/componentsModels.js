@@ -13,6 +13,15 @@ exports.getComponentById = async id => {
   return await baseQuery().where('components.id', id).first();
 };
 
+exports.getComponentsByUicId = async uic_id => {
+  return await db('uics')
+    .where('uics.id', uic_id)
+    .join('users', 'uics.id', 'users.uic_id')
+    .join('serial_items', 'users.id', 'serial_items.user_id')
+    .join('components', 'serial_items.id', 'components.end_item_id')
+    .select('components.*');
+};
+
 exports.getComponentBySn = async serial_number => {
   return await baseQuery()
     .where('components.serial_number', serial_number)
