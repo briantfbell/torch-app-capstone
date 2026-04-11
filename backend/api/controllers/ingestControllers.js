@@ -12,7 +12,7 @@ exports.ingestComponents = async (req, res) => {
   } catch (err) {
     res
       .status(err.status || 500)
-      .send('Error parsing Excel file: ' + err.message);
+      .json({ message: err.message || 'Internal server error.' });
   }
 };
 
@@ -28,6 +28,6 @@ exports.ingestEndItems = async (req, res) => {
   } catch (err) {
     res
       .status(err.status || 500)
-      .send('Error parsing Excel file: ' + err.message);
+      .json({ message: err.message || 'Internal server error.' });
   }
 };

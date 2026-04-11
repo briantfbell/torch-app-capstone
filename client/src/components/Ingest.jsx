@@ -3,6 +3,7 @@ import { useState } from 'react';
 export default function Ingest() {
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState('initial');
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleFileChange = e => {
     if (e.target.files) {
@@ -24,14 +25,21 @@ export default function Ingest() {
         body: formData,
       });
 
+      const body = await response.json();
+
       if (response.ok) {
         setStatus('success');
+        setErrorMessage(null);
         setFile(null);
       } else {
         setStatus('fail');
+        setErrorMessage(body.message || 'Upload failed.');
+        setFile(null);
       }
-    } catch {
+    } catch (err) {
       setStatus('fail');
+      setErrorMessage(err.message || 'Upload failed.');
+      setFile(null);
     }
   };
 
@@ -49,14 +57,21 @@ export default function Ingest() {
         body: formData,
       });
 
+      const body = await response.json();
+
       if (response.ok) {
         setStatus('success');
+        setErrorMessage(null);
         setFile(null);
       } else {
         setStatus('fail');
+        setErrorMessage(body.message || 'Upload failed.');
+        setFile(null);
       }
-    } catch {
+    } catch (err) {
       setStatus('fail');
+      setErrorMessage(err.message || 'Upload failed.');
+      setFile(null);
     }
   };
 
@@ -75,7 +90,10 @@ export default function Ingest() {
       )}
 
       {file && (
-        <button onClick={handleUploadEndItems} disabled={status === 'uploading'}>
+        <button
+          onClick={handleUploadEndItems}
+          disabled={status === 'uploading'}
+        >
           Upload end items
         </button>
       )}
@@ -89,7 +107,7 @@ export default function Ingest() {
       )}
 
       {status === 'success' && <p>Upload successful!</p>}
-      {status === 'fail' && <p>Upload failed.</p>}
+      {status === 'fail' && <p>{errorMessage}</p>}
       {status === 'uploading' && <p>Uploading...</p>}
     </div>
   );
