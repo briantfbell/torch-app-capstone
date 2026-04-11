@@ -35,8 +35,12 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "testMatch": ["**/tests/**/*.test.js"],
-    "setupFiles": ["./api/tests/setup.js"],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "setupFiles": [
+      "./api/tests/setup.js"
+    ],
     "moduleNameMapper": {
       ".+/db/knex(\\.js)?$": "<rootDir>/api/tests/__mocks__/db.js"
     }

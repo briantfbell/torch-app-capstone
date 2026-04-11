@@ -41,7 +41,9 @@ describe('GET /serial-items', () => {
       .get('/serial-items?status=serviceable')
       .set('Cookie', `token=${makeToken()}`);
 
-    expect(serialItemsServices.getAllSerialItems).toHaveBeenCalledWith({ status: 'serviceable' });
+    expect(serialItemsServices.getAllSerialItems).toHaveBeenCalledWith({
+      status: 'serviceable',
+    });
   });
 
   it('returns 401 with no token', async () => {
@@ -80,7 +82,9 @@ describe('GET /serial-items/:id', () => {
 
 describe('GET /serial-items/uic/:uic_id', () => {
   it('returns 200 with serialItems and calls getSerialItemsByUicId with the uic_id param', async () => {
-    serialItemsServices.getSerialItemsByUicId.mockResolvedValue([mockSerialItem]);
+    serialItemsServices.getSerialItemsByUicId.mockResolvedValue([
+      mockSerialItem,
+    ]);
 
     const res = await request(app)
       .get('/serial-items/uic/1')
@@ -94,7 +98,12 @@ describe('GET /serial-items/uic/:uic_id', () => {
 });
 
 describe('POST /serial-items', () => {
-  const body = { serial_number: 'SN-001', status: 'serviceable', item_id: 1, uic_id: 1 };
+  const body = {
+    serial_number: 'SN-001',
+    status: 'serviceable',
+    item_id: 1,
+    uic_id: 1,
+  };
 
   it('returns 201 with newSerialItem and calls createSerialItem with the request body', async () => {
     serialItemsServices.createSerialItem.mockResolvedValue(mockSerialItem);
@@ -122,7 +131,10 @@ describe('PATCH /serial-items/:id', () => {
   const body = { status: 'unserviceable' };
 
   it('returns 200 with updatedSerialItem and calls updateSerialItem with the id and body', async () => {
-    serialItemsServices.updateSerialItem.mockResolvedValue({ ...mockSerialItem, status: 'unserviceable' });
+    serialItemsServices.updateSerialItem.mockResolvedValue({
+      ...mockSerialItem,
+      status: 'unserviceable',
+    });
 
     const res = await request(app)
       .patch('/serial-items/1')
@@ -132,7 +144,10 @@ describe('PATCH /serial-items/:id', () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('updatedSerialItem');
     expect(res.body).toHaveProperty('message');
-    expect(serialItemsServices.updateSerialItem).toHaveBeenCalledWith('1', body);
+    expect(serialItemsServices.updateSerialItem).toHaveBeenCalledWith(
+      '1',
+      body,
+    );
   });
 
   it('returns 401 with no token', async () => {
