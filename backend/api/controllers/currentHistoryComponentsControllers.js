@@ -1,12 +1,13 @@
-const currentHistoryServices = require('../services/currentHistoryServices');
-const archivedHistoryServices = require('../services/archivedHistoryServices');
+const currentHistoryComponentsServices = require('../services/currentHistoryComponentsServices');
+const archivedHistoryComponentsServices = require('../services/archivedHistoryComponentsServices');
 
 exports.getAll = async (req, res) => {
   try {
-    const data = await currentHistoryServices.getComponentCurrentHistory(
-      req.query,
-    );
-    res.status(200).json({ currentHistory: data });
+    const currentHistory =
+      await currentHistoryComponentsServices.getComponentCurrentHistory(
+        req.query,
+      );
+    res.status(200).json({ currentHistory });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -17,7 +18,7 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const currentHistory =
-      await currentHistoryServices.getComponentCurrentHistoryById(
+      await currentHistoryComponentsServices.getComponentCurrentHistoryById(
         req.params.id,
       );
     res.status(200).json({ currentHistory });
@@ -33,23 +34,30 @@ exports.create = async (req, res) => {
     let existing;
 
     if (req.body.serial_number) {
-      existing = await currentHistoryServices.getComponentCurrentHistoryBySn(
-        req.body.serial_number,
-      );
+      existing =
+        await currentHistoryComponentsServices.getComponentCurrentHistoryBySn(
+          req.body.serial_number,
+        );
     } else {
       existing =
-        await currentHistoryServices.getUnserializedComponentCurrentHistory(
+        await currentHistoryComponentsServices.getUnserializedComponentCurrentHistory(
           req.body.component_id,
         );
     }
 
     if (existing) {
-      await archivedHistoryServices.createComponentArchivedHistory(existing);
-      await currentHistoryServices.deleteComponentCurrentHistory(existing.id);
+      await archivedHistoryComponentsServices.createComponentArchivedHistory(
+        existing,
+      );
+      await currentHistoryComponentsServices.deleteComponentCurrentHistory(
+        existing.id,
+      );
     }
 
     const newCurrentHistory =
-      await currentHistoryServices.createComponentCurrentHistory(req.body);
+      await currentHistoryComponentsServices.createComponentCurrentHistory(
+        req.body,
+      );
 
     res.status(201).json({
       newCurrentHistory,
@@ -65,14 +73,16 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const existing =
-      await currentHistoryServices.getComponentCurrentHistoryById(
+      await currentHistoryComponentsServices.getComponentCurrentHistoryById(
         req.params.id,
       );
 
-    await archivedHistoryServices.createComponentArchivedHistory(existing);
+    await archivedHistoryComponentsServices.createComponentArchivedHistory(
+      existing,
+    );
 
     const updatedCurrentHistory =
-      await currentHistoryServices.updateComponentCurrentHistory(
+      await currentHistoryComponentsServices.updateComponentCurrentHistory(
         req.params.id,
         req.body,
       );
@@ -90,7 +100,9 @@ exports.update = async (req, res) => {
 exports.del = async (req, res) => {
   try {
     const deletedCurrentHistory =
-      await currentHistoryServices.deleteComponentCurrentHistory(req.params.id);
+      await currentHistoryComponentsServices.deleteComponentCurrentHistory(
+        req.params.id,
+      );
     res.status(200).json({
       deletedCurrentHistory,
       message: `ID: ${deletedCurrentHistory.id} was successfully deleted.`,

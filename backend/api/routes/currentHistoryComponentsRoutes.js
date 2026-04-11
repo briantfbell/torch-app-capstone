@@ -15,7 +15,7 @@ const {
 router.get('/:id', getById);
 router.get('/', getAll);
 router.post('/', hrhAuth, create);
-router.patch('/:id', adminAuth, update);
-// router.delete('/:id', adminAuth, del);
+router.patch('/:id', hrhAuth, update);
+// router.delete('/:id', hrhAuth, del);
 
 module.exports = router;

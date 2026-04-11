@@ -17,7 +17,7 @@ router.get('/uic/:uic_id', getSerialItemsByUicId);
 router.get('/:id', getSerialItemById);
 router.get('/', getAllSerialItems);
 router.post('/', hrhAuth, createSerialItem);
-router.patch('/:id', adminAuth, updateSerialItem);
-router.delete('/:id', adminAuth, deleteSerialItem);
+router.patch('/:id', hrhAuth, updateSerialItem);
+router.delete('/:id', hrhAuth, deleteSerialItem);
 
 module.exports = router;

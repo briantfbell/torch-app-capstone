@@ -3,9 +3,9 @@ const uicsServices = require('../services/uicsServices');
 exports.getAllUics = async (req, res) => {
   try {
     const { query } = req;
-    const data = await uicsServices.getAllUics(query);
+    const allUics = await uicsServices.getAllUics(query);
 
-    res.status(200).json({ allUics: data });
+    res.status(200).json({ allUics });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -18,7 +18,7 @@ exports.getUicById = async (req, res) => {
     const { id } = req.params;
     const uic = await uicsServices.getUicById(id);
 
-    res.status(200).json({ uic: uic });
+    res.status(200).json({ uic });
   } catch (err) {
     res
       .status(err.status || 500)

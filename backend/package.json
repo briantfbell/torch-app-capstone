@@ -29,6 +29,20 @@
     "read-excel-file": "^8.0.3"
   },
   "devDependencies": {
-    "@faker-js/faker": "^10.4.0"
+    "@faker-js/faker": "^10.4.0",
+    "jest": "^30.3.0",
+    "supertest": "^7.2.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "setupFiles": [
+      "./api/tests/setup.js"
+    ],
+    "moduleNameMapper": {
+      ".+/db/knex(\\.js)?$": "<rootDir>/api/tests/__mocks__/db.js"
+    }
   }
 }
