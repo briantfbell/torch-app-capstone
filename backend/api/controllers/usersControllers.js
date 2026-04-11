@@ -3,9 +3,9 @@ const usersServices = require('../services/usersServices');
 exports.getAllUsers = async (req, res) => {
   try {
     const { query } = req;
-    const data = await usersServices.getAllUsers(query);
+    const allUsers = await usersServices.getAllUsers(query);
 
-    res.status(200).json({ allUsers: data });
+    res.status(200).json({ allUsers });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -18,7 +18,7 @@ exports.getUserById = async (req, res) => {
     const { id } = req.params;
     const user = await usersServices.getUserById(id);
 
-    res.status(200).json({ user: user });
+    res.status(200).json({ user });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -31,7 +31,7 @@ exports.updateUser = async (req, res) => {
     const updatedUser = await usersServices.updateUser(req.params.id, req.body);
 
     res.status(200).json({
-      updatedUser: updatedUser,
+      updatedUser,
       message: `'${updatedUser.username}' has been successfully updated.`,
     });
   } catch (err) {
@@ -46,7 +46,7 @@ exports.deleteUser = async (req, res) => {
     const deletedUser = await usersServices.deleteUser(req.params.id);
 
     res.status(200).json({
-      deletedUser: deletedUser,
+      deletedUser,
       message: `'${deletedUser.username}' was successfully deleted.`,
     });
   } catch (err) {

@@ -2,10 +2,9 @@ const archivedHistoryServices = require('../services/archivedHistoryServices');
 
 exports.getAll = async (req, res) => {
   try {
-    const data = await archivedHistoryServices.getComponentArchivedHistory(
-      req.query,
-    );
-    res.status(200).json({ archivedHistory: data });
+    const archivedHistory =
+      await archivedHistoryServices.getComponentArchivedHistory(req.query);
+    res.status(200).json({ archivedHistory });
   } catch (err) {
     res
       .status(err.status || 500)
