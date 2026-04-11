@@ -37,6 +37,147 @@ cd backend && npm run dev
 
 ---
 
+## Database Schema
+
+```mermaid
+erDiagram
+    ranks {
+        int id PK
+        varchar rank
+    }
+
+    uics {
+        int id PK
+        varchar uic
+        varchar unit_name
+        varchar parent_uic
+    }
+
+    users {
+        int id PK
+        varchar username
+        string password
+        string name_first
+        string name_last
+        varchar email
+        varchar phone
+        timestamp created_at
+        timestamp updated_at
+        bigint dodid
+        string role
+        int rank_id FK
+        int uic_id FK
+    }
+
+    end_items {
+        int id PK
+        int fsc
+        text description
+        varchar niin
+        int auth_qty
+        varchar lin
+        string image
+        decimal cost
+        boolean completed
+    }
+
+    components {
+        int id PK
+        varchar niin
+        text description
+        string ui
+        int auth_qty
+        string image
+        string arc
+        varchar cost
+        int end_item_id FK
+    }
+
+    serial_end_items {
+        int id PK
+        varchar serial_number
+        timestamp assigned_at
+        string status
+        text common_name
+        int end_item_id FK
+        int user_id FK
+    }
+
+    serial_component_items {
+        int id PK
+        varchar serial_number
+        timestamp assigned_at
+        string status
+        text common_name
+        int component_id FK
+        int user_id FK
+    }
+
+    history_end_current {
+        int id PK
+        boolean seen
+        text location
+        timestamp last_seen
+        int user_id FK
+        int end_item_id FK
+        int serial_number FK
+    }
+
+    history_end_archive {
+        int id PK
+        boolean seen
+        text location
+        timestamp last_seen
+        timestamp archived_at
+        int user_id FK
+        int end_item_id FK
+        int serial_number FK
+    }
+
+    history_component_current {
+        int id PK
+        boolean seen
+        text location
+        timestamp last_seen
+        int user_id FK
+        int component_id FK
+        int serial_number FK
+    }
+
+    history_component_archive {
+        int id PK
+        boolean seen
+        text location
+        timestamp last_seen
+        timestamp archived_at
+        int user_id FK
+        int component_id FK
+        int serial_number FK
+    }
+
+    ranks ||--o{ users : "rank_id"
+    uics ||--o{ users : "uic_id"
+    end_items ||--o{ components : "end_item_id"
+    end_items ||--o{ serial_end_items : "end_item_id"
+    users ||--o{ serial_end_items : "user_id"
+    components ||--o{ serial_component_items : "component_id"
+    users ||--o{ serial_component_items : "user_id"
+    users ||--o{ history_end_current : "user_id"
+    end_items ||--o{ history_end_current : "end_item_id"
+    serial_end_items ||--o{ history_end_current : "serial_number"
+    users ||--o{ history_end_archive : "user_id"
+    end_items ||--o{ history_end_archive : "end_item_id"
+    serial_end_items ||--o{ history_end_archive : "serial_number"
+    users ||--o{ history_component_current : "user_id"
+    components ||--o{ history_component_current : "component_id"
+    serial_component_items ||--o{ history_component_current : "serial_number"
+    users ||--o{ history_component_archive : "user_id"
+    components ||--o{ history_component_archive : "component_id"
+    serial_component_items ||--o{ history_component_archive : "serial_number"
+```
+
+---
+
 ## API Reference
 
 **Base URL:** `http://localhost:8080`
