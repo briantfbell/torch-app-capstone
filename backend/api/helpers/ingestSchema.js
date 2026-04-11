@@ -40,4 +40,24 @@ const schema = {
   // }
 };
 
-module.exports = { schema };
+// Strips spaces, underscores, and lowercases for fuzzy header matching
+const normalizeStr = (str) => String(str).toLowerCase().replace(/[\s_]/g, '');
+
+// Build a lookup from normalized column name -> canonical column name
+const columnLookup = Object.fromEntries(
+  Object.values(schema).map(({ column }) => [normalizeStr(column), column])
+);
+
+// Replaces header cells in the first row with the canonical column name when
+// a case/space/underscore-insensitive match is found, so parseData can match them.
+const normalizeHeaders = (data) => {
+  if (!data || data.length === 0) return data;
+  const [headers, ...rest] = data;
+  const normalizedHeaders = headers.map((cell) => {
+    if (cell == null) return cell;
+    return columnLookup[normalizeStr(cell)] ?? cell;
+  });
+  return [normalizedHeaders, ...rest];
+};
+
+module.exports = { schema, normalizeHeaders };

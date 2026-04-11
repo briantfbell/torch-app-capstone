@@ -1,11 +1,11 @@
 const ingestModels = require('../models/ingestModels');
 const serialItemsModels = require('../models/serialItemsModels');
 const { readSheet, parseData } = require('read-excel-file/node');
-const { schema } = require('../helpers/ingestSchema');
+const { schema, normalizeHeaders } = require('../helpers/ingestSchema');
 
 exports.ingestComponents = async (file, user) => {
   const data = await readSheet(file.buffer);
-  const results = parseData(data, schema);
+  const results = parseData(normalizeHeaders(data), schema);
 
   const errors = [];
   const objects = [];
@@ -45,7 +45,7 @@ exports.ingestComponents = async (file, user) => {
 
 exports.ingestEndItems = async (file, user) => {
   const data = await readSheet(file.buffer);
-  const results = parseData(data, schema);
+  const results = parseData(normalizeHeaders(data), schema);
 
   const errors = [];
   const objects = [];
