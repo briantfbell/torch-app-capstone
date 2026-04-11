@@ -1,11 +1,10 @@
-const currentHistoryServices = require('../services/currentHistoryServices');
-const archivedHistoryServices = require('../services/archivedHistoryServices');
+const currentHistoryEndItemsServices = require('../services/currentHistoryEndItemsServices');
+const archivedHistoryEndItemsServices = require('../services/archivedHistoryEndItemsServices');
 
 exports.getAll = async (req, res) => {
   try {
-    const currentHistory = await currentHistoryServices.getCurrentHistory(
-      req.query,
-    );
+    const currentHistory =
+      await currentHistoryEndItemsServices.getCurrentHistory(req.query);
     res.status(200).json({ currentHistory });
   } catch (err) {
     res
@@ -16,9 +15,8 @@ exports.getAll = async (req, res) => {
 
 exports.getById = async (req, res) => {
   try {
-    const currentHistory = await currentHistoryServices.getCurrentHistoryById(
-      req.params.id,
-    );
+    const currentHistory =
+      await currentHistoryEndItemsServices.getCurrentHistoryById(req.params.id);
     res.status(200).json({ currentHistory });
   } catch (err) {
     res
@@ -29,18 +27,19 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const existing = await currentHistoryServices.getCurrentHistoryBySn({
-      serial_number: req.body.serial_number,
-    });
+    const existing = await currentHistoryEndItemsServices.getCurrentHistoryBySn(
+      {
+        serial_number: req.body.serial_number,
+      },
+    );
 
     if (existing) {
-      await archivedHistoryServices.createArchivedHistory(existing);
-      await currentHistoryServices.deleteCurrentHistory(existing.id);
+      await archivedHistoryEndItemsServices.createArchivedHistory(existing);
+      await currentHistoryEndItemsServices.deleteCurrentHistory(existing.id);
     }
 
-    const newCurrentHistory = await currentHistoryServices.createCurrentHistory(
-      req.body,
-    );
+    const newCurrentHistory =
+      await currentHistoryEndItemsServices.createCurrentHistory(req.body);
 
     res.status(201).json({
       newCurrentHistory,
@@ -55,14 +54,14 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const existing = await currentHistoryServices.getCurrentHistoryById(
+    const existing = await currentHistoryEndItemsServices.getCurrentHistoryById(
       req.params.id,
     );
 
-    await archivedHistoryServices.createArchivedHistory(existing);
+    await archivedHistoryEndItemsServices.createArchivedHistory(existing);
 
     const updatedCurrentHistory =
-      await currentHistoryServices.updateCurrentHistory(
+      await currentHistoryEndItemsServices.updateCurrentHistory(
         req.params.id,
         req.body,
       );
@@ -80,7 +79,7 @@ exports.update = async (req, res) => {
 exports.del = async (req, res) => {
   try {
     const deletedCurrentHistory =
-      await currentHistoryServices.deleteCurrentHistory(req.params.id);
+      await currentHistoryEndItemsServices.deleteCurrentHistory(req.params.id);
     res.status(200).json({
       deletedCurrentHistory,
       message: `ID: ${deletedCurrentHistory.id} was successfully deleted.`,

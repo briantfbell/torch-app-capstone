@@ -1,10 +1,9 @@
-const archivedHistoryServices = require('../services/archivedHistoryServices');
+const archivedHistoryEndItemsServices = require('../services/archivedHistoryEndItemsServices');
 
 exports.getAll = async (req, res) => {
   try {
-    const archivedHistory = await archivedHistoryServices.getArchivedHistory(
-      req.query,
-    );
+    const archivedHistory =
+      await archivedHistoryEndItemsServices.getArchivedHistory(req.query);
     res.status(200).json({ archivedHistory });
   } catch (err) {
     res
@@ -16,7 +15,9 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const archivedHistory =
-      await archivedHistoryServices.getArchivedHistoryById(req.params.id);
+      await archivedHistoryEndItemsServices.getArchivedHistoryById(
+        req.params.id,
+      );
     res.status(200).json({ archivedHistory });
   } catch (err) {
     res
@@ -28,7 +29,7 @@ exports.getById = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const newArchivedHistory =
-      await archivedHistoryServices.createArchivedHistory(req.body);
+      await archivedHistoryEndItemsServices.createArchivedHistory(req.body);
     res.status(201).json({
       newArchivedHistory,
       message: `ID: ${newArchivedHistory.id} has been successfully created.`,
