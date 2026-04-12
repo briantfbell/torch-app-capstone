@@ -3,9 +3,9 @@ const componentsServices = require('../services/componentsServices');
 exports.getAllComponents = async (req, res) => {
   try {
     const { query } = req;
-    const data = await componentsServices.getAllComponents(query);
+    const allComponents = await componentsServices.getAllComponents(query);
 
-    res.status(200).json({ allComponents: data });
+    res.status(200).json({ allComponents });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -18,7 +18,20 @@ exports.getComponentById = async (req, res) => {
     const { id } = req.params;
     const component = await componentsServices.getComponentById(id);
 
-    res.status(200).json({ component: component });
+    res.status(200).json({ component });
+  } catch (err) {
+    res
+      .status(err.status || 500)
+      .json({ message: err.message || 'Internal server error.' });
+  }
+};
+
+exports.getComponentsByUicId = async (req, res) => {
+  try {
+    const { uic_id } = req.params;
+    const components = await componentsServices.getComponentsByUicId(uic_id);
+
+    res.status(200).json({ components });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -31,7 +44,7 @@ exports.createComponent = async (req, res) => {
     const newComponent = await componentsServices.createComponent(req.body);
 
     res.status(201).json({
-      newComponent: newComponent,
+      newComponent,
       message: `NIIN: ${newComponent.niin} has been successfully created.`,
     });
   } catch (err) {
@@ -49,7 +62,7 @@ exports.updateComponent = async (req, res) => {
     );
 
     res.status(200).json({
-      updatedComponent: updatedComponent,
+      updatedComponent,
       message: `NIIN: ${updatedComponent.niin} has been successfully updated.`,
     });
   } catch (err) {
@@ -66,7 +79,7 @@ exports.deleteComponent = async (req, res) => {
     );
 
     res.status(200).json({
-      deletedComponent: deletedComponent,
+      deletedComponent,
       message: `NIIN: ${deletedComponent.niin} was successfully deleted.`,
     });
   } catch (err) {

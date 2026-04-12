@@ -16,6 +16,20 @@ exports.getComponentById = async id => {
   return component;
 };
 
+exports.getComponentsByUicId = async uic_id => {
+  const components = await componentsModels.getComponentsByUicId(uic_id);
+
+  if (!components) {
+    const error = new Error(
+      'Either the UIC does not exist or no components recorded.',
+    );
+    error.status = 404;
+    throw error;
+  }
+
+  return components;
+};
+
 exports.createComponent = async ({
   niin,
   description,
@@ -24,7 +38,6 @@ exports.createComponent = async ({
   image,
   arc,
   end_item_lin,
-  serial_number,
 }) => {
   if (
     !niin ||
@@ -35,7 +48,7 @@ exports.createComponent = async ({
     !arc ||
     !end_item_lin
   ) {
-    const error = new Error('All fields except serial number are required.');
+    const error = new Error('All fields are required.');
     error.status = 400;
     throw error;
   }
@@ -50,7 +63,6 @@ exports.createComponent = async ({
       auth_qty,
       image,
       arc,
-      serial_number,
     },
     end_item_lin,
   );

@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const auth = require('./middleware/auth');
 
 const app = express();
 
@@ -37,8 +38,10 @@ const serialItemsRoutes = require('./routes/serialItemsRoutes');
 const componentsRoutes = require('./routes/componentsRoutes');
 const endItemsRoutes = require('./routes/endItemsRoutes');
 const ingestRoutes = require('./routes/ingestRoutes');
-const currentHistoryRoutes = require('./routes/currentHistoryRoutes');
-const archivedHistoryRoutes = require('./routes/archivedHistoryRoutes');
+const currentHistoryEndItemsRoutes = require('./routes/currentHistoryEndItemsRoutes');
+const currentHistoryComponentsRoutes = require('./routes/currentHistoryComponentsRoutes');
+const archivedHistoryEndItemsRoutes = require('./routes/archivedHistoryEndItemsRoutes');
+const archivedHistoryComponentsRoutes = require('./routes/archivedHistoryComponentsRoutes');
 
 // future dev
 // const inventoryRecordsRoutes = require('./routes/inventoryRecordsRoutes');
@@ -46,14 +49,16 @@ const archivedHistoryRoutes = require('./routes/archivedHistoryRoutes');
 // const shortagesRoutes = require('./routes/shortagesRoutes');
 
 app.use('/auth', authRoutes);
-app.use('/users', usersRoutes);
 app.use('/uics', uicsRoutes);
-app.use('/serial-items', serialItemsRoutes);
-app.use('/components', componentsRoutes);
-app.use('/end-items', endItemsRoutes);
-app.use('/ingest', ingestRoutes);
-app.use('/current-history', currentHistoryRoutes);
-app.use('/archived-history', archivedHistoryRoutes);
+app.use('/users', auth, usersRoutes);
+app.use('/serial-items', auth, serialItemsRoutes);
+app.use('/components', auth, componentsRoutes);
+app.use('/end-items', auth, endItemsRoutes);
+app.use('/ingest', auth, ingestRoutes);
+app.use('/current-history/end-items', auth, currentHistoryEndItemsRoutes);
+app.use('/current-history/components', auth, currentHistoryComponentsRoutes);
+app.use('/archived-history/end-items', auth, archivedHistoryEndItemsRoutes);
+app.use('/archived-history/components', auth, archivedHistoryComponentsRoutes);
 
 // future dev
 // app.use('/inventory-records', inventoryRecordsRoutes);

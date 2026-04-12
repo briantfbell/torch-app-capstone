@@ -4,6 +4,9 @@ GET http://localhost:8080/serial-items
 ### GET serial item by id
 GET http://localhost:8080/serial-items/1
 
+### GET serial item by uic id
+GET http://localhost:8080/serial-items/uic/1
+
 ### Create a serial item
 POST http://localhost:8080/serial-items
 Content-Type: application/json
@@ -11,8 +14,8 @@ Content-Type: application/json
 {
   "serial_number": "SN-012",
   "status": "serviceable",
-  "end_item_lin": "pyropZ",
-  "user_dodid": "221191331"
+  "end_item_lin": "70210N",
+  "user_dodid": "5399334747"
 }
 
 ### Update serial item by id

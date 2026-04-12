@@ -1,15 +1,15 @@
-const endItemsServices = require("../services/endItemsServices");
+const endItemsServices = require('../services/endItemsServices');
 
 exports.getAllEndItems = async (req, res) => {
   try {
     const { query } = req;
-    const data = await endItemsServices.getAllEndItems(query);
+    const allEndItems = await endItemsServices.getAllEndItems(query);
 
-    res.status(200).json({ allEndItems: data });
+    res.status(200).json({ allEndItems });
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ message: err.message || "Internal server error." });
+      .json({ message: err.message || 'Internal server error.' });
   }
 };
 
@@ -18,11 +18,24 @@ exports.getEndItemById = async (req, res) => {
     const { id } = req.params;
     const endItem = await endItemsServices.getEndItemById(id);
 
-    res.status(200).json({ endItem: endItem });
+    res.status(200).json({ endItem });
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ message: err.message || "Internal server error." });
+      .json({ message: err.message || 'Internal server error.' });
+  }
+};
+
+exports.getEndItemsByUicId = async (req, res) => {
+  try {
+    const { uic_id } = req.params;
+    const endItems = await endItemsServices.getEndItemsByUicId(uic_id);
+
+    res.status(200).json({ endItems });
+  } catch (err) {
+    res
+      .status(err.status || 500)
+      .json({ message: err.message || 'Internal server error.' });
   }
 };
 
@@ -31,13 +44,13 @@ exports.createEndItem = async (req, res) => {
     const newEndItem = await endItemsServices.createEndItem(req.body);
 
     res.status(201).json({
-      newEndItem: newEndItem,
+      newEndItem,
       message: `LIN: ${newEndItem.lin} has been successfully created.`,
     });
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ message: err.message || "Internal server error." });
+      .json({ message: err.message || 'Internal server error.' });
   }
 };
 
@@ -49,12 +62,12 @@ exports.updateEndItem = async (req, res) => {
     );
 
     res.status(200).json({
-      updatedEndItem: updatedEndItem,
+      updatedEndItem,
       message: `LIN: ${updatedEndItem.lin} has been successfully updated.`,
     });
   } catch (err) {
     res.status(err.status || 500).json({
-      message: err.message || "Internal server error.",
+      message: err.message || 'Internal server error.',
     });
   }
 };
@@ -70,9 +83,9 @@ exports.markEndItemComplete = async (req, res) => {
       message: `LIN: ${updatedEndItem.lin} has been marked complete.`,
     });
   } catch (err) {
-    console.error("markEndItemComplete error:", err);
+    console.error('markEndItemComplete error:', err);
     res.status(err.status || 500).json({
-      message: err.message || "Internal server error.",
+      message: err.message || 'Internal server error.',
     });
   }
 };
@@ -82,12 +95,12 @@ exports.deleteEndItem = async (req, res) => {
     const deletedEndItem = await endItemsServices.deleteEndItem(req.params.id);
 
     res.status(200).json({
-      deletedEndItem: deletedEndItem,
+      deletedEndItem,
       message: `LIN: ${deletedEndItem.lin} was successfully deleted.`,
     });
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ message: err.message || "Internal server error." });
+      .json({ message: err.message || 'Internal server error.' });
   }
 };

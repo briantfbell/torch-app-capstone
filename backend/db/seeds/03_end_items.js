@@ -8,7 +8,7 @@ const createItems = async num => {
       description: faker.commerce.productDescription(),
       niin: faker.string.numeric(9),
       auth_qty: faker.number.int({ min: 1, max: 3 }),
-      lin: faker.string.alphanumeric(6),
+      lin: faker.string.alphanumeric(6).toUpperCase(),
       cost: (Math.random() * 10000).toFixed(2),
     });
   }
@@ -21,5 +21,5 @@ exports.seed = async function (knex) {
 
   await knex.raw('ALTER SEQUENCE end_items_id_seq RESTART WITH 1');
 
-  await knex('end_items').insert([...(await createItems(30))]);
+  await knex('end_items').insert([...(await createItems(1))]);
 };

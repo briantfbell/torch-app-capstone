@@ -174,7 +174,7 @@ exports.login = async (email, password) => {
     error.status = 401;
     throw error;
   }
-  console.log('JWT = ', process.env.JWT);
+
   const token = jwt.sign(
     {
       id: user.id,

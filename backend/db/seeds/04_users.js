@@ -15,7 +15,7 @@ const createUsers = async num => {
       phone: faker.phone.number(),
       rank_id: faker.number.int({ min: 2, max: 21 }),
       uic_id: faker.number.int({ min: 1, max: 2 }),
-      role: 'hrh',
+      role: ['hrh'],
       dodid: faker.string.numeric(10),
     },
   ];
@@ -30,7 +30,7 @@ const createUsers = async num => {
       phone: faker.phone.number(),
       rank_id: faker.number.int({ min: 2, max: 21 }),
       uic_id: faker.number.int({ min: 1, max: 2 }),
-      role: roleArray[randNum],
+      role: [roleArray[randNum]],
       dodid: faker.string.numeric(10),
     });
   }
@@ -43,5 +43,5 @@ exports.seed = async function (knex) {
 
   await knex.raw('ALTER SEQUENCE users_id_seq RESTART WITH 1');
 
-  await knex('users').insert([...(await createUsers(30))]);
+  await knex('users').insert([...(await createUsers(1))]);
 };

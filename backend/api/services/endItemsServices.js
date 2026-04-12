@@ -16,6 +16,20 @@ exports.getEndItemById = async id => {
   return endItem;
 };
 
+exports.getEndItemsByUicId = async uic_id => {
+  const endItems = await endItemsModels.getEndItemsByUicId(uic_id);
+
+  if (!endItems) {
+    const error = new Error(
+      'Either the UIC does not exist or no end items recorded.',
+    );
+    error.status = 404;
+    throw error;
+  }
+
+  return endItems;
+};
+
 exports.createEndItem = async ({
   fsc,
   description,
