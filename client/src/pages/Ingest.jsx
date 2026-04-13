@@ -81,6 +81,7 @@ export default function Ingest() {
         setErrorMessage(null);
         setFile(null);
         setItemType(null);
+        setPreviewData(null);
       } else {
         setFailureStates(body);
       }
@@ -110,6 +111,7 @@ export default function Ingest() {
         setErrorMessage(null);
         setFile(null);
         setItemType(null);
+        setPreviewData(null);
       } else {
         setFailureStates(body);
       }
@@ -132,7 +134,7 @@ export default function Ingest() {
         <div>
           <FormControl fullWidth>
             <InputLabel id="select-label">
-              Choose which items you are uploading...
+              What kind of items are you uploading?
             </InputLabel>
 
             <Select
