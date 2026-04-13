@@ -18,6 +18,7 @@ import {
 function InventoryTable() {
   const { endItemId } = useParams();
   const navigate = useNavigate();
+  const storageKey = `inventoryQuantities-${endItemId}`;
 
   const [items, setItems] = useState([]);
   const [quantities, setQuantities] = useState({});
@@ -46,9 +47,9 @@ function InventoryTable() {
         const mappedItems = components.map((item) => ({
           id: item.id,
           niin: item.niin,
-          partNumber: item.part_number || "",
-          displayName: item.description || "",
-          authQty: item.auth_qty ?? "",
+          partNumber: item.part_number || item.partNumber || "",
+          displayName: item.description || item.display_name || "",
+          authQty: item.auth_qty ?? item.authorized_quantity ?? "",
         }));
 
         setItems(mappedItems);
@@ -62,12 +63,14 @@ function InventoryTable() {
   }, [endItemId]);
 
   useEffect(() => {
-    const savedQuantities = localStorage.getItem("inventoryQuantities");
+    const savedQuantities = localStorage.getItem(storageKey);
 
     if (savedQuantities) {
       setQuantities(JSON.parse(savedQuantities));
+    } else {
+      setQuantities({});
     }
-  }, []);
+  }, [storageKey]);
 
   const handleQuantityChange = (id, value) => {
     const numeric = value.replace(/[^0-9]/g, "");
@@ -80,7 +83,7 @@ function InventoryTable() {
 
   const handleSave = () => {
     try {
-      localStorage.setItem("inventoryQuantities", JSON.stringify(quantities));
+      localStorage.setItem(storageKey, JSON.stringify(quantities));
       console.log("Saved quantities:", quantities);
       setSaveStatus("success");
     } catch (e) {
@@ -168,7 +171,6 @@ function InventoryTable() {
                 <TableCell>{item.partNumber}</TableCell>
                 <TableCell>{item.displayName}</TableCell>
                 <TableCell>{item.authQty}</TableCell>
-                {/* <TableCell>{item.}</TableCell> */}
                 <TableCell>
                   <TextField
                     type="number"
@@ -185,12 +187,18 @@ function InventoryTable() {
                     inputProps={{ min: 0 }}
                   />
                 </TableCell>
+                <TableCell>
+                  {quantities[item.id] === "" ||
+                  quantities[item.id] === undefined
+                    ? ""
+                    : Number(quantities[item.id]) - Number(item.authQty || 0)}
+                </TableCell>
               </TableRow>
             ))}
 
             {!apiError && items.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} align="center">
+                <TableCell colSpan={6} align="center">
                   No inventory records available yet.
                 </TableCell>
               </TableRow>
