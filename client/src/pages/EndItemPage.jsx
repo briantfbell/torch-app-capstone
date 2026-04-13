@@ -19,6 +19,7 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import SaveIcon from "@mui/icons-material/Save";
 import PdfModalViewer from "../components/PdfModalViewer";
 import { getEndItemById, updateEndItemNotes } from "../api/endItems";
+import PdfGenerator from "../components/PdfGenerator";
 
 export default function EndItemPage() {
   const { id } = useParams();
@@ -39,7 +40,7 @@ export default function EndItemPage() {
     getEndItemById(id)
       .then((data) => {
         setItem(data);
-        setNotes(data?.endItem?.notes || "");
+        setNotes(data?.endItem?.note || "");
         setLoading(false);
       })
       .catch((err) => {
@@ -54,8 +55,9 @@ export default function EndItemPage() {
     setSaveMessage("");
 
     updateEndItemNotes(id, notes)
-      .then((data) => {
-        setItem(data);
+      .then(() => getEndItemById(id))
+      .then((freshItem) => {
+        setItem(freshItem);
         setSaveMessage("Notes saved.");
         setSavingNotes(false);
       })
@@ -100,22 +102,9 @@ export default function EndItemPage() {
 
   const endItem = item.endItem;
   const imageUrl = endItem.image || "/no_image_found_placeholder.png";
+  const pdfUrl = `/pdfs/${endItem.id}.pdf`;
   console.log(`image path is -> ${endItem}`);
   console.table(endItem);
-
-  const bomPdfMap = {
-    "70210N": "/pdfs/01D054717_Computer_Laptop_7430_2062.pdf",
-    P05043: "/pdfs/016617317_Pistol_9MM_Semiauto_Glock_2062.pdf",
-    C05002: "/pdfs/C05002_Transfer_Unit_Crypto_BOM.pdf",
-    C06935: "/pdfs/C06935_Carbine_556MM_M4A1_2062.pdf",
-    G49966: "/pdfs/G49966_Generator_Set_Diesel_BOM.pdf",
-    J05028: "/pdfs/J05028_Truck_Utility_BOM.pdf",
-    J05046: "/pdfs/J05046_Trailer_Cargo_BOM.pdf",
-    R45463: "/pdfs/R45463_RT1523F_BOM.pdf",
-    R55336: "/pdfs/R55336_Radio_Set_PRC148_BOM.pdf",
-  };
-
-  const bomPdfUrl = bomPdfMap[endItem.lin] || "/pdfs/placeholder.pdf";
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -170,14 +159,20 @@ export default function EndItemPage() {
                 alignItems="stretch"
               >
                 <Stack spacing={2} sx={{ flex: 1.2 }}>
-                  <Button
-                    variant="outlined"
-                    startIcon={<PictureAsPdfIcon />}
-                    onClick={() => setOpenPdf(true)}
-                    sx={{ alignSelf: "flex-start" }}
-                  >
-                    Open End Item BOM PDF
-                  </Button>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Button
+                      variant="outlined"
+                      startIcon={<PictureAsPdfIcon />}
+                      disabled={!pdfUrl}
+                      onClick={() => setOpenPdf(true)}
+                      sx={{ alignSelf: "flex-start" }}
+                    >
+                      {pdfUrl
+                        ? "Open End Item BOM PDF"
+                        : "No BOM for this item"}
+                    </Button>
+                    <PdfGenerator />
+                  </Stack>
 
                   <Card variant="outlined">
                     <CardContent>
@@ -297,7 +292,7 @@ export default function EndItemPage() {
         <PdfModalViewer
           open={openPdf}
           onClose={() => setOpenPdf(false)}
-          pdfUrl={bomPdfUrl}
+          pdfUrl={pdfUrl}
         />
       </Stack>
     </Container>
