@@ -32,6 +32,7 @@ export default function RegisterForm({onSubmit, error}){
     //step control for the form to allow it to fit better with the new splash stuff
     const steps = ["Account", "Personal Info", "Assignment"];
     const [activeStep, setActiveStep] = useState(0);
+<<<<<<< HEAD
     const [isValid, setIsValid] = useState(true);
     const validateStep = () => {
         //validate account
@@ -80,6 +81,10 @@ export default function RegisterForm({onSubmit, error}){
         setIsValid(true);
         setActiveStep((prev) => prev - 1);
     };
+=======
+    const handleNext = () => setActiveStep((prev) => prev + 1);
+    const handleBack = () => setActiveStep((prev) => prev - 1);
+>>>>>>> origin/main
 
     //role modification
     const [accountType, setAccountType] = useState('user'); 
@@ -288,7 +293,11 @@ export default function RegisterForm({onSubmit, error}){
                 </Button>
 
                 {activeStep < steps.length - 1 ? (
+<<<<<<< HEAD
                 <Button disabled={!isValid} variant="contained" onClick={handleNext}>
+=======
+                <Button variant="contained" onClick={handleNext}>
+>>>>>>> origin/main
                     Next
                 </Button>
                 ) : (
@@ -299,7 +308,11 @@ export default function RegisterForm({onSubmit, error}){
             </Stack>
 
             {/*errors*/}
+<<<<<<< HEAD
             {(localError || error) && <p><strong>Error: {localError || error}</strong></p>}
+=======
+            {(localError || error) && <p>{localError || error}</p>}
+>>>>>>> origin/main
             </Stack>
         </form>
     )

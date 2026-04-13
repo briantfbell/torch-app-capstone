@@ -4,6 +4,8 @@ import { jsPDF } from "jspdf";
 import PdfModalViewer from "./PdfModalViewer";
 import {Upload, SwapHoriz, Download, Preview, PictureAsPdf} from "@mui/icons-material";
 
+//TO USE THIS: just import it and add <PdfGenerator /> wherever you want in your page
+
 export default function PdfGenerator({ onComplete }) {
   const [images, setImages] = useState([]);
   const [pdfUrl, setPdfUrl] = useState(null);

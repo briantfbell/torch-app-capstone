@@ -34,6 +34,11 @@ const schema = {
     column: 'End Item LIN',
     type: String,
   },
+  image: {
+    // change to real document header
+    column: 'img',
+    type: String,
+  },
   // cost: {
   //   column: 'Cost',
   //   type: Number

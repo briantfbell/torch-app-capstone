@@ -6,6 +6,7 @@ exports.up = function (knex) {
     table.string('ui', 50).defaultTo('EA').notNullable();
     table.integer('auth_qty', 50).defaultTo(1);
     table.string('image');
+    table.text('note');
     table.string('arc');
     table.varchar('cost');
     table.integer('end_item_id').unsigned();
