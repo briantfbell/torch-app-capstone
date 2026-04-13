@@ -12,8 +12,6 @@ exports.insertSerializedItem = async (obj, userId) => {
   }
 
   await db.transaction(async trx => {
-    console.log(obj);
-
     const [[endItem]] = await Promise.all([
       trx('end_items')
         .insert({
