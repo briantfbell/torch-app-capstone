@@ -118,17 +118,6 @@ export default function Ingest() {
         style={{ display: 'none' }}
       />
 
-      {/* {file && ( */}
-      {/* <section> */}
-      {/* File details: */}
-      {/* <div> */}
-      {/* <p>Name: {file.name}</p> */}
-      {/* <p>Type: {file.type}</p>
-            <p>Size: {file.size} bytes</p> */}
-      {/* </div> */}
-      {/* </section> */}
-      {/* )} */}
-
       {file && itemType === 'end-items' && (
         <Button
           variant="outlined"
