@@ -102,7 +102,6 @@ export default function EndItemPage() {
 
     const endItem = item.endItem;
     const imageUrl = endItem.image || "/no_image_found_placeholder.png";
-    const pdfUrl = `/pdfs/${endItem.id}.pdf`
     console.log(`image path is -> ${endItem}`)
     console.table(endItem)
 
@@ -160,15 +159,15 @@ export default function EndItemPage() {
                             >
                                 <Stack spacing={2} sx={{ flex: 1.2 }}>
                                     <Stack direction="row" spacing={1} alignItems="center">
-                                                <Button
-                                                    variant="outlined"
-                                                    startIcon={<PictureAsPdfIcon />}
-                                                    disabled={!pdfUrl}
-                                                    onClick={() => setOpenPdf(true)}
-                                                    sx={{ alignSelf: "flex-start" }}
-                                                >
-                                                    {pdfUrl ? "Open End Item BOM PDF" : "No BOM for this item"}
-                                                </Button>
+                                    <Button
+                                        variant="outlined"
+                                        startIcon={<PictureAsPdfIcon />}
+                                        onClick={() => setOpenPdf(true)}
+                                        sx={{ alignSelf: "flex-start" }}
+                                    >
+                                        Open End Item BOM PDF
+                                    </Button>
+
                                         <PdfGenerator />
                                     </Stack>
 
@@ -290,7 +289,7 @@ export default function EndItemPage() {
                 <PdfModalViewer
                     open={openPdf}
                     onClose={() => setOpenPdf(false)}
-                    pdfUrl={ pdfUrl }
+                    pdfUrl="/pdfs/DET10_FWD_SHR_OCT25_FLAT.pdf"
                 />
             </Stack>
         </Container>
