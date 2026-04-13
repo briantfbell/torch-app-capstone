@@ -215,9 +215,9 @@ export default function RegisterForm({onSubmit, error}){
 
                     <FormLabel>Roles</FormLabel>
                     <FormGroup>
-                    <FormControlLabel control={<Checkbox value="hrh" checked={roles.includes("hrh")} onChange={handleRoleChange} />} label="HRH" />
-                    <FormControlLabel control={<Checkbox value="sub-hrh" checked={roles.includes("sub-hrh")} onChange={handleRoleChange} />} label="sub-HRH" />
-                    <FormControlLabel control={<Checkbox value="t-hrh" checked={roles.includes("t-hrh")} onChange={handleRoleChange} />} label="t-HRH" />
+                    <FormControlLabel control={<Checkbox disabled={accountType === "admin"} value="hrh" checked={roles.includes("hrh")} onChange={handleRoleChange} />} label="HRH" />
+                    <FormControlLabel control={<Checkbox disabled={accountType === "admin"} value="sub-hrh" checked={roles.includes("sub-hrh")} onChange={handleRoleChange} />} label="sub-HRH" />
+                    <FormControlLabel control={<Checkbox disabled={accountType === "admin"} value="t-hrh" checked={roles.includes("t-hrh")} onChange={handleRoleChange} />} label="t-HRH" />
                     </FormGroup>
                 </FormControl>
 
