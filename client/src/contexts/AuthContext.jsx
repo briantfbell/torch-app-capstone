@@ -38,8 +38,8 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  return (
-    <AuthContext.Provider
+    return (
+        <AuthContext.Provider
       value={{ user, loading, refreshUser: fetchin, logoutFunc }}
     >
       {children}
