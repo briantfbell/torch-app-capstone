@@ -32,59 +32,8 @@ export default function RegisterForm({onSubmit, error}){
     //step control for the form to allow it to fit better with the new splash stuff
     const steps = ["Account", "Personal Info", "Assignment"];
     const [activeStep, setActiveStep] = useState(0);
-<<<<<<< HEAD
-    const [isValid, setIsValid] = useState(true);
-    const validateStep = () => {
-        //validate account
-        if(activeStep === 0){
-            if(!form.username || !form.password || !form.confirmPass || !form.email){
-                setLocalError('All fields are required!')
-                setIsValid(false);
-                return false;
-            }
-            if(form.password !== form.confirmPass){
-                setLocalError('Passwords must match!')
-                setIsValid(false);
-                return false;
-            }
-        }
-
-        //validate personal info
-        if(activeStep === 1){
-            if(!form.name_first || !form.name_last || !form.phone || !form.dodid){
-                setLocalError('All fields are required!')
-                setIsValid(false);
-                return false;
-            }
-        }
-
-        //validate assignment
-        if(activeStep === 2){
-            if(!form.rank || !form.uic){
-                setLocalError('All fields are required!')
-                setIsValid(false);
-                return false;
-            }
-        }
-
-        //If we pass all that, clear error and move on
-        setLocalError('');
-        setIsValid(true);
-        return true;
-    }
-
-    const handleNext = () => {
-        validateStep();
-        if(validateStep()) setActiveStep((prev) => prev + 1)
-    };
-    const handleBack = () => {
-        setIsValid(true);
-        setActiveStep((prev) => prev - 1);
-    };
-=======
     const handleNext = () => setActiveStep((prev) => prev + 1);
     const handleBack = () => setActiveStep((prev) => prev - 1);
->>>>>>> origin/main
 
     //role modification
     const [accountType, setAccountType] = useState('user'); 
@@ -120,7 +69,6 @@ export default function RegisterForm({onSubmit, error}){
 
     //Handle regular change (not uic and role)
     const handleChange = (e) => {
-        validateStep();
         const {name, value} = e.target;
 
         setForm({
@@ -237,52 +185,51 @@ export default function RegisterForm({onSubmit, error}){
 
             {/*Step 3 - Admin stuff */}
             {activeStep === 2 && (
-                <Stack padding={1} borderRight={1} borderLeft={1} borderColor="divider" direction="row" spacing={2}>
-                    <Stack spacing={3.7} sx={{width: '50%'}}>
-                        {/*ranks */}
-                        <FormControl>
-                            <FormLabel>Rank Type</FormLabel>
-                            <RadioGroup required value={rankType} onChange={handleRankTypeChange}>
-                            <FormControlLabel value="enlisted" control={<Radio />} label="Enlisted" />
-                            <FormControlLabel value="officer" control={<Radio />} label="Officer" />
-                            <FormControlLabel value="warrant" control={<Radio />} label="Warrant" />
-                            <FormControlLabel value="civilian" control={<Radio />} label="Civilian" />
-                            </RadioGroup>
-                        </FormControl>
-                        <FormLabel>Rank</FormLabel>
-                        <Select required value={form.rank} onChange={handleChange} name="rank" fullWidth>
-                            {rankType === "enlisted" && enlistedRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
-                            {rankType === "officer" && officerRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
-                            {rankType === "warrant" && warrantRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
-                            {rankType === "civilian" && civilianRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
-                        </Select>
-                    </Stack>
-                    <Stack spacing={2} sx={{width: '50%'}}>
-                        {/*roles*/}
-                        <FormControl>
-                            <FormLabel>Account Type</FormLabel>
-                            <RadioGroup required value={accountType} onChange={handleAccountTypeChange}>
-                            <FormControlLabel value="admin" control={<Radio />} label="Admin" />
-                            <FormControlLabel value="user" control={<Radio />} label="User" />
-                            </RadioGroup>
+                <Stack spacing={2}>
+                
+                {/*ranks */}
+                <FormControl>
+                    <FormLabel>Rank Type</FormLabel>
+                    <RadioGroup required value={rankType} onChange={handleRankTypeChange}>
+                    <FormControlLabel value="enlisted" control={<Radio />} label="Enlisted" />
+                    <FormControlLabel value="officer" control={<Radio />} label="Officer" />
+                    <FormControlLabel value="warrant" control={<Radio />} label="Warrant" />
+                    <FormControlLabel value="civilian" control={<Radio />} label="Civilian" />
+                    </RadioGroup>
+                </FormControl>
 
-                            <FormLabel>Roles</FormLabel>
-                            <FormGroup>
-                            <FormControlLabel control={<Checkbox disabled={accountType === "admin"} value="hrh" checked={roles.includes("hrh")} onChange={handleRoleChange} />} label="HRH" />
-                            <FormControlLabel control={<Checkbox disabled={accountType === "admin"} value="sub-hrh" checked={roles.includes("sub-hrh")} onChange={handleRoleChange} />} label="sub-HRH" />
-                            <FormControlLabel control={<Checkbox disabled={accountType === "admin"} value="t-hrh" checked={roles.includes("t-hrh")} onChange={handleRoleChange} />} label="t-HRH" />
-                            </FormGroup>
-                        </FormControl>
-                        {/* UIC */}
-                        <FormControl fullWidth>
-                            <InputLabel>UIC</InputLabel>
-                            <Select required value={form.uic} onChange={handleUicChange}>
-                            {uics.map((uic) => (
-                                <MenuItem key={uic.uic} value={uic.uic}>{uic.uic}</MenuItem>
-                            ))}
-                            </Select>
-                        </FormControl>
-                    </Stack>
+                <Select required value={form.rank} onChange={handleChange} name="rank" fullWidth>
+                    {rankType === "enlisted" && enlistedRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+                    {rankType === "officer" && officerRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+                    {rankType === "warrant" && warrantRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+                    {rankType === "civilian" && civilianRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+                </Select>
+
+                {/*roles*/}
+                <FormControl>
+                    <FormLabel>Account Type</FormLabel>
+                    <RadioGroup required value={accountType} onChange={handleAccountTypeChange}>
+                    <FormControlLabel value="admin" control={<Radio />} label="Admin" />
+                    <FormControlLabel value="user" control={<Radio />} label="User" />
+                    </RadioGroup>
+
+                    <FormLabel>Roles</FormLabel>
+                    <FormGroup>
+                    <FormControlLabel control={<Checkbox value="hrh" checked={roles.includes("hrh")} onChange={handleRoleChange} />} label="HRH" />
+                    <FormControlLabel control={<Checkbox value="sub-hrh" checked={roles.includes("sub-hrh")} onChange={handleRoleChange} />} label="sub-HRH" />
+                    <FormControlLabel control={<Checkbox value="t-hrh" checked={roles.includes("t-hrh")} onChange={handleRoleChange} />} label="t-HRH" />
+                    </FormGroup>
+                </FormControl>
+
+                {/* UIC */}
+                <FormControl fullWidth>
+                    <InputLabel>UIC</InputLabel>
+                    <Select required value={form.uic} onChange={handleUicChange}>
+                    {uics.map((uic) => (
+                        <MenuItem key={uic.uic} value={uic.uic}>{uic.uic}</MenuItem>
+                    ))}
+                    </Select>
+                </FormControl>
                 </Stack>
             )}
 
@@ -293,11 +240,7 @@ export default function RegisterForm({onSubmit, error}){
                 </Button>
 
                 {activeStep < steps.length - 1 ? (
-<<<<<<< HEAD
-                <Button disabled={!isValid} variant="contained" onClick={handleNext}>
-=======
                 <Button variant="contained" onClick={handleNext}>
->>>>>>> origin/main
                     Next
                 </Button>
                 ) : (
@@ -308,11 +251,7 @@ export default function RegisterForm({onSubmit, error}){
             </Stack>
 
             {/*errors*/}
-<<<<<<< HEAD
-            {(localError || error) && <p><strong>Error: {localError || error}</strong></p>}
-=======
             {(localError || error) && <p>{localError || error}</p>}
->>>>>>> origin/main
             </Stack>
         </form>
     )

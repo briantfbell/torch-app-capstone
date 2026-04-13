@@ -18,11 +18,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import SaveIcon from "@mui/icons-material/Save";
 import PdfModalViewer from "../components/PdfModalViewer";
-<<<<<<< HEAD
-import PdfGenerator from "../components/PdfGenerator";
-=======
 import { getEndItemById, updateEndItemNotes } from "../api/endItems";
->>>>>>> origin/main
 
 export default function EndItemPage() {
   const { id } = useParams();
@@ -154,24 +150,20 @@ export default function EndItemPage() {
                   </Typography>
                 </Box>
 
-              <Stack
-                direction={{ xs: "column", md: "row" }}
-                spacing={3}
-                alignItems="stretch"
-              >
-                <Stack spacing={2} sx={{ flex: 1.2 }}>
-                  <Stack direction="row" spacing={1} alignItems="center">
+                <Stack
+                    direction={{ xs: "column", md: "row" }}
+                    spacing={3}
+                    alignItems="stretch"
+                >
+                  <Stack spacing={2} sx={{ flex: 1.2 }}>
                     <Button
-                      variant="outlined"
-                      startIcon={<PictureAsPdfIcon />}
-                      onClick={() => setOpenPdf(true)}
-                      sx={{ alignSelf: "flex-start" }}
+                        variant="outlined"
+                        startIcon={<PictureAsPdfIcon />}
+                        onClick={() => setOpenPdf(true)}
+                        sx={{ alignSelf: "flex-start" }}
                     >
                       Open End Item BOM PDF
                     </Button>
-
-                    <PdfGenerator />
-                  </Stack>
 
                     <Card variant="outlined">
                       <CardContent>
@@ -288,44 +280,6 @@ export default function EndItemPage() {
             </CardContent>
           </Card>
 
-<<<<<<< HEAD
-              <Card variant="outlined">
-                <CardContent>
-                  <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                    NIIN
-                  </Typography>
-                  <Typography variant="body1">{endItem.niin}</Typography>
-                </CardContent>
-              </Card>
-
-              <Card variant="outlined">
-                <CardContent>
-                  <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                    LIN
-                  </Typography>
-                  <Typography variant="body1">{endItem.lin}</Typography>
-                </CardContent>
-              </Card>
-
-              <Button
-                variant="contained"
-                size="large"
-                fullWidth
-                onClick={() => navigate(`/InventoryTable/${id}`)}
-              >
-                Start / Open Inventory
-              </Button>
-            </Stack>
-          </CardContent>
-        </Card>
-        <PdfModalViewer
-          open={openPdf}
-          onClose={() => setOpenPdf(false)}
-          pdfUrl="/pdfs/DET10_FWD_SHR_OCT25_FLAT.pdf"
-        />
-      </Stack>
-    </Container>
-=======
           <PdfModalViewer
               open={openPdf}
               onClose={() => setOpenPdf(false)}
@@ -333,6 +287,5 @@ export default function EndItemPage() {
           />
         </Stack>
       </Container>
->>>>>>> origin/main
   );
 }
