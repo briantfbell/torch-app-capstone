@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import Button from '@mui/material/Button';
+import { useRef, useState } from 'react';
 
 export default function Ingest() {
   const [file, setFile] = useState(null);
-  const [status, setStatus] = useState('initial');
+  const [status, setStatus] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [itemType, setItemType] = useState(null);
+  const fileInputRef = useRef(null);
 
   const handleFileChange = e => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-    }
+    setFile(e.target.files[0]) || fileInputRef;
   };
 
   const handleUploadEndItems = async () => {
@@ -31,15 +32,18 @@ export default function Ingest() {
         setStatus('success');
         setErrorMessage(null);
         setFile(null);
+        setItemType(null);
       } else {
         setStatus('fail');
         setErrorMessage(body.message || 'Upload failed.');
         setFile(null);
+        setItemType(null);
       }
     } catch (err) {
       setStatus('fail');
       setErrorMessage(err.message || 'Upload failed.');
       setFile(null);
+      setItemType(null);
     }
   };
 
@@ -63,47 +67,86 @@ export default function Ingest() {
         setStatus('success');
         setErrorMessage(null);
         setFile(null);
+        setItemType(null);
       } else {
         setStatus('fail');
         setErrorMessage(body.message || 'Upload failed.');
         setFile(null);
+        setItemType(null);
       }
     } catch (err) {
       setStatus('fail');
       setErrorMessage(err.message || 'Upload failed.');
       setFile(null);
+      setItemType(null);
     }
   };
 
   return (
     <div>
-      <input type="file" onChange={handleFileChange} />
-      {file && (
-        <section>
-          File details:
-          <ul>
-            <li>Name: {file.name}</li>
-            <li>Type: {file.type}</li>
-            <li>Size: {file.size} bytes</li>
-          </ul>
-        </section>
-      )}
+      {itemType === null && (
+        <div>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setItemType('end-items');
+              fileInputRef.current.value = null;
+              fileInputRef.current.click();
+              setErrorMessage(null);
+            }}
+          >
+            Upload End Items
+          </Button>
 
-      {file && (
-        <button
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setItemType('components');
+              fileInputRef.current.value = null;
+              fileInputRef.current.click();
+              setErrorMessage(null);
+            }}
+          >
+            Upload Components
+          </Button>
+        </div>
+      )}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        style={{ display: 'none' }}
+      />
+
+      {/* {file && ( */}
+      {/* <section> */}
+      {/* File details: */}
+      {/* <div> */}
+      {/* <p>Name: {file.name}</p> */}
+      {/* <p>Type: {file.type}</p>
+            <p>Size: {file.size} bytes</p> */}
+      {/* </div> */}
+      {/* </section> */}
+      {/* )} */}
+
+      {file && itemType === 'end-items' && (
+        <Button
+          variant="outlined"
           onClick={handleUploadEndItems}
           disabled={status === 'uploading'}
         >
-          Upload end items
-        </button>
+          Upload
+        </Button>
       )}
-      {file && (
-        <button
+
+      {file && itemType === 'components' && (
+        <Button
+          variant="outlined"
           onClick={handleUploadComponents}
           disabled={status === 'uploading'}
         >
-          Upload components
-        </button>
+          Upload
+        </Button>
       )}
 
       {status === 'success' && <p>Upload successful!</p>}
