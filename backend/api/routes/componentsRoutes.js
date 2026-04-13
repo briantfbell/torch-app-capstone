@@ -17,7 +17,7 @@ router.get('/uic/:uic_id', getComponentsByUicId);
 router.get('/:id', getComponentById);
 router.get('/', getAllComponents);
 router.post('/', hrhAuth, createComponent);
-router.patch('/:id', adminAuth, updateComponent);
-router.delete('/:id', adminAuth, deleteComponent);
+router.patch('/:id', hrhAuth, updateComponent);
+router.delete('/:id', hrhAuth, deleteComponent);
 
 module.exports = router;

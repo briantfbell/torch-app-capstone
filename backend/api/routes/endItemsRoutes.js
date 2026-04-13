@@ -18,8 +18,8 @@ router.get('/uic/:uic_id', getEndItemsByUicId);
 router.get('/:id', getEndItemById);
 router.get('/', getAllEndItems);
 router.post('/', hrhAuth, createEndItem);
-router.patch('/:id/complete', adminAuth, markEndItemComplete);
-router.patch('/:id', adminAuth, updateEndItem);
-router.delete('/:id', adminAuth, deleteEndItem);
+router.patch('/:id/complete', hrhAuth, markEndItemComplete);
+router.patch('/:id', hrhAuth, updateEndItem);
+router.delete('/:id', hrhAuth, deleteEndItem);
 
 module.exports = router;

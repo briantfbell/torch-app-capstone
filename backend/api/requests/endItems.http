@@ -20,6 +20,9 @@ Content-Type: application/json
   "lin": "test6"
 }
 
+### Mark end item complete by id
+PATCH http://localhost:8080/end-items/1/complete
+
 ### Update end item by id
 PATCH http://localhost:8080/end-items/1
 Content-Type: application/json

@@ -14,8 +14,8 @@ Content-Type: application/json
 {
   "serial_number": "SN-012",
   "status": "serviceable",
-  "end_item_lin": "pyropZ",
-  "user_dodid": "221191331"
+  "end_item_lin": "70210N",
+  "user_dodid": "5399334747"
 }
 
 ### Update serial item by id

@@ -1,4 +1,6 @@
 {
+  "jest.jestCommandLine": "npm test --",
+  "jest.rootPath": "./backend",
   "cSpell.words": ["dodid", "niin", "uics"],
   "sqltools.connections": [
     {

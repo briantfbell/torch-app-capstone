@@ -23,7 +23,7 @@ POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
-  "email": "latoya_erdman13@hotmail.com",
+  "email": "hrh",
   "password": "password"
 }
 

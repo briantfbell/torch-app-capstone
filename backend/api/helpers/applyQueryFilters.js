@@ -25,6 +25,7 @@ exports.applyQueryFilters = (query, filters, options = {}) => {
     lin,
     arc,
     end_item_id,
+    component_id,
     status,
     item_id,
     serial_number,
@@ -90,6 +91,11 @@ exports.applyQueryFilters = (query, filters, options = {}) => {
   // END_ITEM_ID (components)
   if (end_item_id) {
     query.where('end_item_id', end_item_id);
+  }
+
+  // COMPONENT_ID (history)
+  if (component_id) {
+    query.where('component_id', component_id);
   }
 
   // STATUS (serial_items) — supports comma-separated or array values

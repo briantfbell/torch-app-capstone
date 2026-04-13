@@ -22,7 +22,7 @@ A web-based military property accountability application designed for use at the
 cd client && npm install
 
 # Install server dependencies
-cd server && npm install
+cd backend && npm install
 ```
 
 ### Run the App
@@ -32,51 +32,195 @@ cd server && npm install
 cd client && npm run dev
 
 # Run server
-cd server && npm run dev
+cd backend && npm run dev
 ```
 
-## API Endpoints
+---
+
+## Database Schema
+
+```mermaid
+erDiagram
+    ranks {
+        int id PK
+        varchar rank
+    }
+
+    uics {
+        int id PK
+        varchar uic
+        varchar unit_name
+        varchar parent_uic
+    }
+
+    users {
+        int id PK
+        varchar username
+        string password
+        string name_first
+        string name_last
+        varchar email
+        varchar phone
+        timestamp created_at
+        timestamp updated_at
+        bigint dodid
+        string role
+        int rank_id FK
+        int uic_id FK
+    }
+
+    end_items {
+        int id PK
+        int fsc
+        text description
+        varchar niin
+        int auth_qty
+        varchar lin
+        string image
+        decimal cost
+        boolean completed
+    }
+
+    components {
+        int id PK
+        varchar niin
+        text description
+        string ui
+        int auth_qty
+        string image
+        string arc
+        varchar cost
+        int end_item_id FK
+    }
+
+    serial_end_items {
+        int id PK
+        varchar serial_number
+        timestamp assigned_at
+        string status
+        text common_name
+        int end_item_id FK
+        int user_id FK
+    }
+
+    serial_component_items {
+        int id PK
+        varchar serial_number
+        timestamp assigned_at
+        string status
+        text common_name
+        int component_id FK
+        int user_id FK
+    }
+
+    history_end_current {
+        int id PK
+        boolean seen
+        text location
+        timestamp last_seen
+        int user_id FK
+        int end_item_id FK
+        int serial_number FK
+    }
+
+    history_end_archive {
+        int id PK
+        boolean seen
+        text location
+        timestamp last_seen
+        timestamp archived_at
+        int user_id FK
+        int end_item_id FK
+        int serial_number FK
+    }
+
+    history_component_current {
+        int id PK
+        boolean seen
+        text location
+        timestamp last_seen
+        int user_id FK
+        int component_id FK
+        int serial_number FK
+    }
+
+    history_component_archive {
+        int id PK
+        boolean seen
+        text location
+        timestamp last_seen
+        timestamp archived_at
+        int user_id FK
+        int component_id FK
+        int serial_number FK
+    }
+
+    uics ||--o{ users : "uic_id"
+    ranks ||--o{ users : "rank_id"
+    users ||--o{ serial_end_items : "user_id"
+    users ||--o{ serial_component_items : "user_id"
+    users ||--o{ history_end_current : "user_id"
+    users ||--o{ history_end_archive : "user_id"
+    users ||--o{ history_component_current : "user_id"
+    users ||--o{ history_component_archive : "user_id"
+    end_items ||--o{ components : "end_item_id"
+    end_items ||--o{ serial_end_items : "end_item_id"
+    end_items ||--o{ history_end_current : "end_item_id"
+    end_items ||--o{ history_end_archive : "end_item_id"
+    components ||--o{ serial_component_items : "component_id"
+    components ||--o{ history_component_current : "component_id"
+    components ||--o{ history_component_archive : "component_id"
+    serial_end_items ||--o{ history_end_current : "serial_number"
+    serial_end_items ||--o{ history_end_archive : "serial_number"
+    serial_component_items ||--o{ history_component_current : "serial_number"
+    serial_component_items ||--o{ history_component_archive : "serial_number"
+```
+
+---
+
+## API Reference
 
 **Base URL:** `http://localhost:8080`
 
+### Authentication
+
 All protected routes require a valid JWT session cookie set by `POST /auth/login`. The cookie is `httpOnly`, expires after 7 days, and is named `token`.
+
+### Role Permissions
+
+| Role    | Access Level                                             |
+| ------- | -------------------------------------------------------- |
+| `user`  | Read access to most resources                            |
+| `hrh`   | Can create resources (POST endpoints)                    |
+| `admin` | Can update and delete resources (PATCH/DELETE endpoints) |
+
+### Error Format
+
+All errors return:
+
+```json
+{ "message": "error description" }
+```
+
+| Status | Meaning                                 |
+| ------ | --------------------------------------- |
+| `400`  | Bad request / missing fields            |
+| `401`  | Missing or invalid token                |
+| `403`  | Insufficient role                       |
+| `404`  | Resource not found                      |
+| `409`  | Conflict (e.g. duplicate serial number) |
+| `500`  | Server error                            |
 
 ---
 
 ### Auth — `/auth`
 
-#### `GET /auth/me` — Auth required
-Get the currently authenticated user's profile.
-
-**Request:** No body.
-
-**Response `200`:**
-```json
-{
-  "user": {
-    "id": 1,
-    "username": "jsmith",
-    "name_first": "John",
-    "name_last": "Smith",
-    "email": "jsmith@example.com",
-    "phone": "555-1234",
-    "role": "user",
-    "rank_id": 7,
-    "rank": "E-7",
-    "uic_id": 1,
-    "uic": "WCAEB1",
-    "created_at": "timestamp",
-    "updated_at": "timestamp"
-  }
-}
-```
-
----
-
 #### `POST /auth/register` — No auth required
+
 Create a new user account.
 
 **Request body:**
+
 ```json
 {
   "username": "jsmith",
@@ -91,9 +235,11 @@ Create a new user account.
   "dodid": "1234567890"
 }
 ```
-All fields required. `rank` must match an existing rank (e.g. `"E-7"`). `uic` must match an existing UIC code.
+
+All fields required. `rank` must match an existing rank value. `uic` must match an existing UIC code.
 
 **Response `201`:**
+
 ```json
 {
   "newUser": {
@@ -117,9 +263,11 @@ All fields required. `rank` must match an existing rank (e.g. `"E-7"`). `uic` mu
 ---
 
 #### `POST /auth/login` — No auth required
+
 Authenticate and receive a session cookie.
 
 **Request body:**
+
 ```json
 {
   "email": "jsmith@example.com",
@@ -127,21 +275,54 @@ Authenticate and receive a session cookie.
 }
 ```
 
-**Response `200`:** Sets `httpOnly` cookie `token` (7-day expiry) and returns the token in the body.
+**Response `200`:** Sets `httpOnly` cookie `token` (7-day expiry) and returns the token.
+
 ```json
 { "token": "<jwt>" }
 ```
 
-**Errors `401`:** User not found, or email/password mismatch.
+**Errors:** `400` missing fields, `401` user not found or wrong password.
+
+---
+
+#### `GET /auth/me` — Auth required
+
+Get the currently authenticated user's profile.
+
+**Request:** No body.
+
+**Response `200`:**
+
+```json
+{
+  "user": {
+    "id": 1,
+    "username": "jsmith",
+    "name_first": "John",
+    "name_last": "Smith",
+    "email": "jsmith@example.com",
+    "phone": "555-1234",
+    "role": "user",
+    "rank_id": 7,
+    "rank": "E-7",
+    "uic_id": 1,
+    "uic": "WCAEB1",
+    "created_at": "timestamp",
+    "updated_at": "timestamp"
+  }
+}
+```
 
 ---
 
 #### `POST /auth/logout` — Auth required
+
 Clear the session cookie.
 
 **Request:** No body.
 
 **Response `200`:**
+
 ```json
 { "message": "Logged out." }
 ```
@@ -150,21 +331,24 @@ Clear the session cookie.
 
 ### Users — `/users`
 
-All endpoints require authentication.
+All endpoints require authentication. PATCH and DELETE require `hrh` role.
 
 #### `GET /users`
-Get all users. Supports filtering, sorting, and pagination via query params.
+
+Get all users. Supports filtering, sorting, and pagination.
 
 **Query params:**
 | Param | Description |
 |-------|-------------|
-| `q` | Search across text fields |
+| `id` | Filter by user ID |
+| `q` | Search username, email, name_first, name_last |
 | `sort_by` | Field to sort by (default: `id`) |
 | `order` | `asc` or `desc` (default: `asc`) |
 | `limit` | Max results (1–100) |
 | `offset` | Pagination offset (default: `0`) |
 
 **Response `200`:**
+
 ```json
 {
   "allUsers": [
@@ -191,36 +375,44 @@ Get all users. Supports filtering, sorting, and pagination via query params.
 ---
 
 #### `GET /users/:id`
+
 Get a single user by ID.
 
 **Response `200`:**
+
 ```json
 {
   "user": { "/* same shape as GET /users item */" }
 }
 ```
 
+**Errors `404`:** User not found.
+
 ---
 
-#### `PATCH /users/:id`
-Update a user. All fields optional.
+#### `PATCH /users/:id` — Admin required
+
+Update a user. All fields optional — send only fields to update.
 
 **Request body:**
+
 ```json
 {
   "username": "jsmith2",
   "name_first": "John",
   "name_last": "Smith",
   "email": "jsmith2@example.com",
+  "password": "newpassword",
   "phone": "555-9999",
   "rank": "E-7",
   "uic_id": 1,
-  "role": "hrc",
+  "role": "hrh",
   "DoDID": "0987654321"
 }
 ```
 
 **Response `200`:**
+
 ```json
 {
   "updatedUser": { "/* updated user object */" },
@@ -228,14 +420,16 @@ Update a user. All fields optional.
 }
 ```
 
-**Errors `400`:** No changes detected.
+**Errors:** `400` no changes detected, `404` user not found.
 
 ---
 
-#### `DELETE /users/:id`
+#### `DELETE /users/:id` — Admin required
+
 Delete a user by ID.
 
 **Response `200`:**
+
 ```json
 {
   "deletedUser": { "/* deleted user object */" },
@@ -243,13 +437,16 @@ Delete a user by ID.
 }
 ```
 
+**Errors `404`:** User not found.
+
 ---
 
 ### UICs — `/uics`
 
-No authentication required on any UIC endpoint.
+GET endpoints are public. POST requires `hrh` role. PATCH and DELETE require `hrh` role.
 
 #### `GET /uics`
+
 Get all UICs. Supports filtering, sorting, and pagination.
 
 **Query params:**
@@ -262,6 +459,7 @@ Get all UICs. Supports filtering, sorting, and pagination.
 | `offset` | Pagination offset |
 
 **Response `200`:**
+
 ```json
 {
   "allUics": [
@@ -269,9 +467,7 @@ Get all UICs. Supports filtering, sorting, and pagination.
       "id": 1,
       "uic": "WCAEB1",
       "unit_name": "1st Battalion",
-      "parent_uic": "W1A1AB",
-      "created_at": "timestamp",
-      "updated_at": "timestamp"
+      "parent_uic": "W1A1AB"
     }
   ]
 }
@@ -280,21 +476,27 @@ Get all UICs. Supports filtering, sorting, and pagination.
 ---
 
 #### `GET /uics/:id`
+
 Get a single UIC by ID.
 
 **Response `200`:**
+
 ```json
 {
   "uic": { "/* same shape as GET /uics item */" }
 }
 ```
 
+**Errors `404`:** UIC not found.
+
 ---
 
-#### `POST /uics`
+#### `POST /uics` — HRH role required
+
 Create a new UIC.
 
 **Request body:**
+
 ```json
 {
   "uic": "W1A1AA",
@@ -302,22 +504,33 @@ Create a new UIC.
   "parent_uic": "W1A1AB"
 }
 ```
+
 All fields required.
 
 **Response `201`:**
+
 ```json
 {
-  "newUic": { "/* uic object */" },
+  "newUic": {
+    "id": 1,
+    "uic": "W1A1AA",
+    "unit_name": "1st Battalion",
+    "parent_uic": "W1A1AB"
+  },
   "message": "UIC 'W1A1AA' has been successfully created."
 }
 ```
 
+**Errors `400`:** Missing fields.
+
 ---
 
-#### `PATCH /uics/:id`
+#### `PATCH /uics/:id` — Admin required
+
 Update a UIC. All fields optional.
 
 **Request body:**
+
 ```json
 {
   "uic": "W1A1AA",
@@ -327,6 +540,7 @@ Update a UIC. All fields optional.
 ```
 
 **Response `200`:**
+
 ```json
 {
   "updatedUic": { "/* updated uic object */" },
@@ -334,12 +548,16 @@ Update a UIC. All fields optional.
 }
 ```
 
+**Errors `404`:** UIC not found.
+
 ---
 
-#### `DELETE /uics/:id`
+#### `DELETE /uics/:id` — Admin required
+
 Delete a UIC by ID.
 
 **Response `200`:**
+
 ```json
 {
   "deletedUic": { "/* deleted uic object */" },
@@ -347,13 +565,16 @@ Delete a UIC by ID.
 }
 ```
 
+**Errors `404`:** UIC not found.
+
 ---
 
 ### End Items — `/end-items`
 
-All endpoints require authentication.
+All endpoints require authentication. POST requires `hrh` role. PATCH and DELETE require `hrh` role.
 
 #### `GET /end-items`
+
 Get all end items. Supports filtering, sorting, and pagination.
 
 **Query params:**
@@ -364,13 +585,13 @@ Get all end items. Supports filtering, sorting, and pagination.
 | `niin` | Substring match on NIIN |
 | `fsc` | Substring match on FSC |
 | `lin` | Substring match on LIN |
-| `q` | General text search |
 | `sort_by` | Field to sort by |
 | `order` | `asc` or `desc` |
 | `limit` | Max results |
 | `offset` | Pagination offset |
 
 **Response `200`:**
+
 ```json
 {
   "allEndItems": [
@@ -380,8 +601,9 @@ Get all end items. Supports filtering, sorting, and pagination.
       "description": "RIFLE,5.56 MILLIMETER",
       "niin": "016191936",
       "image": "url-or-path",
-      "auth_qty": "1",
+      "auth_qty": 1,
       "lin": "R97777",
+      "completed": false,
       "created_at": "timestamp",
       "updated_at": "timestamp"
     }
@@ -392,34 +614,58 @@ Get all end items. Supports filtering, sorting, and pagination.
 ---
 
 #### `GET /end-items/:id`
+
 Get a single end item by ID.
 
 **Response `200`:**
+
 ```json
 {
   "endItem": { "/* same shape as GET /end-items item */" }
 }
 ```
 
+**Errors `404`:** End item not found.
+
 ---
 
-#### `POST /end-items`
+#### `GET /end-items/uic/:uic_id`
+
+Get all end items assigned to a UIC.
+
+**Response `200`:**
+
+```json
+{
+  "endItems": [ { "/* end item objects */" } ]
+}
+```
+
+**Errors `404`:** UIC does not exist or no end items recorded.
+
+---
+
+#### `POST /end-items` — HRH role required
+
 Create a new end item.
 
 **Request body:**
+
 ```json
 {
   "fsc": "1005",
   "description": "RIFLE,5.56 MILLIMETER",
   "niin": "016191936",
   "image": "url-or-path",
-  "auth_qty": "1",
+  "auth_qty": 1,
   "lin": "R97777"
 }
 ```
+
 All fields required.
 
 **Response `201`:**
+
 ```json
 {
   "newEndItem": { "/* end item object */" },
@@ -427,24 +673,30 @@ All fields required.
 }
 ```
 
+**Errors `400`:** Missing fields.
+
 ---
 
-#### `PATCH /end-items/:id`
+#### `PATCH /end-items/:id` — Admin required
+
 Update an end item. All fields optional.
 
 **Request body:**
+
 ```json
 {
   "fsc": "1005",
   "description": "RIFLE,5.56 MILLIMETER",
   "niin": "016191936",
   "image": "url-or-path",
-  "auth_qty": "2",
-  "lin": "R97777"
+  "auth_qty": 2,
+  "lin": "R97777",
+  "completed": true
 }
 ```
 
 **Response `200`:**
+
 ```json
 {
   "updatedEndItem": { "/* updated end item object */" },
@@ -452,12 +704,31 @@ Update an end item. All fields optional.
 }
 ```
 
+**Errors `404`:** End item not found.
+
 ---
 
-#### `DELETE /end-items/:id`
+#### `PATCH /end-items/:id/complete` — Admin required
+
+Mark an end item as complete. No body needed.
+
+**Response `200`:**
+
+```json
+{
+  "updatedEndItem": { "/* end item object with completed: true */" },
+  "message": "LIN: R97777 has been marked complete."
+}
+```
+
+---
+
+#### `DELETE /end-items/:id` — Admin required
+
 Delete an end item by ID.
 
 **Response `200`:**
+
 ```json
 {
   "deletedEndItem": { "/* deleted end item object */" },
@@ -465,13 +736,16 @@ Delete an end item by ID.
 }
 ```
 
+**Errors `404`:** End item not found.
+
 ---
 
 ### Components — `/components`
 
-All endpoints require authentication.
+All endpoints require authentication. POST requires `hrh` role. PATCH and DELETE require `hrh` role.
 
 #### `GET /components`
+
 Get all components. Supports filtering, sorting, and pagination.
 
 **Query params:**
@@ -482,13 +756,13 @@ Get all components. Supports filtering, sorting, and pagination.
 | `niin` | Substring match on NIIN |
 | `arc` | Substring match on ARC |
 | `end_item_id` | Filter by end item ID |
-| `q` | General text search |
 | `sort_by` | Field to sort by |
 | `order` | `asc` or `desc` |
 | `limit` | Max results |
 | `offset` | Pagination offset |
 
 **Response `200`:**
+
 ```json
 {
   "allComponents": [
@@ -497,7 +771,7 @@ Get all components. Supports filtering, sorting, and pagination.
       "niin": "123456789",
       "description": "MAGAZINE,30-ROUND",
       "ui": "EA",
-      "auth_qty": "6",
+      "auth_qty": 6,
       "image": "url-or-path",
       "arc": "B",
       "end_item_id": 1,
@@ -511,35 +785,59 @@ Get all components. Supports filtering, sorting, and pagination.
 ---
 
 #### `GET /components/:id`
+
 Get a single component by ID.
 
 **Response `200`:**
+
 ```json
 {
   "component": { "/* same shape as GET /components item */" }
 }
 ```
 
+**Errors `404`:** Component not found.
+
 ---
 
-#### `POST /components`
+#### `GET /components/uic/:uic_id`
+
+Get all components assigned to a UIC.
+
+**Response `200`:**
+
+```json
+{
+  "components": [ { "/* component objects */" } ]
+}
+```
+
+**Errors `404`:** UIC does not exist or no components recorded.
+
+---
+
+#### `POST /components` — HRH role required
+
 Create a new component. Associates the component to an end item via LIN.
 
 **Request body:**
+
 ```json
 {
   "niin": "123456789",
   "description": "MAGAZINE,30-ROUND",
   "ui": "EA",
-  "auth_qty": "6",
+  "auth_qty": 6,
   "image": "url-or-path",
   "arc": "B",
   "end_item_lin": "R97777"
 }
 ```
+
 All fields required. `end_item_lin` must match an existing end item's LIN.
 
 **Response `201`:**
+
 ```json
 {
   "newComponent": { "/* component object */" },
@@ -547,25 +845,29 @@ All fields required. `end_item_lin` must match an existing end item's LIN.
 }
 ```
 
+**Errors `400`:** Missing fields.
+
 ---
 
-#### `PATCH /components/:id`
+#### `PATCH /components/:id` — Admin required
+
 Update a component. All fields optional.
 
 **Request body:**
+
 ```json
 {
   "niin": "123456789",
   "description": "MAGAZINE,30-ROUND",
   "ui": "EA",
-  "auth_qty": "4",
+  "auth_qty": 4,
   "image": "url-or-path",
-  "arc": "B",
-  "end_item_id": 1
+  "arc": "B"
 }
 ```
 
 **Response `200`:**
+
 ```json
 {
   "updatedComponent": { "/* updated component object */" },
@@ -573,14 +875,16 @@ Update a component. All fields optional.
 }
 ```
 
-**Errors `400`:** No changes detected.
+**Errors:** `400` no changes detected, `404` component not found.
 
 ---
 
-#### `DELETE /components/:id`
+#### `DELETE /components/:id` — Admin required
+
 Delete a component by ID.
 
 **Response `200`:**
+
 ```json
 {
   "deletedComponent": { "/* deleted component object */" },
@@ -588,14 +892,17 @@ Delete a component by ID.
 }
 ```
 
+**Errors `404`:** Component not found.
+
 ---
 
 ### Serial Items — `/serial-items`
 
-All endpoints require authentication.
+All endpoints require authentication. POST requires `hrh` role. PATCH and DELETE require `hrh` role.
 
 #### `GET /serial-items`
-Get all serial items. Supports filtering, sorting, and pagination.
+
+Get all serial end items. Supports filtering, sorting, and pagination.
 
 **Query params:**
 | Param | Description |
@@ -603,15 +910,13 @@ Get all serial items. Supports filtering, sorting, and pagination.
 | `id` | Filter by ID |
 | `serial_number` | Substring match on serial number |
 | `status` | Comma-separated status values (e.g. `serviceable,unserviceable`) |
-| `item_id` | Filter by end item ID |
-| `signed_to` | Filter by signed_to field |
-| `q` | General text search |
 | `sort_by` | Field to sort by |
 | `order` | `asc` or `desc` |
 | `limit` | Max results |
 | `offset` | Pagination offset |
 
 **Response `200`:**
+
 ```json
 {
   "allSerialItems": [
@@ -619,7 +924,7 @@ Get all serial items. Supports filtering, sorting, and pagination.
       "id": 1,
       "serial_number": "SN-012",
       "status": "serviceable",
-      "item_id": 1,
+      "end_item_id": 1,
       "user_id": 3,
       "created_at": "timestamp",
       "updated_at": "timestamp"
@@ -631,21 +936,43 @@ Get all serial items. Supports filtering, sorting, and pagination.
 ---
 
 #### `GET /serial-items/:id`
+
 Get a single serial item by ID.
 
 **Response `200`:**
+
 ```json
 {
   "serialItem": { "/* same shape as GET /serial-items item */" }
 }
 ```
 
+**Errors `404`:** Serial item not found.
+
 ---
 
-#### `POST /serial-items`
+#### `GET /serial-items/uic/:uic_id`
+
+Get all serial items assigned to a UIC.
+
+**Response `200`:**
+
+```json
+{
+  "serialItems": [ { "/* serial item objects */" } ]
+}
+```
+
+**Errors `404`:** UIC does not exist or no serial items recorded.
+
+---
+
+#### `POST /serial-items` — HRH role required
+
 Create a new serial item. Associates to an end item via LIN and a user via DoDID.
 
 **Request body:**
+
 ```json
 {
   "serial_number": "SN-012",
@@ -654,9 +981,11 @@ Create a new serial item. Associates to an end item via LIN and a user via DoDID
   "user_dodid": "1234567890"
 }
 ```
+
 All fields required. `end_item_lin` must match an existing end item's LIN. `user_dodid` must match an existing user's DoDID.
 
 **Response `201`:**
+
 ```json
 {
   "newSerialItem": { "/* serial item object */" },
@@ -664,22 +993,25 @@ All fields required. `end_item_lin` must match an existing end item's LIN. `user
 }
 ```
 
+**Errors `400`:** Missing fields.
+
 ---
 
-#### `PATCH /serial-items/:id`
+#### `PATCH /serial-items/:id` — Admin required
+
 Update a serial item. All fields optional.
 
 **Request body:**
+
 ```json
 {
   "serial_number": "SN-013",
-  "status": "unserviceable",
-  "item_id": 2,
-  "user_id": 5
+  "status": "unserviceable"
 }
 ```
 
 **Response `200`:**
+
 ```json
 {
   "updatedSerialItem": { "/* updated serial item object */" },
@@ -687,12 +1019,16 @@ Update a serial item. All fields optional.
 }
 ```
 
+**Errors `404`:** Serial item not found.
+
 ---
 
-#### `DELETE /serial-items/:id`
+#### `DELETE /serial-items/:id` — Admin required
+
 Delete a serial item by ID.
 
 **Response `200`:**
+
 ```json
 {
   "deletedSerialItem": { "/* deleted serial item object */" },
@@ -700,27 +1036,279 @@ Delete a serial item by ID.
 }
 ```
 
+**Errors `404`:** Serial item not found.
+
 ---
 
-### History — `/history`
+### Current History (End Items) — `/current-history/end-items`
 
-All endpoints require authentication.
+Tracks the current property record for each serialized end item. Only one record per serial number can exist at a time — creating or updating a record for an existing serial number automatically archives the old one.
 
-#### `GET /history`
-Get all history records. Supports filtering, sorting, and pagination via query params.
+All endpoints require authentication. POST requires `hrh` role. PATCH requires `hrh` role.
+
+#### `GET /current-history/end-items`
+
+Get all current end item history records.
+
+**Query params:**
+| Param | Description |
+|-------|-------------|
+| `id` | Filter by record ID |
+| `serial_number` | Filter by serial number string |
+| `sort_by` | Field to sort by |
+| `order` | `asc` or `desc` |
+| `limit` | Max results |
+| `offset` | Pagination offset |
 
 **Response `200`:**
+
 ```json
 {
-  "allHistory": [
+  "currentHistory": [
     {
       "id": 1,
-      "fsc": "1005",
-      "description": "RIFLE,5.56 MILLIMETER",
-      "niin": "016191936",
-      "image": "url-or-path",
-      "auth_qty": "1",
-      "lin": "R97777",
+      "end_item_id": 1,
+      "user_id": 3,
+      "serial_number": 5,
+      "seen": true,
+      "location": "Arms Room",
+      "last_seen": "timestamp",
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    }
+  ]
+}
+```
+
+> Note: `serial_number` in the response is the foreign key ID from the `serial_end_items` table, not the human-readable serial number string.
+
+---
+
+#### `GET /current-history/end-items/:id`
+
+Get a single current end item history record by ID.
+
+**Response `200`:**
+
+```json
+{
+  "currentHistory": { "/* same shape as GET /current-history/end-items item */" }
+}
+```
+
+**Errors `404`:** Record not found.
+
+---
+
+#### `POST /current-history/end-items` — HRH role required
+
+Create a current history record for an end item.
+
+If a record already exists for the given `serial_number`, the existing record is automatically archived before the new one is created.
+
+**Request body:**
+
+```json
+{
+  "end_item_id": 1,
+  "user_id": 3,
+  "seen": true,
+  "location": "Arms Room",
+  "last_seen": "2024-01-15T08:00:00Z",
+  "serial_number": "SN-012"
+}
+```
+
+All fields required. `serial_number` is the human-readable string (e.g. `"SN-012"`) — it is resolved to the internal ID automatically.
+
+**Response `201`:**
+
+```json
+{
+  "newCurrentHistory": { "/* current history object */" },
+  "message": "ID: 1 has been successfully created."
+}
+```
+
+**Errors `400`:** Missing fields.
+
+---
+
+#### `PATCH /current-history/end-items/:id` — Admin required
+
+Update a current end item history record.
+
+The existing record is archived before the update is applied.
+
+**Request body** (all optional):
+
+```json
+{
+  "end_item_id": 1,
+  "user_id": 3,
+  "seen": false,
+  "location": "Motor Pool",
+  "last_seen": "2024-01-20T10:00:00Z",
+  "serial_number": "SN-012"
+}
+```
+
+**Response `200`:**
+
+```json
+{
+  "updatedCurrentHistory": { "/* updated current history object */" },
+  "message": "ID: 1 has been successfully updated."
+}
+```
+
+**Errors:** `404` record not found, `409` serial number already has a current history record.
+
+---
+
+### Current History (Components) — `/current-history/components`
+
+Tracks the current property record for each component. For serialized components, only one record per serial number can exist at a time. Unserialized (bulk) components are tracked by `component_id`.
+
+All endpoints require authentication. POST requires `hrh` role. PATCH requires `hrh` role.
+
+#### `GET /current-history/components`
+
+Get all current component history records.
+
+**Query params:** Same as `/current-history/end-items`.
+
+**Response `200`:**
+
+```json
+{
+  "currentHistory": [
+    {
+      "id": 1,
+      "component_id": 2,
+      "user_id": 3,
+      "serial_number": 4,
+      "seen": true,
+      "location": "Arms Room",
+      "last_seen": "timestamp",
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    }
+  ]
+}
+```
+
+> Note: `serial_number` is the foreign key ID from the `serial_component_items` table. It is `null` for unserialized components.
+
+---
+
+#### `GET /current-history/components/:id`
+
+Get a single current component history record by ID.
+
+**Response `200`:**
+
+```json
+{
+  "currentHistory": { "/* same shape as GET /current-history/components item */" }
+}
+```
+
+**Errors `404`:** Record not found.
+
+---
+
+#### `POST /current-history/components` — HRH role required
+
+Create a current history record for a component.
+
+If a record already exists for the given `serial_number` (or for the same unserialized `component_id`), the existing record is automatically archived before the new one is created.
+
+**Request body:**
+
+```json
+{
+  "component_id": 2,
+  "user_id": 3,
+  "seen": true,
+  "location": "Arms Room",
+  "last_seen": "2024-01-15T08:00:00Z",
+  "serial_number": "SN-MAG-001"
+}
+```
+
+`component_id`, `user_id`, `seen`, `location`, and `last_seen` are required. `serial_number` is optional — omit it for unserialized (bulk) components. When provided, it is resolved to the internal serial component item ID automatically.
+
+**Response `201`:**
+
+```json
+{
+  "newCurrentHistory": { "/* current history object */" },
+  "message": "ID: 1 has been successfully created."
+}
+```
+
+**Errors `400`:** Missing required fields.
+
+---
+
+#### `PATCH /current-history/components/:id` — Admin required
+
+Update a current component history record.
+
+The existing record is archived before the update is applied.
+
+**Request body** (all optional):
+
+```json
+{
+  "component_id": 2,
+  "user_id": 3,
+  "seen": false,
+  "location": "Supply Room",
+  "last_seen": "2024-01-20T10:00:00Z",
+  "serial_number": "SN-MAG-001"
+}
+```
+
+**Response `200`:**
+
+```json
+{
+  "updatedCurrentHistory": { "/* updated current history object */" },
+  "message": "ID: 1 has been successfully updated."
+}
+```
+
+**Errors:** `404` record not found, `409` serial number already has a current history record.
+
+---
+
+### Archived History (End Items) — `/archived-history/end-items`
+
+Read-only audit trail of past end item history records. Records are written here automatically when a current history record is replaced or updated — do not create them manually unless necessary.
+
+All endpoints require authentication. POST requires `hrh` role.
+
+#### `GET /archived-history/end-items`
+
+Get all archived end item history records.
+
+**Query params:** Same as `/current-history/end-items`.
+
+**Response `200`:**
+
+```json
+{
+  "archivedHistory": [
+    {
+      "id": 1,
+      "end_item_id": 1,
+      "user_id": 3,
+      "serial_number": 5,
+      "seen": true,
+      "location": "Arms Room",
+      "last_seen": "timestamp",
       "created_at": "timestamp",
       "updated_at": "timestamp"
     }
@@ -730,116 +1318,188 @@ Get all history records. Supports filtering, sorting, and pagination via query p
 
 ---
 
-#### `GET /history/:id`
-Get a single history record by ID.
+#### `GET /archived-history/end-items/:id`
+
+Get a single archived end item history record by ID.
 
 **Response `200`:**
+
 ```json
 {
-  "endItem": { "/* same shape as GET /history item */" }
+  "archivedHistory": { "/* same shape as GET /archived-history/end-items item */" }
 }
 ```
+
+**Errors `404`:** Record not found.
 
 ---
 
-#### `POST /history`
-Create a new history record.
+#### `POST /archived-history/end-items` — HRH role required
+
+Manually create an archived end item history record.
 
 **Request body:**
+
 ```json
 {
-  "fsc": "1005",
-  "description": "RIFLE,5.56 MILLIMETER",
-  "niin": "016191936",
-  "image": "url-or-path",
-  "auth_qty": "1",
-  "lin": "R97777"
+  "end_item_id": 1,
+  "user_id": 3,
+  "seen": true,
+  "location": "Arms Room",
+  "last_seen": "2024-01-15T08:00:00Z",
+  "serial_number": 5
 }
 ```
-All fields required.
+
+All fields required. `serial_number` here is the numeric foreign key ID from `serial_end_items` (not the string serial number).
 
 **Response `201`:**
+
 ```json
 {
-  "newHistory": { "/* history object */" },
+  "newArchivedHistory": { "/* archived history object */" },
   "message": "ID: 1 has been successfully created."
 }
 ```
 
+**Errors `400`:** Missing fields.
+
 ---
 
-#### `PATCH /history/:id`
-Update a history record. All fields optional.
+### Archived History (Components) — `/archived-history/components`
+
+Read-only audit trail of past component history records.
+
+All endpoints require authentication. POST requires `hrh` role.
+
+#### `GET /archived-history/components`
+
+Get all archived component history records.
+
+**Query params:** Same as `/current-history/end-items`.
+
+**Response `200`:**
+
+```json
+{
+  "archivedHistory": [
+    {
+      "id": 1,
+      "component_id": 2,
+      "user_id": 3,
+      "serial_number": 4,
+      "seen": true,
+      "location": "Arms Room",
+      "last_seen": "timestamp",
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    }
+  ]
+}
+```
+
+> Note: `serial_number` is `null` for unserialized components.
+
+---
+
+#### `GET /archived-history/components/:id`
+
+Get a single archived component history record by ID.
+
+**Response `200`:**
+
+```json
+{
+  "archivedHistory": { "/* same shape as GET /archived-history/components item */" }
+}
+```
+
+**Errors `404`:** Record not found.
+
+---
+
+#### `POST /archived-history/components` — HRH role required
+
+Manually create an archived component history record.
 
 **Request body:**
+
 ```json
 {
-  "fsc": "1005",
-  "description": "RIFLE,5.56 MILLIMETER",
-  "niin": "016191936",
-  "image": "url-or-path",
-  "auth_qty": "2",
-  "lin": "R97777"
+  "component_id": 2,
+  "user_id": 3,
+  "seen": true,
+  "location": "Arms Room",
+  "last_seen": "2024-01-15T08:00:00Z",
+  "serial_number": 4
 }
 ```
 
-**Response `200`:**
+`component_id`, `user_id`, `seen`, `location`, and `last_seen` are required. `serial_number` is optional (omit for unserialized components). When provided, use the numeric FK ID from `serial_component_items`.
+
+**Response `201`:**
+
 ```json
 {
-  "updatedHistory": { "/* updated history object */" },
-  "message": "ID: 1 has been successfully updated."
+  "newArchivedHistory": { "/* archived history object */" },
+  "message": "ID: 1 has been successfully created."
 }
 ```
 
----
-
-#### `DELETE /history/:id`
-Delete a history record by ID.
-
-**Response `200`:**
-```json
-{
-  "deletedHistory": { "/* deleted history object */" },
-  "message": "ID: 1 was successfully deleted."
-}
-```
+**Errors `400`:** Missing required fields.
 
 ---
 
 ### Ingest — `/ingest`
 
-#### `POST /ingest/ingest-backup` — Auth required (role: `hrc`)
-Upload an Excel file to bulk-ingest property records. Only users with the `hrc` role can use this endpoint.
+Bulk upload endpoints for importing property data from Excel files. Both require `hrh` role.
+
+#### `POST /ingest/end-items` — HRH role required
+
+Upload an Excel file to bulk-import end items and their serial numbers.
 
 **Content-Type:** `multipart/form-data`
 
-**Request:** Form field `file` containing an `.xlsx` file. The file must include the following columns:
+**Request:** Form field `file` containing an `.xlsx` file with these columns:
 
-| Excel Column | Required | Type | Maps To |
-|---|---|---|---|
-| `DoD Activity Address Code` | Yes | String | UIC |
-| `LIN Number / DODIC` | No | String | LIN |
-| `FSC` | Yes | Number | FSC |
-| `Material` | No | String | NIIN |
-| `Material Description` | Yes | String | Description |
-| `Stock` | Yes | Number | Authorized Quantity |
-| `Unit of Measure` | Yes | String | UI |
-| `Serial Number` | No | Number | Serial Number |
+| Excel Column           | Required | Type   | Maps To                |
+| ---------------------- | -------- | ------ | ---------------------- |
+| `LIN Number / DODIC`   | Yes      | String | LIN                    |
+| `FSC`                  | Yes      | Number | FSC                    |
+| `Material`             | Yes      | String | NIIN                   |
+| `Material Description` | Yes      | String | Description            |
+| `Stock`                | No       | Number | auth_qty (default: 1)  |
+| `Unit of Measure`      | No       | String | UI (default: `EA`)     |
+| `Serial Number`        | No       | Number | Serial Number          |
+| `End Item LIN`         | Yes      | String | Associates to end item |
 
-**Behavior:**
-- Rows **with** a serial number → inserted into `end_items` + `serial_items`. Duplicate serial numbers are skipped.
-- Rows **without** a serial number → inserted into `components`.
-- If the UIC in the row doesn't exist, it is created automatically.
+**Behavior:** Duplicate serial numbers are skipped. If all rows already exist, returns `400`.
 
 **Response `201`:**
+
 ```json
-{ "message": "Success." }
+{ "message": "Upload successful." }
 ```
 
-**Errors:**
-- `400` — No file uploaded.
-- `403` — Requesting user does not have the `hrc` role.
-- `500` — `"Error parsing Excel file: {error message}"`
+**Errors:** `400` no file uploaded or all rows are duplicates, `500` Excel parse error.
+
+---
+
+#### `POST /ingest/components` — HRH role required
+
+Upload an Excel file to bulk-import components.
+
+**Content-Type:** `multipart/form-data`
+
+**Request:** Same Excel format as `/ingest/end-items`.
+
+**Response `201`:**
+
+```json
+{ "message": "Upload successful." }
+```
+
+**Errors:** Same as `/ingest/end-items`.
 
 ---
 
