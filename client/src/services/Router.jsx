@@ -27,7 +27,11 @@ export default function MainRouter({ mode, onToggleTheme }) {
                   <Routes>
                     <Route path="/equipment" element={<EquipmentPage />} />
                     <Route
+<<<<<<< Updated upstream
                       path="/equipment/shr-viewer"
+=======
+                      path="/equipment/sub-hand-receipt"
+>>>>>>> Stashed changes
                       element={<SHRViewPage />}
                     />
                     <Route
@@ -35,7 +39,11 @@ export default function MainRouter({ mode, onToggleTheme }) {
                       element={<ShortageTrackerPage />}
                     />
                     <Route
+<<<<<<< Updated upstream
                       path="/InventoryTable"
+=======
+                      path="/InventoryTable/:endItemId"
+>>>>>>> Stashed changes
                       element={<InventoryTable />}
                     />
                     <Route path="/equipment/:id" element={<EndItemPage />} />
