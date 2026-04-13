@@ -1,4 +1,5 @@
-import { Button } from '@mui/material';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -198,53 +199,59 @@ export default function Ingest() {
 
       {file && itemType === 'end-items' && (
         <>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setStatus(null);
-              setErrorMessage(null);
-              setFile(null);
-              setItemType(null);
-              setPreviewData(null);
-            }}
-            disabled={status === 'uploading'}
-          >
-            Cancel
-          </Button>
+          <ButtonGroup variant="outlined" aria-label="component-button-group">
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setStatus(null);
+                setErrorMessage(null);
+                setFile(null);
+                setItemType(null);
+                setPreviewData(null);
+              }}
+              disabled={status === 'uploading'}
+            >
+              Cancel
+            </Button>
 
-          <Button
-            variant="outlined"
-            onClick={handleUploadEndItems}
-            disabled={status === 'uploading'}
-          >
-            Upload
-          </Button>
+            <Button
+              variant="outlined"
+              onClick={handleUploadEndItems}
+              loading={status === 'uploading'}
+              loadingPosition={'start'}
+            >
+              Upload
+            </Button>
+          </ButtonGroup>
         </>
       )}
 
       {file && itemType === 'components' && (
         <>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setStatus(null);
-              setErrorMessage(null);
-              setFile(null);
-              setItemType(null);
-              setPreviewData(null);
-            }}
-            disabled={status === 'uploading'}
-          >
-            Cancel
-          </Button>
+          <ButtonGroup variant="outlined" aria-label="component-button-group">
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setStatus(null);
+                setErrorMessage(null);
+                setFile(null);
+                setItemType(null);
+                setPreviewData(null);
+              }}
+              disabled={status === 'uploading'}
+            >
+              Cancel
+            </Button>
 
-          <Button
-            variant="outlined"
-            onClick={handleUploadComponents}
-            disabled={status === 'uploading'}
-          >
-            Upload
-          </Button>
+            <Button
+              variant="outlined"
+              onClick={handleUploadComponents}
+              loading={status === 'uploading'}
+              loadingPosition={'start'}
+            >
+              Upload
+            </Button>
+          </ButtonGroup>
         </>
       )}
 
