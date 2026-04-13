@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import Button from '@mui/material/Button'
-import { Checkbox, FormGroup, RadioGroup, FormControlLabel, FormLabel, FormControl, Stack, TextField, Radio, InputLabel, Select, MenuItem, Menu } from "@mui/material"
+import { Stepper, Step, StepLabel, Checkbox, FormGroup, RadioGroup, FormControlLabel, FormLabel, FormControl, Stack, TextField, Radio, InputLabel, Select, MenuItem, Menu } from "@mui/material"
 
 export default function RegisterForm({onSubmit, error}){
     //Form for form data (trying something new)
@@ -28,6 +28,12 @@ export default function RegisterForm({onSubmit, error}){
         setAccountType('user');
         setLocalError('');
     }
+
+    //step control for the form to allow it to fit better with the new splash stuff
+    const steps = ["Account", "Personal Info", "Assignment"];
+    const [activeStep, setActiveStep] = useState(0);
+    const handleNext = () => setActiveStep((prev) => prev + 1);
+    const handleBack = () => setActiveStep((prev) => prev - 1);
 
     //role modification
     const [accountType, setAccountType] = useState('user'); 
@@ -144,91 +150,109 @@ export default function RegisterForm({onSubmit, error}){
     };
 
 
-    return(
-        <form className='registerFormContainer' onSubmit={handleSubmit}>
-            <Stack spacing={2} direction="row" justifyContent="center">
-                <Stack spacing={3}>
-                    <TextField id='outlined-basic'  value={form.username} label='username' required onChange={handleChange} name='username' type='text' placeholder="Username"/>
-                    <TextField id='outlined-basic'  value={form.password} label='password' required onChange={handleChange} name='password' type='password' placeholder="Password"/>
-                    <TextField id='outlined-basic'  value={form.confirmPass} label='confirmPass' required onChange={handleChange} name='confirmPass' type='password' placeholder="Confirm Password"/>
-                    
-                    {/* etc info, */}
-                    <TextField id='outlined-basic'  label='email' required value={form.email} onChange={handleChange} name='email' placeholder="Email Address" />
-                    <TextField id='outlined-basic'  label='name_first' required value={form.name_first} onChange={handleChange} name='name_first' placeholder="First Name"/>
-                    <TextField id='outlined-basic'  label='name_last' required value={form.name_last} onChange={handleChange} name='name_last' placeholder="Last Name"/>
-                    <TextField id='outlined-basic'  label='phone' required value={form.phone} onChange={handleChange} name='phone' placeholder="Phone Number" />
-                    <TextField id='outlined-basic'  label='DoDID' required value={form.dodid}
-                        onChange={handleChange}
-                        name='dodid'
-                        placeholder="DoDID"
-                    />
-                </Stack>
+    return (
+        <form className="registerFormContainer" onSubmit={handleSubmit}>
+            <Stack spacing={3} sx={{ width: 400 }}>
+            
+            {/*Steppin it*/}
+            <Stepper activeStep={activeStep}>
+                {steps.map((label) => (
+                <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                </Step>
+                ))}
+            </Stepper>
+
+            {/*Step 1 - Account */}
+            {activeStep === 0 && (
                 <Stack spacing={2}>
-                    
-                    {/*Form for ranks, one select box for the type, the other changes based on the type chosen*/}
-                    <FormControl required>
-                        <FormLabel id="rank-type">Select Rank Type</FormLabel>
-                        <RadioGroup value={rankType} onChange={handleRankTypeChange}>
-                            <FormControlLabel value="enlisted" control={<Radio />} label="Enlisted" />
-                            <FormControlLabel value="officer" control={<Radio />} label="Officer" />
-                            <FormControlLabel value="warrant" control={<Radio />} label="Warrant Officer" />
-                            <FormControlLabel value="civilian" control={<Radio />} label="Civilian" />
-                        </RadioGroup>
-                        <FormLabel id="rank">Select Rank</FormLabel>
-                        <Select
-                            labelId="rank"
-                            id="rank"
-                            value={form.rank}
-                            label="Rank"
-                            onChange={handleChange}
-                            name='rank'
-                        >
-                            {rankType === 'enlisted' && enlistedRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
-                            {rankType === 'officer' && officerRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
-                            {rankType === 'warrant' && warrantRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
-                            {rankType === 'civilian' && civilianRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
-                        </Select>
-                    </FormControl>
-                    
-                    {/*Form for account control, has checkbox and radio control*/}
-                    <FormControl required>
-                        <FormLabel id="role">Account Type</FormLabel>
-                        <RadioGroup value={accountType} onChange={handleAccountTypeChange}>
-                            <FormControlLabel value="admin" control={<Radio />} label="Admin" />
-                            <FormControlLabel value="user" control={<Radio />} label="User" />
-                        </RadioGroup>
-                        <FormLabel>Roles</FormLabel>
-                        <FormGroup required>
-                            <FormControlLabel control={<Checkbox value= 'hrh' checked={roles.includes('hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange} />} label="HRH" />
-                            <FormControlLabel control={<Checkbox value = 'sub-hrh' checked={roles.includes('sub-hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange} />} label="sub-HRH" />
-                            <FormControlLabel control={<Checkbox value = 't-hrh' checked={roles.includes('t-hrh')} disabled={accountType === 'admin'} onChange={handleRoleChange}/>} label="t-HRH" />
-                        </FormGroup>
-                    </FormControl>
-
-                    {/*UIC input with drop down, from upper fetch*/}
-                    <FormControl fullWidth>
-                        <InputLabel id='uic'>UIC</InputLabel>
-                        <Select
-                            labelId='uic'
-                            id='uic'
-                            value={form.uic}
-                            label="UIC"
-                            onChange={handleUicChange}
-                        >
-                            {uics.map((uic) => (
-                                <MenuItem key={uic.uic} value={uic.uic}>{uic.uic}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                    <TextField required label="Username" name="username" value={form.username} onChange={handleChange} fullWidth />
+                    <TextField required label="Password" name="password" type="password" value={form.password} onChange={handleChange} fullWidth />
+                    <TextField required label="Confirm Password" name="confirmPass" type="password" value={form.confirmPass} onChange={handleChange} fullWidth />
+                    <TextField required label="Email" name="email" value={form.email} onChange={handleChange} fullWidth />
                 </Stack>
-            </Stack>
-            <br/>
-            <Stack direction = "row" spacing={2} justifyContent="center">
-                <Button type="submit" variant="contained">Register</Button>
-                <Button type="button" variant="outlined" color="secondary" onClick={handleClear}>Clear Form</Button>
+            )}
+
+            {/*Step 2 - Personal info */}
+            {activeStep === 1 && (
+                <Stack spacing={2}>
+                <TextField required label="First Name" name="name_first" value={form.name_first} onChange={handleChange} fullWidth />
+                <TextField required label="Last Name" name="name_last" value={form.name_last} onChange={handleChange} fullWidth />
+                <TextField required label="Phone" name="phone" value={form.phone} onChange={handleChange} fullWidth />
+                <TextField required label="DoDID" name="dodid" value={form.dodid} onChange={handleChange} fullWidth />
+                </Stack>
+            )}
+
+            {/*Step 3 - Admin stuff */}
+            {activeStep === 2 && (
+                <Stack spacing={2}>
+                
+                {/*ranks */}
+                <FormControl>
+                    <FormLabel>Rank Type</FormLabel>
+                    <RadioGroup required value={rankType} onChange={handleRankTypeChange}>
+                    <FormControlLabel value="enlisted" control={<Radio />} label="Enlisted" />
+                    <FormControlLabel value="officer" control={<Radio />} label="Officer" />
+                    <FormControlLabel value="warrant" control={<Radio />} label="Warrant" />
+                    <FormControlLabel value="civilian" control={<Radio />} label="Civilian" />
+                    </RadioGroup>
+                </FormControl>
+
+                <Select required value={form.rank} onChange={handleChange} name="rank" fullWidth>
+                    {rankType === "enlisted" && enlistedRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+                    {rankType === "officer" && officerRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+                    {rankType === "warrant" && warrantRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+                    {rankType === "civilian" && civilianRanks.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+                </Select>
+
+                {/*roles*/}
+                <FormControl>
+                    <FormLabel>Account Type</FormLabel>
+                    <RadioGroup required value={accountType} onChange={handleAccountTypeChange}>
+                    <FormControlLabel value="admin" control={<Radio />} label="Admin" />
+                    <FormControlLabel value="user" control={<Radio />} label="User" />
+                    </RadioGroup>
+
+                    <FormLabel>Roles</FormLabel>
+                    <FormGroup>
+                    <FormControlLabel control={<Checkbox value="hrh" checked={roles.includes("hrh")} onChange={handleRoleChange} />} label="HRH" />
+                    <FormControlLabel control={<Checkbox value="sub-hrh" checked={roles.includes("sub-hrh")} onChange={handleRoleChange} />} label="sub-HRH" />
+                    <FormControlLabel control={<Checkbox value="t-hrh" checked={roles.includes("t-hrh")} onChange={handleRoleChange} />} label="t-HRH" />
+                    </FormGroup>
+                </FormControl>
+
+                {/* UIC */}
+                <FormControl fullWidth>
+                    <InputLabel>UIC</InputLabel>
+                    <Select required value={form.uic} onChange={handleUicChange}>
+                    {uics.map((uic) => (
+                        <MenuItem key={uic.uic} value={uic.uic}>{uic.uic}</MenuItem>
+                    ))}
+                    </Select>
+                </FormControl>
+                </Stack>
+            )}
+
+            {/*nav buttons*/}
+            <Stack direction="row" spacing={2} justifyContent="space-between">
+                <Button disabled={activeStep === 0} onClick={handleBack}>
+                Back
+                </Button>
+
+                {activeStep < steps.length - 1 ? (
+                <Button variant="contained" onClick={handleNext}>
+                    Next
+                </Button>
+                ) : (
+                <Button type="submit" variant="contained">
+                    Register
+                </Button>
+                )}
             </Stack>
 
+            {/*errors*/}
             {(localError || error) && <p>{localError || error}</p>}
+            </Stack>
         </form>
     )
 }
