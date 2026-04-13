@@ -75,8 +75,9 @@ export default function EquipmentPage() {
   useEffect(() => {
     fetch("http://localhost:8080/end-items", { credentials: "include" })
       .then((res) => res.json())
+      // Hiding the first item (id:1) because it's mocked and not relevant to ingested data
       .then((data) => {
-        setEndItems(data.allEndItems ?? []);
+        setEndItems(data.allEndItems.filter((item) => item.id !== 1));
         setLoading(false);
       })
       .catch((err) => {
