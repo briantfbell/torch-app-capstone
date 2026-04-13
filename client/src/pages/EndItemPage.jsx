@@ -100,6 +100,8 @@ export default function EndItemPage() {
 
   const endItem = item.endItem;
   const imageUrl = endItem.image || "/no_image_found_placeholder.png";
+  console.log(`image path is -> ${endItem}`)
+  console.table(endItem)
 
   return (
       <Container maxWidth="lg" sx={{ py: 4 }}>

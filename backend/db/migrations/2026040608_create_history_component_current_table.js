@@ -4,6 +4,7 @@ exports.up = function (knex) {
     table.boolean('seen').defaultTo(false).notNullable();
     table.text('location');
     table.timestamp('last_seen');
+    table.text('note');
     table.integer('user_id').unsigned();
     table.integer('component_id').unsigned();
     table.integer('serial_number').unsigned();
