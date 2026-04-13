@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box';
 import {DataGrid} from '@mui/x-data-grid';
+import {Stack, Typography} from '@mui/material';
 
 // For information on how to fill this with backend data: https://mui.com/x/api/data-grid/data-grid/
 
@@ -7,49 +8,97 @@ const columns = [
     {
         field: 'name',
         headerName: 'Item Name',
-        width: 150,
+        flex: 1,
+        minWidth: 300,
+        editable: false,
+    },
+    {
+        field: 'fsc',
+        headerName: 'FSC',
+        flex: 1,
+        editable: false,
+    },
+    {
+        field: 'lin',
+        headerName: 'LIN',
+        flex: 1,
+        editable: false,
+    },
+    {
+        field: 'niin',
+        headerName: 'NIIN',
+        flex: 1,
         editable: false,
     },
     {
         field: 'nsn',
         headerName: 'NSN',
-        width: 180,
+        flex: 1,
+        editable: false,
+    },
+    {
+        field: 'auth_qty',
+        headerName: 'Auth Qty',
+        type: 'number',
+        flex: 1,
         editable: false,
     },
     {
         field: 'qty',
-        headerName: 'QTY',
+        headerName: 'Delta',
         type: 'number',
-        width: 110,
+        flex: 1,
         editable: false,
+        renderCell: (params) => {
+            const isOver = params.value > 0;
+            const display = isOver ? `+${params.value}` : `${params.value}`;
+            return (
+                <Stack height="100%" justifyContent="center">
+                    <Typography
+                        variant="body2"
+                        fontWeight={600}
+                        color={isOver ? 'info.main' : 'error.main'}
+                    >
+                        {display}
+                    </Typography>
+                </Stack>
+            );
+        },
+    },
+    {
+        field: 'status',
+        headerName: 'Status',
+        flex: 1,
+        editable: false,
+        renderCell: (params) => {
+            const isOver = params.value === 'OVER';
+            return (
+                <Stack height="100%" justifyContent="center">
+                    <Typography
+                        variant="body2"
+                        fontWeight={600}
+                        color={isOver ? 'info.main' : 'error.main'}
+                    >
+                        {params.value}
+                    </Typography>
+                </Stack>
+            );
+        },
     },
     {
         field: 'value',
         headerName: 'Value ($)',
         type: 'number',
-        width: 110,
+        flex: 1,
         editable: false,
+        valueFormatter: (value) =>
+            value?.toLocaleString('en-US', {style: 'currency', currency: 'USD'}),
     },
 ];
 
-const rows = [
-    { id: 1, name: 'AN/PRC-117G', nsn: '5820-01-598-1254', qty: 14, value: 12400},
-    { id: 2, name: 'AN/PRC-118G', nsn: '5820-01-598-1276', qty: 11, value: 12341},
-    { id: 3, name: 'AN/PRC-119G', nsn: '5820-01-598-1234', qty: 10, value: 45632},
-    { id: 4, name: 'AN/PRC-112G', nsn: '5820-01-598-1253', qty: 16, value: 456754},
-    { id: 5, name: 'AN/PRC-113G', nsn: '5820-01-598-1226', qty: 17, value: 72562},
-    { id: 6, name: 'AN/PRC-114G', nsn: '5820-01-598-1274', qty: 19, value: 642968},
-    { id: 1, name: 'AN/PRC-117G', nsn: '5820-01-598-1254', qty: 14, value: 12400},
-    { id: 2, name: 'AN/PRC-118G', nsn: '5820-01-598-1276', qty: 11, value: 12341},
-    { id: 3, name: 'AN/PRC-119G', nsn: '5820-01-598-1234', qty: 10, value: 45632},
-    { id: 4, name: 'AN/PRC-112G', nsn: '5820-01-598-1253', qty: 16, value: 456754},
-    { id: 5, name: 'AN/PRC-113G', nsn: '5820-01-598-1226', qty: 17, value: 72562},
-    { id: 6, name: 'AN/PRC-114G', nsn: '5820-01-598-1274', qty: 19, value: 642968},
-];
-
-export default function ShortageDataGrid() {
+export default function ShortageDataGrid({rows = []}) {
     return (
-        <Box sx={{ height: 400, width: '100%' }}>
+        <Box sx={{height: 400, width: '100%'}}>
             <DataGrid
                 rows={rows}
                 columns={columns}
@@ -63,12 +112,6 @@ export default function ShortageDataGrid() {
                 pageSizeOptions={[5]}
                 disableRowSelectionOnClick
                 sx={{border: 'none'}}
-                autosizeOnMount
-                autosizeOptions={{
-                    includeHeaders: true,
-                    includeOutliers: true,
-                    expand: true, // If content is small, stretch to fill the grid width
-                }}
             />
         </Box>
     );
