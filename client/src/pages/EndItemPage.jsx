@@ -16,6 +16,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import PdfModalViewer from "../components/PdfModalViewer";
+import PdfGenerator from "../components/PdfGenerator";
 
 export default function EndItemPage() {
   const { id } = useParams();
@@ -135,14 +136,18 @@ export default function EndItemPage() {
                 alignItems="stretch"
               >
                 <Stack spacing={2} sx={{ flex: 1.2 }}>
-                  <Button
-                    variant="outlined"
-                    startIcon={<PictureAsPdfIcon />}
-                    onClick={() => setOpenPdf(true)}
-                    sx={{ alignSelf: "flex-start" }}
-                  >
-                    Open End Item BOM PDF
-                  </Button>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Button
+                      variant="outlined"
+                      startIcon={<PictureAsPdfIcon />}
+                      onClick={() => setOpenPdf(true)}
+                      sx={{ alignSelf: "flex-start" }}
+                    >
+                      Open End Item BOM PDF
+                    </Button>
+
+                    <PdfGenerator />
+                  </Stack>
 
                   <Card variant="outlined">
                     <CardContent>
@@ -237,7 +242,6 @@ export default function EndItemPage() {
             </Stack>
           </CardContent>
         </Card>
-
         <PdfModalViewer
           open={openPdf}
           onClose={() => setOpenPdf(false)}
