@@ -242,6 +242,7 @@ export default function EndItemPage() {
             </Stack>
           </CardContent>
         </Card>
+
         <PdfModalViewer
           open={openPdf}
           onClose={() => setOpenPdf(false)}
