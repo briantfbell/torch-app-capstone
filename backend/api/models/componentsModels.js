@@ -1,10 +1,31 @@
 const db = require('../../db/knex');
 const { applyQueryFilters } = require('../helpers/applyQueryFilters');
 
-const baseQuery = () => db('components').select('*');
+const baseQuery = () =>
+  db('components')
+    .join(
+      'serial_component_items',
+      'components.id',
+      'serial_component_items.component_id',
+    )
+    .select('*');
 
 exports.getAllComponents = async query => {
-  return await applyQueryFilters(baseQuery(), query);
+  const queryWithSerials = db('components')
+    .leftJoin(
+      'serial_component_items',
+      'components.id',
+      'serial_component_items.component_id',
+    )
+    .select(
+      'components.*',
+      db.raw(
+        'json_agg(serial_component_items.*) filter (where serial_component_items.id is not null) as serialized_components',
+      ),
+    )
+    .groupBy('components.id');
+
+  return await applyQueryFilters(queryWithSerials, query);
 };
 
 exports.getComponentById = async id => {

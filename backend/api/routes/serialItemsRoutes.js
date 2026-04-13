@@ -13,6 +13,10 @@ const {
   deleteSerialItem,
 } = require('../controllers/serialItemsControllers');
 
+// router.get('/components/:id', getSerialItemsByComponentId);
+// router.get('/end-items/:id', getSerialItemsByEndItemId);
+// router.get('/components', getSerialItemsByAllComponents);
+// router.get('/end-items', getSerialItemsByAllEndItems);
 router.get('/uic/:uic_id', getSerialItemsByUicId);
 router.get('/:id', getSerialItemById);
 router.get('/', getAllSerialItems);

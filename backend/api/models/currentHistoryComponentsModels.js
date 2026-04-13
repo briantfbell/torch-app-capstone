@@ -1,14 +1,14 @@
 const db = require('../../db/knex');
 const { applyQueryFilters } = require('../helpers/applyQueryFilters');
 
-const baseQuery = () => db('history_end_current').select('*');
+const baseQuery = () => db('history_component_current').select('*');
 
 exports.getCurrentHistory = async query => {
   return await applyQueryFilters(baseQuery(), query);
 };
 
 exports.getCurrentHistoryById = async id => {
-  return await baseQuery().where('history_end_current.id', id).first();
+  return await baseQuery().where('history_component_current.id', id).first();
 };
 
 exports.getCurrentHistoryBySn = async sn => {
@@ -19,14 +19,14 @@ exports.getCurrentHistoryBySn = async sn => {
 
   if (!serial_end_item) return null;
 
-  return await db('history_end_current')
-    .where('history_end_current.serial_number', serial_end_item.id)
+  return await db('history_component_current')
+    .where('history_component_current.serial_number', serial_end_item.id)
     .select('*')
     .first();
 };
 
 exports.createCurrentHistory = async currentHistoryData => {
-  const [currentHistory] = await db('history_end_current')
+  const [currentHistory] = await db('history_component_current')
     .insert(currentHistoryData)
     .returning('*');
 
@@ -43,7 +43,7 @@ exports.updateCurrentHistory = async (currentHistoryId, currentHistoryData) => {
     currentHistoryData.serial_number = serial_end_item.id;
   }
 
-  const [currentHistory] = await db('history_end_current')
+  const [currentHistory] = await db('history_component_current')
     .where('id', currentHistoryId)
     .update(currentHistoryData)
     .returning('*');
