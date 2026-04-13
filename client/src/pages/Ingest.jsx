@@ -55,48 +55,51 @@ export default function Ingest() {
     const selected = e.target.files[0];
     if (!selected) return;
 
-    const isValidType =
-      selected.name.endsWith('.xlsx') ||
-      selected.name.endsWith('.xls') ||
-      selected.name.endsWith('.csv') ||
-      selected.type ===
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-      selected.type === 'application/vnd.ms-excel' ||
-      selected.type === 'text/csv';
-
-    if (!isValidType) {
-      setStatus('fail');
-      setErrorMessage('Only .xlsx, .xls, and .csv files are accepted.');
-      setFile(null);
-      setItemType(null);
-      setPreviewData(null);
-      return;
-    }
-
     setFile(selected);
     setStatus(null);
 
+    // Browser API for reading local files as raw binary data
     const reader = new FileReader();
+
+    // Fires once the file has been fully loaded into memory
     reader.onload = event => {
+      // Convert the raw ArrayBuffer into bytes that XLSX can parse
       const data = new Uint8Array(event.target.result);
+
+      // Parse the byte array into a workbook (contains all sheets)
       const workbook = XLSX.read(data, { type: 'array' });
+
+      // Grab the first sheet by name
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+      // Convert the sheet into a 2D array; row 0 will be the header row
       const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
       if (rows.length > 0) {
+        // Row 0 contains all column names from the spreadsheet
         const allHeaders = rows[0];
+
+        // If a schema is loaded, keep only matching column indices; otherwise keep all
         const filteredIndices = schemaColumns
           ? allHeaders.reduce((acc, h, i) => {
               if (schemaColumns.has(normalizeStr(h))) acc.push(i);
               return acc;
             }, [])
           : allHeaders.map((_, i) => i);
+
+        // Remap column names through the filtered indices
         const headers = filteredIndices.map(i => allHeaders[i]);
+
+        // Take up to 5 data rows and pluck only the schema-matching columns
         const filteredRows = rows
           .slice(1, 6)
           .map(row => filteredIndices.map(i => row[i]));
+
+        // Store headers + rows in state to render the preview table
         setPreviewData({ headers, rows: filteredRows });
       }
     };
+    // Trigger the read — fires onload when complete
     reader.readAsArrayBuffer(selected);
   };
 
@@ -182,18 +185,26 @@ export default function Ingest() {
                   setItemType('components');
                   fileInputRef.current.value = null;
                   setErrorMessage(null);
+
+                  // Create a listener for when the OS file picker closes,
                   window.addEventListener(
                     'focus',
                     () => {
+                      // Small delay because focus fires
+                      // before the browser updates the input's file list
                       setTimeout(() => {
+                        // If no file was selected (user cancelled the picker), reset state
                         if (!fileInputRef.current?.files?.length) {
-                          setItemType(null);
-                          setErrorMessage(null);
+                          clearAllStates();
                         }
-                      }, 300);
+                      }, 100);
                     },
+
+                    // auto-removes this listener after it fires
                     { once: true },
                   );
+
+                  // lastly, actually click the selection
                   fileInputRef.current.click();
                 }}
               >
@@ -206,6 +217,7 @@ export default function Ingest() {
                   setItemType('end-items');
                   fileInputRef.current.value = null;
                   setErrorMessage(null);
+                  // same as above
                   window.addEventListener(
                     'focus',
                     () => {
