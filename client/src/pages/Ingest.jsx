@@ -4,8 +4,10 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
+
+const normalizeStr = str => String(str).toLowerCase().replace(/[\s_]/g, '');
 
 export default function Ingest() {
   const [file, setFile] = useState(null);
@@ -13,11 +15,37 @@ export default function Ingest() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [itemType, setItemType] = useState(null);
   const [previewData, setPreviewData] = useState(null);
+  const [schemaColumns, setSchemaColumns] = useState(null);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    fetch('http://localhost:8080/ingest/schema', { credentials: 'include' })
+      .then(res => res.json())
+      .then(({ columns }) =>
+        setSchemaColumns(new Set(columns.map(normalizeStr))),
+      )
+      .catch(() => {});
+  }, []);
 
   const setFailureStates = body => {
     setStatus('fail');
     setErrorMessage(body.message || 'Upload failed.');
+    setFile(null);
+    setItemType(null);
+    setPreviewData(null);
+  };
+
+  const setSuccessStates = () => {
+    setStatus('success');
+    setErrorMessage(null);
+    setFile(null);
+    setItemType(null);
+    setPreviewData(null);
+  };
+
+  const clearAllStates = () => {
+    setStatus(null);
+    setErrorMessage(null);
     setFile(null);
     setItemType(null);
     setPreviewData(null);
@@ -55,7 +83,18 @@ export default function Ingest() {
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
       if (rows.length > 0) {
-        setPreviewData({ headers: rows[0], rows: rows.slice(1, 6) });
+        const allHeaders = rows[0];
+        const filteredIndices = schemaColumns
+          ? allHeaders.reduce((acc, h, i) => {
+              if (schemaColumns.has(normalizeStr(h))) acc.push(i);
+              return acc;
+            }, [])
+          : allHeaders.map((_, i) => i);
+        const headers = filteredIndices.map(i => allHeaders[i]);
+        const filteredRows = rows
+          .slice(1, 6)
+          .map(row => filteredIndices.map(i => row[i]));
+        setPreviewData({ headers, rows: filteredRows });
       }
     };
     reader.readAsArrayBuffer(selected);
@@ -78,11 +117,7 @@ export default function Ingest() {
       const body = await response.json();
 
       if (response.ok) {
-        setStatus('success');
-        setErrorMessage(null);
-        setFile(null);
-        setItemType(null);
-        setPreviewData(null);
+        setSuccessStates();
       } else {
         setFailureStates(body);
       }
@@ -108,11 +143,7 @@ export default function Ingest() {
       const body = await response.json();
 
       if (response.ok) {
-        setStatus('success');
-        setErrorMessage(null);
-        setFile(null);
-        setItemType(null);
-        setPreviewData(null);
+        setSuccessStates();
       } else {
         setFailureStates(body);
       }
@@ -203,11 +234,7 @@ export default function Ingest() {
             <Button
               variant="outlined"
               onClick={() => {
-                setStatus(null);
-                setErrorMessage(null);
-                setFile(null);
-                setItemType(null);
-                setPreviewData(null);
+                clearAllStates();
               }}
               disabled={status === 'uploading'}
             >
@@ -232,11 +259,7 @@ export default function Ingest() {
             <Button
               variant="outlined"
               onClick={() => {
-                setStatus(null);
-                setErrorMessage(null);
-                setFile(null);
-                setItemType(null);
-                setPreviewData(null);
+                clearAllStates();
               }}
               disabled={status === 'uploading'}
             >
@@ -286,7 +309,7 @@ export default function Ingest() {
                     }}
                     title={h}
                   >
-                    {h}
+                    {h.toUpperCase()}
                   </th>
                 ))}
               </tr>
@@ -294,7 +317,7 @@ export default function Ingest() {
             <tbody>
               {previewData.rows.map((row, i) => (
                 <tr key={i}>
-                  {previewData.headers.map((_, j) => (
+                  {row.map((cell, j) => (
                     <td
                       key={j}
                       style={{
@@ -304,9 +327,9 @@ export default function Ingest() {
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
                       }}
-                      title={row[j] ?? ''}
+                      title={cell ?? ''}
                     >
-                      {row[j] ?? ''}
+                      {cell ?? ''}
                     </td>
                   ))}
                 </tr>

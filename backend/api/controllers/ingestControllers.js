@@ -1,4 +1,10 @@
 const ingestServices = require('../services/ingestServices');
+const { schema } = require('../helpers/ingestSchema');
+
+exports.getIngestSchema = (_req, res) => {
+  const columns = Object.values(schema).map(({ column }) => column);
+  res.json({ columns });
+};
 
 exports.ingestComponents = async (req, res) => {
   if (!req.file) {
