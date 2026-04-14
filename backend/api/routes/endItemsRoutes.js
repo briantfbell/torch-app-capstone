@@ -17,5 +17,6 @@ router.get('/', auth, getAllEndItems);
 router.post('/', auth, createEndItem);
 router.patch('/:id', auth, updateEndItem);
 router.delete('/:id', auth, deleteEndItem);
+router.put('/:id', auth, updateEndItem);
 
 module.exports = router;

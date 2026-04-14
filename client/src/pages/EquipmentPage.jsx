@@ -16,6 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import PdfModalViewer from "../components/PdfModalViewer";
 
 function EndItemRow({ item, onClick, selected }) {
   return (
@@ -64,6 +65,7 @@ export default function EquipmentPage() {
   const [endItems, setEndItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uic, setUic] = useState("");
+  const [openPdf, setOpenPdf] = useState(false);
 
   useEffect(() => {
     fetch("http://localhost:8080/auth/me", { credentials: "include" })
@@ -92,7 +94,7 @@ export default function EquipmentPage() {
   };
 
   const handleSubHandReceipt = () => {
-    navigate("/equipment/shr-viewer");
+    setOpenPdf(true);
   };
 
   if (loading) {
@@ -152,6 +154,12 @@ export default function EquipmentPage() {
         >
           Sub Hand Receipt PDF
         </Button>
+
+        <PdfModalViewer
+          open={openPdf}
+          onClose={() => setOpenPdf(false)}
+          pdfUrl="/pdfs/1B10_SHR_flat.pdf"
+        />
 
         {/* End Items section */}
         <Card variant="outlined">

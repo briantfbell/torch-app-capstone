@@ -184,12 +184,13 @@ erDiagram
 
 ### Authentication
 
-All protected routes require a valid JWT session cookie set by `POST /auth/login`. The cookie is `httpOnly`, expires after 7 days, and is named `token`.
+All protected routes require a valid JWT session cookie set by `POST /auth/login`. The cookie is `httpOnly`, expires
+after 7 days, and is named `token`.
 
 ### Role Permissions
 
 | Role    | Access Level                                             |
-| ------- | -------------------------------------------------------- |
+|---------|----------------------------------------------------------|
 | `user`  | Read access to most resources                            |
 | `hrh`   | Can create resources (POST endpoints)                    |
 | `admin` | Can update and delete resources (PATCH/DELETE endpoints) |
@@ -199,11 +200,13 @@ All protected routes require a valid JWT session cookie set by `POST /auth/login
 All errors return:
 
 ```json
-{ "message": "error description" }
+{
+  "message": "error description"
+}
 ```
 
 | Status | Meaning                                 |
-| ------ | --------------------------------------- |
+|--------|-----------------------------------------|
 | `400`  | Bad request / missing fields            |
 | `401`  | Missing or invalid token                |
 | `403`  | Insufficient role                       |
@@ -278,7 +281,9 @@ Authenticate and receive a session cookie.
 **Response `200`:** Sets `httpOnly` cookie `token` (7-day expiry) and returns the token.
 
 ```json
-{ "token": "<jwt>" }
+{
+  "token": "<jwt>"
+}
 ```
 
 **Errors:** `400` missing fields, `401` user not found or wrong password.
@@ -324,7 +329,9 @@ Clear the session cookie.
 **Response `200`:**
 
 ```json
-{ "message": "Logged out." }
+{
+  "message": "Logged out."
+}
 ```
 
 ---
@@ -382,7 +389,9 @@ Get a single user by ID.
 
 ```json
 {
-  "user": { "/* same shape as GET /users item */" }
+  "user": {
+    "/* same shape as GET /users item */"
+  }
 }
 ```
 
@@ -415,7 +424,9 @@ Update a user. All fields optional — send only fields to update.
 
 ```json
 {
-  "updatedUser": { "/* updated user object */" },
+  "updatedUser": {
+    "/* updated user object */"
+  },
   "message": "'jsmith2' has been successfully updated."
 }
 ```
@@ -432,7 +443,9 @@ Delete a user by ID.
 
 ```json
 {
-  "deletedUser": { "/* deleted user object */" },
+  "deletedUser": {
+    "/* deleted user object */"
+  },
   "message": "'jsmith' was successfully deleted."
 }
 ```
@@ -483,7 +496,9 @@ Get a single UIC by ID.
 
 ```json
 {
-  "uic": { "/* same shape as GET /uics item */" }
+  "uic": {
+    "/* same shape as GET /uics item */"
+  }
 }
 ```
 
@@ -543,7 +558,9 @@ Update a UIC. All fields optional.
 
 ```json
 {
-  "updatedUic": { "/* updated uic object */" },
+  "updatedUic": {
+    "/* updated uic object */"
+  },
   "message": "UIC 'W1A1AA' has been successfully updated."
 }
 ```
@@ -560,7 +577,9 @@ Delete a UIC by ID.
 
 ```json
 {
-  "deletedUic": { "/* deleted uic object */" },
+  "deletedUic": {
+    "/* deleted uic object */"
+  },
   "message": "UIC 'W1A1AA' was successfully deleted."
 }
 ```
@@ -621,7 +640,9 @@ Get a single end item by ID.
 
 ```json
 {
-  "endItem": { "/* same shape as GET /end-items item */" }
+  "endItem": {
+    "/* same shape as GET /end-items item */"
+  }
 }
 ```
 
@@ -637,7 +658,11 @@ Get all end items assigned to a UIC.
 
 ```json
 {
-  "endItems": [ { "/* end item objects */" } ]
+  "endItems": [
+    {
+      "/* end item objects */"
+    }
+  ]
 }
 ```
 
@@ -668,7 +693,9 @@ All fields required.
 
 ```json
 {
-  "newEndItem": { "/* end item object */" },
+  "newEndItem": {
+    "/* end item object */"
+  },
   "message": "LIN: R97777 has been successfully created."
 }
 ```
@@ -699,7 +726,9 @@ Update an end item. All fields optional.
 
 ```json
 {
-  "updatedEndItem": { "/* updated end item object */" },
+  "updatedEndItem": {
+    "/* updated end item object */"
+  },
   "message": "LIN: R97777 has been successfully updated."
 }
 ```
@@ -716,7 +745,9 @@ Mark an end item as complete. No body needed.
 
 ```json
 {
-  "updatedEndItem": { "/* end item object with completed: true */" },
+  "updatedEndItem": {
+    "/* end item object with completed: true */"
+  },
   "message": "LIN: R97777 has been marked complete."
 }
 ```
@@ -731,7 +762,9 @@ Delete an end item by ID.
 
 ```json
 {
-  "deletedEndItem": { "/* deleted end item object */" },
+  "deletedEndItem": {
+    "/* deleted end item object */"
+  },
   "message": "LIN: R97777 was successfully deleted."
 }
 ```
@@ -792,7 +825,9 @@ Get a single component by ID.
 
 ```json
 {
-  "component": { "/* same shape as GET /components item */" }
+  "component": {
+    "/* same shape as GET /components item */"
+  }
 }
 ```
 
@@ -808,7 +843,11 @@ Get all components assigned to a UIC.
 
 ```json
 {
-  "components": [ { "/* component objects */" } ]
+  "components": [
+    {
+      "/* component objects */"
+    }
+  ]
 }
 ```
 
@@ -840,7 +879,9 @@ All fields required. `end_item_lin` must match an existing end item's LIN.
 
 ```json
 {
-  "newComponent": { "/* component object */" },
+  "newComponent": {
+    "/* component object */"
+  },
   "message": "NIIN: 123456789 has been successfully created."
 }
 ```
@@ -870,7 +911,9 @@ Update a component. All fields optional.
 
 ```json
 {
-  "updatedComponent": { "/* updated component object */" },
+  "updatedComponent": {
+    "/* updated component object */"
+  },
   "message": "NIIN: 123456789 has been successfully updated."
 }
 ```
@@ -887,7 +930,9 @@ Delete a component by ID.
 
 ```json
 {
-  "deletedComponent": { "/* deleted component object */" },
+  "deletedComponent": {
+    "/* deleted component object */"
+  },
   "message": "NIIN: 123456789 was successfully deleted."
 }
 ```
@@ -943,7 +988,9 @@ Get a single serial item by ID.
 
 ```json
 {
-  "serialItem": { "/* same shape as GET /serial-items item */" }
+  "serialItem": {
+    "/* same shape as GET /serial-items item */"
+  }
 }
 ```
 
@@ -959,7 +1006,11 @@ Get all serial items assigned to a UIC.
 
 ```json
 {
-  "serialItems": [ { "/* serial item objects */" } ]
+  "serialItems": [
+    {
+      "/* serial item objects */"
+    }
+  ]
 }
 ```
 
@@ -982,13 +1033,16 @@ Create a new serial item. Associates to an end item via LIN and a user via DoDID
 }
 ```
 
-All fields required. `end_item_lin` must match an existing end item's LIN. `user_dodid` must match an existing user's DoDID.
+All fields required. `end_item_lin` must match an existing end item's LIN. `user_dodid` must match an existing user's
+DoDID.
 
 **Response `201`:**
 
 ```json
 {
-  "newSerialItem": { "/* serial item object */" },
+  "newSerialItem": {
+    "/* serial item object */"
+  },
   "message": "SN: SN-012 has been successfully posted."
 }
 ```
@@ -1014,7 +1068,9 @@ Update a serial item. All fields optional.
 
 ```json
 {
-  "updatedSerialItem": { "/* updated serial item object */" },
+  "updatedSerialItem": {
+    "/* updated serial item object */"
+  },
   "message": "SN: SN-013 has been successfully updated."
 }
 ```
@@ -1031,7 +1087,9 @@ Delete a serial item by ID.
 
 ```json
 {
-  "deletedSerialItem": { "/* deleted serial item object */" },
+  "deletedSerialItem": {
+    "/* deleted serial item object */"
+  },
   "message": "SN: SN-012 was successfully deleted."
 }
 ```
@@ -1042,7 +1100,8 @@ Delete a serial item by ID.
 
 ### Current History (End Items) — `/current-history/end-items`
 
-Tracks the current property record for each serialized end item. Only one record per serial number can exist at a time — creating or updating a record for an existing serial number automatically archives the old one.
+Tracks the current property record for each serialized end item. Only one record per serial number can exist at a time —
+creating or updating a record for an existing serial number automatically archives the old one.
 
 All endpoints require authentication. POST requires `hrh` role. PATCH requires `hrh` role.
 
@@ -1080,7 +1139,8 @@ Get all current end item history records.
 }
 ```
 
-> Note: `serial_number` in the response is the foreign key ID from the `serial_end_items` table, not the human-readable serial number string.
+> Note: `serial_number` in the response is the foreign key ID from the `serial_end_items` table, not the human-readable
+> serial number string.
 
 ---
 
@@ -1092,7 +1152,9 @@ Get a single current end item history record by ID.
 
 ```json
 {
-  "currentHistory": { "/* same shape as GET /current-history/end-items item */" }
+  "currentHistory": {
+    "/* same shape as GET /current-history/end-items item */"
+  }
 }
 ```
 
@@ -1104,7 +1166,8 @@ Get a single current end item history record by ID.
 
 Create a current history record for an end item.
 
-If a record already exists for the given `serial_number`, the existing record is automatically archived before the new one is created.
+If a record already exists for the given `serial_number`, the existing record is automatically archived before the new
+one is created.
 
 **Request body:**
 
@@ -1119,13 +1182,16 @@ If a record already exists for the given `serial_number`, the existing record is
 }
 ```
 
-All fields required. `serial_number` is the human-readable string (e.g. `"SN-012"`) — it is resolved to the internal ID automatically.
+All fields required. `serial_number` is the human-readable string (e.g. `"SN-012"`) — it is resolved to the internal ID
+automatically.
 
 **Response `201`:**
 
 ```json
 {
-  "newCurrentHistory": { "/* current history object */" },
+  "newCurrentHistory": {
+    "/* current history object */"
+  },
   "message": "ID: 1 has been successfully created."
 }
 ```
@@ -1157,7 +1223,9 @@ The existing record is archived before the update is applied.
 
 ```json
 {
-  "updatedCurrentHistory": { "/* updated current history object */" },
+  "updatedCurrentHistory": {
+    "/* updated current history object */"
+  },
   "message": "ID: 1 has been successfully updated."
 }
 ```
@@ -1168,7 +1236,8 @@ The existing record is archived before the update is applied.
 
 ### Current History (Components) — `/current-history/components`
 
-Tracks the current property record for each component. For serialized components, only one record per serial number can exist at a time. Unserialized (bulk) components are tracked by `component_id`.
+Tracks the current property record for each component. For serialized components, only one record per serial number can
+exist at a time. Unserialized (bulk) components are tracked by `component_id`.
 
 All endpoints require authentication. POST requires `hrh` role. PATCH requires `hrh` role.
 
@@ -1198,7 +1267,8 @@ Get all current component history records.
 }
 ```
 
-> Note: `serial_number` is the foreign key ID from the `serial_component_items` table. It is `null` for unserialized components.
+> Note: `serial_number` is the foreign key ID from the `serial_component_items` table. It is `null` for unserialized
+> components.
 
 ---
 
@@ -1210,7 +1280,9 @@ Get a single current component history record by ID.
 
 ```json
 {
-  "currentHistory": { "/* same shape as GET /current-history/components item */" }
+  "currentHistory": {
+    "/* same shape as GET /current-history/components item */"
+  }
 }
 ```
 
@@ -1222,7 +1294,8 @@ Get a single current component history record by ID.
 
 Create a current history record for a component.
 
-If a record already exists for the given `serial_number` (or for the same unserialized `component_id`), the existing record is automatically archived before the new one is created.
+If a record already exists for the given `serial_number` (or for the same unserialized `component_id`), the existing
+record is automatically archived before the new one is created.
 
 **Request body:**
 
@@ -1237,13 +1310,16 @@ If a record already exists for the given `serial_number` (or for the same unseri
 }
 ```
 
-`component_id`, `user_id`, `seen`, `location`, and `last_seen` are required. `serial_number` is optional — omit it for unserialized (bulk) components. When provided, it is resolved to the internal serial component item ID automatically.
+`component_id`, `user_id`, `seen`, `location`, and `last_seen` are required. `serial_number` is optional — omit it for
+unserialized (bulk) components. When provided, it is resolved to the internal serial component item ID automatically.
 
 **Response `201`:**
 
 ```json
 {
-  "newCurrentHistory": { "/* current history object */" },
+  "newCurrentHistory": {
+    "/* current history object */"
+  },
   "message": "ID: 1 has been successfully created."
 }
 ```
@@ -1275,7 +1351,9 @@ The existing record is archived before the update is applied.
 
 ```json
 {
-  "updatedCurrentHistory": { "/* updated current history object */" },
+  "updatedCurrentHistory": {
+    "/* updated current history object */"
+  },
   "message": "ID: 1 has been successfully updated."
 }
 ```
@@ -1286,7 +1364,8 @@ The existing record is archived before the update is applied.
 
 ### Archived History (End Items) — `/archived-history/end-items`
 
-Read-only audit trail of past end item history records. Records are written here automatically when a current history record is replaced or updated — do not create them manually unless necessary.
+Read-only audit trail of past end item history records. Records are written here automatically when a current history
+record is replaced or updated — do not create them manually unless necessary.
 
 All endpoints require authentication. POST requires `hrh` role.
 
@@ -1326,7 +1405,9 @@ Get a single archived end item history record by ID.
 
 ```json
 {
-  "archivedHistory": { "/* same shape as GET /archived-history/end-items item */" }
+  "archivedHistory": {
+    "/* same shape as GET /archived-history/end-items item */"
+  }
 }
 ```
 
@@ -1351,13 +1432,16 @@ Manually create an archived end item history record.
 }
 ```
 
-All fields required. `serial_number` here is the numeric foreign key ID from `serial_end_items` (not the string serial number).
+All fields required. `serial_number` here is the numeric foreign key ID from `serial_end_items` (not the string serial
+number).
 
 **Response `201`:**
 
 ```json
 {
-  "newArchivedHistory": { "/* archived history object */" },
+  "newArchivedHistory": {
+    "/* archived history object */"
+  },
   "message": "ID: 1 has been successfully created."
 }
 ```
@@ -1410,7 +1494,9 @@ Get a single archived component history record by ID.
 
 ```json
 {
-  "archivedHistory": { "/* same shape as GET /archived-history/components item */" }
+  "archivedHistory": {
+    "/* same shape as GET /archived-history/components item */"
+  }
 }
 ```
 
@@ -1435,13 +1521,16 @@ Manually create an archived component history record.
 }
 ```
 
-`component_id`, `user_id`, `seen`, `location`, and `last_seen` are required. `serial_number` is optional (omit for unserialized components). When provided, use the numeric FK ID from `serial_component_items`.
+`component_id`, `user_id`, `seen`, `location`, and `last_seen` are required. `serial_number` is optional (omit for
+unserialized components). When provided, use the numeric FK ID from `serial_component_items`.
 
 **Response `201`:**
 
 ```json
 {
-  "newArchivedHistory": { "/* archived history object */" },
+  "newArchivedHistory": {
+    "/* archived history object */"
+  },
   "message": "ID: 1 has been successfully created."
 }
 ```
@@ -1463,7 +1552,7 @@ Upload an Excel file to bulk-import end items and their serial numbers.
 **Request:** Form field `file` containing an `.xlsx` file with these columns:
 
 | Excel Column           | Required | Type   | Maps To                |
-| ---------------------- | -------- | ------ | ---------------------- |
+|------------------------|----------|--------|------------------------|
 | `LIN Number / DODIC`   | Yes      | String | LIN                    |
 | `FSC`                  | Yes      | Number | FSC                    |
 | `Material`             | Yes      | String | NIIN                   |
@@ -1478,7 +1567,9 @@ Upload an Excel file to bulk-import end items and their serial numbers.
 **Response `201`:**
 
 ```json
-{ "message": "Upload successful." }
+{
+  "message": "Upload successful."
+}
 ```
 
 **Errors:** `400` no file uploaded or all rows are duplicates, `500` Excel parse error.
@@ -1496,10 +1587,84 @@ Upload an Excel file to bulk-import components.
 **Response `201`:**
 
 ```json
-{ "message": "Upload successful." }
+{
+  "message": "Upload successful."
+}
 ```
 
 **Errors:** Same as `/ingest/end-items`.
+
+---
+
+## Dashboard Logic
+
+### Data Sources
+
+The dashboard pulls from 6 backend endpoints on a 5-second polling interval using `react-query`:
+
+| Data                   | Endpoint                      | Purpose                                                                      |
+|------------------------|-------------------------------|------------------------------------------------------------------------------|
+| End Items              | `/end-items`                  | Master list of equipment types (laptops, vehicles, etc.)                     |
+| Components             | `/components`                 | Sub-items belonging to end items, each with an `auth_qty` per parent         |
+| Serial End Items       | `/serial-items`               | Registered physical units of each end item (one row = one serial number)     |
+| Serial Component Items | `/serial-components`          | Registered physical units of each component (one row = one serial number)    |
+| End Item History       | `/current-history/end-items`  | Inventory scan results per end item serial — tracks whether each was `seen`  |
+| Component History      | `/current-history/components` | Inventory scan results per component serial — tracks whether each was `seen` |
+
+### Key Concepts
+
+**Auth Qty vs. Registered Serials**
+`end_items.auth_qty` is the authorized quantity on paper. `serial_end_items` contains the actual registered serial
+numbers. The dashboard uses the registered serial count as the working authority for shortage calculations, falling back
+to `auth_qty` only if no serials are registered.
+
+**Seen vs. Not Seen**
+History tables have a boolean `seen` field. A serial is considered "on hand" only when its corresponding history record
+has `seen = true` AND its serial ID is in the registered set. A serial that exists but hasn't been scanned during
+inventory is counted as missing.
+
+### Completion Logic
+
+An end item type is marked **complete** depending on whether it has components:
+
+- **No components** — complete when every registered end item serial has been found (`seen = true`)
+- **Has components** — complete when every component type's total found count meets or exceeds its scaled auth qty (see
+  below)
+
+### Component Auth Qty Scaling
+
+Because components belong to end items, their expected quantity scales with how many end item serials are registered:
+
+> `componentAuthQty = component.auth_qty × registeredEndItemSerialCount`
+
+**Example:** A radio has `auth_qty = 2`. If 5 laptops are registered, the total expected radios = 10. If 2 laptops are
+missing from inventory, those 10 missing radios are implicitly unaccounted for in the on-hand count.
+
+### Shortage & Over Calculations
+
+**End Items**
+
+- `delta = onHand − registeredCount`
+- `delta < 0` → SHORT (fewer found than registered)
+- `delta > 0` → OVER (more found than registered)
+- Shortage value = `|delta| × item.cost`
+
+**Components**
+
+- Same delta logic, but auth qty is the scaled value above
+- Shortage value = `|delta| × component.cost`
+
+### Pie Chart & Bar Chart
+
+- **Pie chart** — ratio of complete vs. incomplete end item types using the completion logic above
+- **Bar chart** — each end item type shown as a `% on hand` bar, capped at 100%, color-coded red (< 50%), yellow (
+  50–85%), green (> 85%). X-axis is always fixed at 100 so bars are visually proportional.
+
+### Shortage Summary Grid
+
+Two tabs (End Items and Components). Each row represents an item that is either SHORT or OVER. Columns include auth qty,
+on hand count, delta, status, and total shortage/surplus dollar value. The total shortage value displayed above the grid
+is the sum across all short items in the active tab.
 
 ---
 
