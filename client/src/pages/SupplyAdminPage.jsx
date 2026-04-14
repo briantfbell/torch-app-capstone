@@ -58,7 +58,15 @@ export default function SupplyAdminPage() {
       justifyContent="center"
     >
       <Stack spacing={3} alignItems="center" justifyContent="center">
-        <Grid container spacing={2}>
+        <Grid
+          container
+          spacing={2}
+          sx={{
+            flexDirection: { xs: 'column', sm: 'row' },
+          }}
+          alignItems="center"
+          justifyContent="center"
+        >
           <Grid size={1}></Grid>
 
           <Grid size={10} spacing={0.5}>
@@ -75,7 +83,15 @@ export default function SupplyAdminPage() {
             </Typography>
           </Grid>
 
-          <Grid size={1}>
+          <Grid
+            size={1}
+            alignSelf="center"
+            justifySelf="center"
+            sx={{
+              display: 'flex',
+              justifyContent: { xs: 'center', sm: 'flex-start' },
+            }}
+          >
             {isAdmin ? (
               <FormControl style={{ width: '12rem' }}>
                 <InputLabel id="select-label">Select a UIC</InputLabel>
