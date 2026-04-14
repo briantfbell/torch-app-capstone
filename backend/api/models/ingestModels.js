@@ -57,6 +57,7 @@ exports.insertComponent = async (obj, userId, uicId) => {
         cost: (Math.random() * 1000).toFixed(2),
       })
       .returning('id');
+    console.log(obj);
 
     if (obj.serial_number) {
       await trx('serial_component_items').insert({

@@ -56,6 +56,8 @@ export default function SupplyAdminPage() {
       sx={{ py: 4 }}
       alignItems="center"
       justifyContent="center"
+      alignSelf="center"
+      justifySelf="center"
     >
       <Stack spacing={3} alignItems="center" justifyContent="center">
         <Grid

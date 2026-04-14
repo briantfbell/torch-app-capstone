@@ -27,7 +27,7 @@ const schema = {
   },
   serial_number: {
     column: 'Serial Number',
-    type: Number,
+    type: String,
   },
   end_item_lin: {
     // change to real document header

@@ -16,7 +16,6 @@ exports.ingestComponents = async (file, user, overrideUic) => {
   const results = parseData(normalizeHeaders(data), schema);
   const uicString = overrideUic ?? user.uic;
   const uicId = await getUicId(uicString);
-
   const errors = [];
   const objects = [];
   let row = 1;
