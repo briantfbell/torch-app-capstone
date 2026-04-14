@@ -165,7 +165,7 @@ export default function IngestItems({ uic }) {
 
   return (
     <div>
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container maxWidth="lg">
         <Stack spacing={3}>
           <Button
             component="label"
