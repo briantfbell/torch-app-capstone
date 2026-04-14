@@ -3,7 +3,7 @@ const { faker } = require('@faker-js/faker');
 const UI_OPTIONS = ['EA', 'PR', 'BX', 'DZ', 'SE', 'KT'];
 const ARC_OPTIONS = ['A', 'B', 'C', 'X', 'N'];
 
-const createComponents = async (num) => {
+const createComponents = async num => {
   let temp = [];
   for (let i = 0; i < num; i++) {
     temp.push({
@@ -24,8 +24,5 @@ exports.seed = async function (knex) {
 
   await knex.raw('ALTER SEQUENCE components_id_seq RESTART WITH 1');
 
-
-  await knex('components').insert([
-    ...(await createComponents(1)),
-  ]);
+  await knex('components').insert([...(await createComponents(1))]);
 };

@@ -1,27 +1,27 @@
-const serialComponentsModel = require('../models/serialComponentsModel');
+const serialComponentsModel = require('../models/serialComponentsModels');
 
-exports.getAllSerialComponentItems = async query => {
-  return await serialComponentsModel.getAllSerialComponentItems(query);
+exports.getAllSerialComponents = async query => {
+  return await serialComponentsModel.getAllSerialComponents(query);
 };
 
-exports.getSerialComponentItemById = async id => {
-  const serialComponentItem =
-    await serialComponentsModel.getSerialComponentItemById(id);
+exports.getSerialComponentById = async id => {
+  const serialComponent =
+    await serialComponentsModel.getSerialComponentById(id);
 
-  if (!serialComponentItem) {
-    const error = new Error('Serial component item does not exist.');
+  if (!serialComponent) {
+    const error = new Error('Serial item not found.');
     error.status = 404;
     throw error;
   }
 
-  return serialComponentItem;
+  return serialComponent;
 };
 
-exports.getSerialComponentItemsByUicId = async uic_id => {
-  const serialComponentItems =
-    await serialComponentsModel.getSerialComponentItemsByUicId(uic_id);
+exports.getSerialComponentsByUicId = async uic_id => {
+  const serialComponents =
+    await serialComponentsModel.getSerialComponentsByUicId(uic_id);
 
-  if (!serialComponentItems) {
+  if (!serialComponents) {
     const error = new Error(
       'Either the UIC does not exist or no serial component items recorded.',
     );
@@ -29,12 +29,11 @@ exports.getSerialComponentItemsByUicId = async uic_id => {
     throw error;
   }
 
-  return serialComponentItems;
+  return serialComponents;
 };
 
-exports.createSerialComponentItem = async serialComponentItemData => {
-  const { component_id, user_id, serial_number, status } =
-    serialComponentItemData;
+exports.createSerialComponent = async serialComponentData => {
+  const { component_id, user_id, serial_number, status } = serialComponentData;
 
   if (!serial_number || !user_id || !status || !component_id) {
     const error = new Error('All fields are required.');
@@ -42,41 +41,41 @@ exports.createSerialComponentItem = async serialComponentItemData => {
     throw error;
   }
 
-  return await serialComponentsModel.createSerialComponentItem(
+  return await serialComponentsModel.createSerialComponent(
     { serial_number, status },
     component_id,
     user_id,
   );
 };
 
-exports.updateSerialComponentItem = async (id, serialComponentItemData) => {
-  const existingSerialComponentItem =
-    await serialComponentsModel.getSerialComponentItemById(id);
+exports.updateSerialComponent = async (id, serialComponentData) => {
+  const existingSerialComponent =
+    await serialComponentsModel.getSerialComponentById(id);
 
-  if (!existingSerialComponentItem) {
+  if (!existingSerialComponent) {
     const error = new Error('Serial component item does not exist.');
     error.status = 404;
     throw error;
   }
 
-  return await serialComponentsModel.updateSerialComponentItem(
+  return await serialComponentsModel.updateSerialComponent(
     id,
-    serialComponentItemData,
+    serialComponentData,
   );
 };
 
-exports.deleteSerialComponentItem = async id => {
-  const existingSerialComponentItem =
-    await serialComponentsModel.getSerialComponentItemById(id);
+exports.deleteSerialComponent = async id => {
+  const existingSerialComponent =
+    await serialComponentsModel.getSerialComponentById(id);
 
-  if (!existingSerialComponentItem) {
+  if (!existingSerialComponent) {
     const error = new Error('Serial component item does not exist.');
     error.status = 404;
     throw error;
   }
 
-  const [deletedSerialComponentItem] =
-    await serialComponentsModel.deleteSerialComponentItem(id);
+  const [deletedSerialComponent] =
+    await serialComponentsModel.deleteSerialComponent(id);
 
-  return deletedSerialComponentItem;
+  return deletedSerialComponent;
 };

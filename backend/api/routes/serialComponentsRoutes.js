@@ -4,19 +4,19 @@ const hrhAuth = require('../middleware/hrhAuth');
 const router = express.Router();
 
 const {
-  getSerialComponentItemsByUicId,
-  getSerialComponentItemById,
-  getAllSerialComponentItems,
-  createSerialComponentItem,
-  updateSerialComponentItem,
-  deleteSerialComponentItem,
-} = require('../controllers/serialComponentsController');
+  getSerialComponentsByUicId,
+  getSerialComponentById,
+  getAllSerialComponents,
+  createSerialComponent,
+  updateSerialComponent,
+  deleteSerialComponent,
+} = require('../controllers/serialComponentsControllers');
 
-router.get('/uic/:uic_id', getSerialComponentItemsByUicId);
-router.get('/:id', getSerialComponentItemById);
-router.get('/', getAllSerialComponentItems);
-router.post('/', hrhAuth, createSerialComponentItem);
-router.patch('/:id', hrhAuth, updateSerialComponentItem);
-router.delete('/:id', hrhAuth, deleteSerialComponentItem);
+router.get('/uic/:uic_id', getSerialComponentsByUicId);
+router.get('/:id', getSerialComponentById);
+router.get('/', getAllSerialComponents);
+router.post('/', hrhAuth, createSerialComponent);
+router.patch('/:id', hrhAuth, updateSerialComponent);
+router.delete('/:id', hrhAuth, deleteSerialComponent);
 
 module.exports = router;
