@@ -32,7 +32,35 @@ export default function EndItemPage() {
     const [notes, setNotes] = useState("");
     const [savingNotes, setSavingNotes] = useState(false);
     const [saveMessage, setSaveMessage] = useState("");
+    const [pdfUrl, setPdfUrl] = useState(null);
 
+    useEffect(() => {
+        if (!item?.endItem?.lin) {
+            setPdfUrl(null);
+            return;
+        }
+
+        const currentLin = String(item.endItem.lin).trim().toLowerCase();
+
+        fetch("/pdfs/pdfManifest.json")
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error("Could not load PDF manifest");
+                }
+                return res.json();
+            })
+            .then((files) => {
+                const match = files.find((file) =>
+                    String(file).trim().toLowerCase().includes(currentLin)
+                );
+
+                setPdfUrl(match ? `/pdfs/${match}` : null);
+            })
+            .catch((err) => {
+                console.error("PDF manifest error:", err);
+                setPdfUrl(null);
+            });
+    }, [item]);
     useEffect(() => {
         setLoading(true);
         setError("");
@@ -159,14 +187,21 @@ export default function EndItemPage() {
                             >
                                 <Stack spacing={2} sx={{ flex: 1.2 }}>
                                     <Stack direction="row" spacing={1} alignItems="center">
-                                    <Button
-                                        variant="outlined"
-                                        startIcon={<PictureAsPdfIcon />}
-                                        onClick={() => setOpenPdf(true)}
-                                        sx={{ alignSelf: "flex-start" }}
-                                    >
-                                        Open End Item BOM PDF
-                                    </Button>
+
+                                        {pdfUrl ? (
+                                            <Button
+                                                variant="outlined"
+                                                startIcon={<PictureAsPdfIcon />}
+                                                onClick={() => setOpenPdf(true)}
+                                                sx={{ alignSelf: "flex-start" }}
+                                            >
+                                                Open End Item BOM PDF
+                                            </Button>
+                                        ) : (
+                                            <Typography variant="body2" color="text.secondary">
+                                                No BOM for this item.
+                                            </Typography>
+                                        )}
 
                                         <PdfGenerator />
                                     </Stack>
@@ -286,11 +321,13 @@ export default function EndItemPage() {
                     </CardContent>
                 </Card>
 
-                <PdfModalViewer
-                    open={openPdf}
-                    onClose={() => setOpenPdf(false)}
-                    pdfUrl="/pdfs/DET10_FWD_SHR_OCT25_FLAT.pdf"
-                />
+                {pdfUrl && (
+                    <PdfModalViewer
+                        open={openPdf}
+                        onClose={() => setOpenPdf(false)}
+                        pdfUrl={pdfUrl}
+                    />
+                )}
             </Stack>
         </Container>
     );
