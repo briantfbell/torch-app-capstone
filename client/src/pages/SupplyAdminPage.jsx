@@ -1,9 +1,9 @@
 import {
-  Box,
   Chip,
   CircularProgress,
   Container,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -12,46 +12,29 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import IngestItems from '../components/IngestItems.jsx';
+import { useAuth } from '../hooks/useAuth.jsx';
 
 export default function SupplyAdminPage() {
-  const [userUic, setUserUic] = useState(null);
-  const [userRoles, setUserRoles] = useState(null);
+  const { user, loading: authLoading } = useAuth();
   const [uics, setUics] = useState([]);
   const [selectedUic, setSelectedUic] = useState(null);
-  const [loading, setLoading] = useState(true);
-  console.log(uics, userUic, selectedUic, userRoles);
+
+  const isAdmin = user?.role?.includes('admin');
+
+  // selectedUic is null until the admin explicitly picks one;
+  // fall back to the logged-in user's own UIC until then
+  const effectiveUic = selectedUic ?? user?.uic ?? null;
 
   useEffect(() => {
-    const fetchData = async () => {
-      const getUserInfo = fetch('http://localhost:8080/auth/me', {
-        credentials: 'include',
-      })
-        .then(res => res.json())
-        .then(data => {
-          setUserUic(data.user?.uic ?? '');
-          setUserRoles(data.user?.role ?? []);
-          setSelectedUic(userUic);
-        })
-        .then(() => setLoading(false))
-        .catch(err => console.error('Failed to load user:', err));
+    if (!isAdmin) return;
 
-      let uicArray = [];
+    fetch('http://localhost:8080/uics', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => setUics(data.allUics.map(i => i.uic)))
+      .catch(err => console.error('Failed to get UICs:', err));
+  }, [isAdmin]);
 
-      const getUics = fetch('http://localhost:8080/uics', {
-        credentials: 'include',
-      })
-        .then(res => res.json())
-        .then(data => data.allUics.map(i => uicArray.push(i.uic)))
-        .then(() => setUics(uicArray))
-        .catch(err => console.error('Failed to get UICs:', err));
-
-      await Promise.all([getUserInfo, getUics]);
-    };
-
-    fetchData();
-  }, [userUic]);
-
-  if (loading) {
+  if (authLoading) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Stack
@@ -68,60 +51,62 @@ export default function SupplyAdminPage() {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Stack spacing={3}>
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          justifyContent="space-between"
-          alignItems="center"
-          spacing={2}
-        >
-          <Box sx={{ minWidth: 120 }} />
+    <Stack
+      maxWidth="lg"
+      sx={{ py: 4 }}
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Stack spacing={3} alignItems="center" justifyContent="center">
+        <Grid container spacing={2}>
+          <Grid size={1}></Grid>
 
-          <Stack alignItems="center" spacing={0.5}>
-            <Typography variant="h4" fontWeight={700}>
+          <Grid size={10} spacing={0.5}>
+            <Typography variant="h4" fontWeight={700} textAlign="center">
               Supply Admin Dashboard
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              textAlign="center"
+            >
               Upload CSV, XLSX, or XLS files
             </Typography>
-          </Stack>
+          </Grid>
 
-          {userRoles.includes('admin') ? (
-            <FormControl style={{ width: '12rem' }}>
-              <InputLabel id="select-label">Select a UIC</InputLabel>
+          <Grid size={1}>
+            {isAdmin ? (
+              <FormControl style={{ width: '12rem' }}>
+                <InputLabel id="select-label">Select a UIC</InputLabel>
 
-              <Select
-                labelId="select-label"
-                id="select"
-                value={selectedUic}
-                label=""
-                // onChange={handleUicChange}
-              >
-                {uics.map(u => {
-                  <MenuItem
-                    variant="outlined"
-                    color="primary"
-                    value={u}
-                    sx={{ minWidth: 120 }}
-                    onClick={() => setSelectedUic(u)}
-                  >
-                    {u}
-                  </MenuItem>;
-                })}
-              </Select>
-            </FormControl>
-          ) : (
-            <Chip
-              label={userUic ? `UIC: ${userUic}` : 'Loading UIC...'}
-              variant="outlined"
-              color="primary"
-              sx={{ minWidth: 120 }}
-            />
-          )}
-        </Stack>
-        <IngestItems />
+                <Select
+                  labelId="select-label"
+                  id="select"
+                  value={effectiveUic ?? ''}
+                  label="Select a UIC"
+                  onChange={e => setSelectedUic(e.target.value)}
+                >
+                  {uics.map(u => (
+                    <MenuItem key={u} value={u}>
+                      {u}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ) : (
+              <Chip
+                label={user?.uic ? `UIC: ${user.uic}` : 'No UIC assigned'}
+                variant="outlined"
+                color="primary"
+                sx={{ minWidth: 120 }}
+              />
+            )}
+          </Grid>
+        </Grid>
+
+        <IngestItems uic={effectiveUic} />
       </Stack>
-    </Container>
+    </Stack>
   );
 }

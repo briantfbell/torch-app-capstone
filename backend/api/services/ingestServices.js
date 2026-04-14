@@ -1,12 +1,20 @@
 const ingestModels = require('../models/ingestModels');
 const serialEndItemsModels = require('../models/serialEndItemsModels');
 const serialComponentsModels = require('../models/serialComponentsModels');
+const uicsModels = require('../models/uicsModels');
 const { readSheet, parseData } = require('read-excel-file/node');
 const { schema, normalizeHeaders } = require('../helpers/ingestSchema');
 
-exports.ingestComponents = async (file, user) => {
+const resolveUicId = async (uicString) => {
+  if (!uicString) return null;
+  const uic = await uicsModels.getUicByUic(uicString);
+  return uic?.id ?? null;
+};
+
+exports.ingestComponents = async (file, user, overrideUic) => {
   const data = await readSheet(file.buffer);
   const results = parseData(normalizeHeaders(data), schema);
+  const uicId = await resolveUicId(overrideUic ?? user.uic);
 
   const errors = [];
   const objects = [];
@@ -36,7 +44,7 @@ exports.ingestComponents = async (file, user) => {
       }
     }
 
-    await ingestModels.insertComponent(obj, user.id);
+    await ingestModels.insertComponent(obj, user.id, uicId);
   }
 
   if (objects.length > 0 && errors.length === objects.length) {
@@ -46,9 +54,10 @@ exports.ingestComponents = async (file, user) => {
   }
 };
 
-exports.ingestEndItems = async (file, user) => {
+exports.ingestEndItems = async (file, user, overrideUic) => {
   const data = await readSheet(file.buffer);
   const results = parseData(normalizeHeaders(data), schema);
+  const uicId = await resolveUicId(overrideUic ?? user.uic);
 
   const errors = [];
   const objects = [];
@@ -80,7 +89,7 @@ exports.ingestEndItems = async (file, user) => {
           throw error;
         }
       } else {
-        await ingestModels.insertSerializedItem(obj, user.id);
+        await ingestModels.insertSerializedItem(obj, user.id, uicId);
       }
     }
   }

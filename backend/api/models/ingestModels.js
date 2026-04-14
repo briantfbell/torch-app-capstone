@@ -1,7 +1,7 @@
 const db = require('../../db/knex');
 const endItemsModels = require('../models/endItemsModels');
 
-exports.insertSerializedItem = async (obj, userId) => {
+exports.insertSerializedItem = async (obj, userId, uicId) => {
   const match = await db('serial_end_items')
     .where({ serial_number: obj.serial_number })
     .select('id')
@@ -30,12 +30,13 @@ exports.insertSerializedItem = async (obj, userId) => {
       end_item_id: endItem.id,
       serial_number: obj.serial_number,
       user_id: userId,
+      uic_id: uicId ?? null,
       status: 'serviceable',
     });
   });
 };
 
-exports.insertComponent = async (obj, userId) => {
+exports.insertComponent = async (obj, userId, uicId) => {
   const end_item = await endItemsModels.getEndItemByLin(obj.end_item_lin);
 
   if (!end_item) return;
@@ -57,6 +58,7 @@ exports.insertComponent = async (obj, userId) => {
         component_id: component.id,
         serial_number: obj.serial_number,
         user_id: userId,
+        uic_id: uicId ?? null,
         status: 'serviceable',
       });
     }
