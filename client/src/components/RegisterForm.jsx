@@ -55,6 +55,12 @@ export default function RegisterForm({onSubmit, error}){
                 setIsValid(false);
                 return false;
             }
+
+            if(isNaN(form.phone) || isNaN(form.dodid)){
+                setLocalError('Phone and DoDID must be numbers')
+                setIsValid(false);
+                return false;
+            }
         }
 
         //validate assignment
