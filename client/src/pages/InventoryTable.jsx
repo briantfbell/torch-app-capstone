@@ -13,6 +13,7 @@ import {
   Button,
   Box,
   Alert,
+  MenuItem,
 } from "@mui/material";
 
 function InventoryTable() {
@@ -21,7 +22,7 @@ function InventoryTable() {
   const storageKey = `inventoryQuantities-${endItemId}`;
 
   const [items, setItems] = useState([]);
-  const [quantities, setQuantities] = useState({});
+  const [inventoryData, setInventoryData] = useState({});
   const [saveStatus, setSaveStatus] = useState(null);
   const [apiError, setApiError] = useState("");
   const [completionWarning, setCompletionWarning] = useState("");
@@ -63,28 +64,73 @@ function InventoryTable() {
   }, [endItemId]);
 
   useEffect(() => {
-    const savedQuantities = localStorage.getItem(storageKey);
+    const savedInventoryData = localStorage.getItem(storageKey);
 
-    if (savedQuantities) {
-      setQuantities(JSON.parse(savedQuantities));
+    if (savedInventoryData) {
+      setInventoryData(JSON.parse(savedInventoryData));
     } else {
-      setQuantities({});
+      setInventoryData({});
     }
   }, [storageKey]);
 
   const handleQuantityChange = (id, value) => {
     const numeric = value.replace(/[^0-9]/g, "");
-    setQuantities((prev) => ({
+    setInventoryData((prev) => ({
       ...prev,
-      [id]: numeric,
+      [id]: {
+        ...prev[id],
+        onHandQty: numeric,
+      },
     }));
     setCompletionWarning("");
   };
 
+  const handleLocationChange = (id, value) => {
+    setInventoryData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        location: value,
+      },
+    }));
+  };
+
+  const handleNeedsReplacementChange = (id, value) => {
+    setInventoryData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        needsReplacement: value,
+      },
+    }));
+  };
+
   const handleSave = () => {
     try {
-      localStorage.setItem(storageKey, JSON.stringify(quantities));
-      console.log("Saved quantities:", quantities);
+      const stampedInventoryData = Object.fromEntries(
+        Object.entries(inventoryData).map(([id, row]) => [
+          id,
+          {
+            ...row,
+            countedBy:
+              row.onHandQty !== undefined ||
+              row.location ||
+              row.needsReplacement
+                ? "Current User"
+                : row.countedBy || "",
+            lastCounted:
+              row.onHandQty !== undefined ||
+              row.location ||
+              row.needsReplacement
+                ? new Date().toLocaleDateString()
+                : row.lastCounted || "",
+          },
+        ]),
+      );
+
+      setInventoryData(stampedInventoryData);
+      localStorage.setItem(storageKey, JSON.stringify(stampedInventoryData));
+      console.log("Saved inventory data:", stampedInventoryData);
       setSaveStatus("success");
     } catch (e) {
       setSaveStatus("error");
@@ -102,7 +148,7 @@ function InventoryTable() {
     }
 
     const hasUnfilledRows = items.some((item) => {
-      const value = quantities[item.id];
+      const value = inventoryData[item.id]?.onHandQty;
       return value === undefined || value === "";
     });
 
@@ -161,6 +207,10 @@ function InventoryTable() {
               <TableCell>Authorized Qty</TableCell>
               <TableCell>On Hand Qty</TableCell>
               <TableCell>Variance</TableCell>
+              <TableCell>Location</TableCell>
+              <TableCell>Needs Replacement</TableCell>
+              <TableCell>Counted By</TableCell>
+              <TableCell>Last Counted</TableCell>
             </TableRow>
           </TableHead>
 
@@ -175,7 +225,7 @@ function InventoryTable() {
                   <TextField
                     type="number"
                     size="small"
-                    value={quantities[item.id] || ""}
+                    value={inventoryData[item.id]?.onHandQty || ""}
                     onChange={(e) =>
                       handleQuantityChange(item.id, e.target.value)
                     }
@@ -188,17 +238,47 @@ function InventoryTable() {
                   />
                 </TableCell>
                 <TableCell>
-                  {quantities[item.id] === "" ||
-                  quantities[item.id] === undefined
+                  {inventoryData[item.id]?.onHandQty === "" ||
+                  inventoryData[item.id]?.onHandQty === undefined
                     ? ""
-                    : Number(quantities[item.id]) - Number(item.authQty || 0)}
+                    : Number(inventoryData[item.id].onHandQty) -
+                      Number(item.authQty || 0)}
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    size="small"
+                    value={inventoryData[item.id]?.location || ""}
+                    onChange={(e) =>
+                      handleLocationChange(item.id, e.target.value)
+                    }
+                  />
+                </TableCell>
+
+                <TableCell>
+                  <TextField
+                    select
+                    size="small"
+                    value={inventoryData[item.id]?.needsReplacement || ""}
+                    onChange={(e) =>
+                      handleNeedsReplacementChange(item.id, e.target.value)
+                    }
+                    sx={{ minWidth: 120 }}
+                  >
+                    <MenuItem value="Yes">Yes</MenuItem>
+                    <MenuItem value="No">No</MenuItem>
+                  </TextField>
+                </TableCell>
+
+                <TableCell>{inventoryData[item.id]?.countedBy || ""}</TableCell>
+                <TableCell>
+                  {inventoryData[item.id]?.lastCounted || ""}
                 </TableCell>
               </TableRow>
             ))}
 
             {!apiError && items.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} align="center">
+                <TableCell colSpan={10} align="center">
                   No inventory records available yet.
                 </TableCell>
               </TableRow>

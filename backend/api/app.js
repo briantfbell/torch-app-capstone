@@ -9,7 +9,7 @@ const app = express();
 // In development the Vite dev server runs on port 5173.
 // Set CLIENT_URL in your .env to allow your production frontend origin.
 const allowedOrigins = ['http://localhost:5173', process.env.CLIENT_URL].filter(
-  Boolean,
+    Boolean,
 );
 
 app.use(express.json());
@@ -18,23 +18,24 @@ app.use(cookieParser(process.env.JWT));
 // CORS configuration — credentials: true is required so the browser sends
 // the httpOnly cookie on cross-origin requests (e.g. Vite → Express)
 app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow server-to-server requests (no origin) and whitelisted origins
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-  }),
+    cors({
+        origin: (origin, callback) => {
+            // Allow server-to-server requests (no origin) and whitelisted origins
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
+        credentials: true,
+    }),
 );
 
 const authRoutes = require('./routes/authRoutes');
 const usersRoutes = require('./routes/usersRoutes');
 const uicsRoutes = require('./routes/uicsRoutes');
 const serialItemsRoutes = require('./routes/serialItemsRoutes');
+const serialComponentsRoutes = require('./routes/serialComponentsRoutes');
 const componentsRoutes = require('./routes/componentsRoutes');
 const endItemsRoutes = require('./routes/endItemsRoutes');
 const ingestRoutes = require('./routes/ingestRoutes');
@@ -52,6 +53,7 @@ app.use('/auth', authRoutes);
 app.use('/uics', uicsRoutes);
 app.use('/users', auth, usersRoutes);
 app.use('/serial-items', auth, serialItemsRoutes);
+app.use('/serial-components', auth, serialComponentsRoutes);
 app.use('/components', auth, componentsRoutes);
 app.use('/end-items', auth, endItemsRoutes);
 app.use('/ingest', auth, ingestRoutes);
@@ -66,7 +68,7 @@ app.use('/archived-history/components', auth, archivedHistoryComponentsRoutes);
 // app.use('/shortages', shortagesRoutes);
 
 app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Working for now...' });
+    res.status(200).json({message: 'Working for now...'});
 });
 
 module.exports = app;

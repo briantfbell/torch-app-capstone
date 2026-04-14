@@ -24,7 +24,7 @@ import {
   Settings,
   DriveFileMove,
 } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { logout } from "../../api/auth";
 import { useAuth } from "../../hooks/useAuth";
 import { FormControlLabel, FormGroup, Stack, Switch } from "@mui/material";
@@ -166,6 +166,8 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 
 export default function MiniDrawer({ children, mode, onToggleTheme }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isDashboard = location.pathname === "/dashboard";
   const theme = useTheme();
   const [open, setOpen] = useState(false);
 
@@ -221,23 +223,25 @@ export default function MiniDrawer({ children, mode, onToggleTheme }) {
             <MenuIcon />
           </IconButton>
 
-          <Box
-            component="img"
-            src={
-              mode === "dark"
-                ? "/artwork/Header_Dark_Mode.png"
-                : "/artwork/Header_Light_Mode.png"
-            }
-            alt="TORCH"
-            sx={{
-              height: 105,
-              objectFit: "contain",
-              py: 2,
-              position: "absolute",
-              left: "17%",
-              transform: "translateX(-50%)",
-            }}
-          />
+          {isDashboard && (
+            <Box
+              component="img"
+              src={
+                mode === "dark"
+                  ? "/artwork/Header_Dark_Mode.png"
+                  : "/artwork/Header_Light_Mode.png"
+              }
+              alt="TORCH"
+              sx={{
+                height: 105,
+                objectFit: "contain",
+                py: 2,
+                position: "absolute",
+                left: "55%",
+                transform: "translateX(-50%)",
+              }}
+            />
+          )}
 
           <Stack sx={{ flexGrow: 1 }} alignItems="end">
             <FormGroup>
@@ -291,7 +295,8 @@ export default function MiniDrawer({ children, mode, onToggleTheme }) {
               <ListItemText>Equipment</ListItemText>
             </ListItemButton>
           </ListItem>
-          <ListItem
+          {/* Shortages Page has been removed because the dashboard handles it better */}
+          {/* <ListItem
             disablePadding
             sx={{ display: "block", mb: 1 }}
             onClick={() => navigate("/shortages")}
@@ -302,7 +307,7 @@ export default function MiniDrawer({ children, mode, onToggleTheme }) {
               </ListItemIcon>
               <ListItemText>Shortages</ListItemText>
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
           <ListItem
             disablePadding
             sx={{ display: "block", mb: 1 }}
