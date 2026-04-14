@@ -34,7 +34,7 @@ app.use(
 const authRoutes = require('./routes/authRoutes');
 const usersRoutes = require('./routes/usersRoutes');
 const uicsRoutes = require('./routes/uicsRoutes');
-const serialItemsRoutes = require('./routes/serialItemsRoutes');
+const serialEndItemsRoutes = require('./routes/serialEndItemsRoutes');
 const serialComponentsRoutes = require('./routes/serialComponentsRoutes');
 const componentsRoutes = require('./routes/componentsRoutes');
 const endItemsRoutes = require('./routes/endItemsRoutes');
@@ -47,7 +47,7 @@ const archivedHistoryComponentsRoutes = require('./routes/archivedHistoryCompone
 app.use('/auth', authRoutes);
 app.use('/uics', uicsRoutes);
 app.use('/users', auth, usersRoutes);
-app.use('/serial-items', auth, serialItemsRoutes);
+app.use('/serial-items', auth, serialEndItemsRoutes);
 app.use('/serial-components', auth, serialComponentsRoutes);
 app.use('/components', auth, componentsRoutes);
 app.use('/end-items', auth, endItemsRoutes);

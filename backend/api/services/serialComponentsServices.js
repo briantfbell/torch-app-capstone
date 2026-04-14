@@ -1,4 +1,4 @@
-const serialComponentsModel = require('../models/serialComponentsModel');
+const serialComponentsModel = require('../models/serialComponentsModels');
 
 exports.getAllSerialComponentItems = async query => {
   return await serialComponentsModel.getAllSerialComponentItems(query);

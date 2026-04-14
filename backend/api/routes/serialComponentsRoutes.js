@@ -10,7 +10,7 @@ const {
   createSerialComponentItem,
   updateSerialComponentItem,
   deleteSerialComponentItem,
-} = require('../controllers/serialComponentsController');
+} = require('../controllers/serialComponentsControllers');
 
 router.get('/uic/:uic_id', getSerialComponentItemsByUicId);
 router.get('/:id', getSerialComponentItemById);
