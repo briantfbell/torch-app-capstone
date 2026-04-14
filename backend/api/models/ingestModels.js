@@ -12,8 +12,13 @@ exports.insertSerializedItem = async (obj, userId, uicId) => {
   }
 
   await db.transaction(async trx => {
-    const [[endItem]] = await Promise.all([
-      trx('end_items')
+    let endItem = await trx('end_items')
+      .where({ fsc: obj.fsc, niin: obj.niin, lin: obj.lin })
+      .select('id', 'cost')
+      .first();
+
+    if (!endItem) {
+      [endItem] = await trx('end_items')
         .insert({
           lin: obj.lin,
           fsc: obj.fsc,
@@ -21,10 +26,10 @@ exports.insertSerializedItem = async (obj, userId, uicId) => {
           description: obj.description,
           auth_qty: obj.auth_qty || 1,
           cost: (Math.random() * 10000).toFixed(2),
-          image: obj.image
+          image: obj.image,
         })
-        .returning(['id', 'cost']),
-    ]);
+        .returning(['id', 'cost']);
+    }
 
     await trx('serial_end_items').insert({
       end_item_id: endItem.id,
