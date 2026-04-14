@@ -2,7 +2,6 @@ const db = require('../../db/knex');
 const endItemsModels = require('../models/endItemsModels');
 
 exports.insertSerializedItem = async (obj, userId, uicId) => {
-  console.log(`UIC ID: ${uicId}`);
   const match = await db('serial_end_items')
     .where({ serial_number: obj.serial_number, uic_id: uicId ?? null })
     .select('id')
@@ -45,20 +44,32 @@ exports.insertSerializedItem = async (obj, userId, uicId) => {
 exports.insertComponent = async (obj, userId, uicId) => {
   const end_item = await endItemsModels.getEndItemByLin(obj.end_item_lin);
 
-  if (!end_item) return;
+  if (!end_item) {
+    const error = new Error(
+      `No end item exists for NIIN: ${obj.niin}. Upload associated end item first.`,
+    );
+    error.status = 400;
+    throw error;
+  }
 
   await db.transaction(async trx => {
-    const [component] = await trx('components')
-      .insert({
-        niin: obj.niin,
-        description: obj.description,
-        ui: obj.ui,
-        auth_qty: obj.auth_qty || 1,
-        end_item_id: end_item.id,
-        cost: (Math.random() * 1000).toFixed(2),
-      })
-      .returning('id');
-    console.log(obj);
+    let component = await trx('components')
+      .where({ niin: obj.niin })
+      .select('id', 'cost')
+      .first();
+
+    if (!component) {
+      [component] = await trx('components')
+        .insert({
+          niin: obj.niin,
+          description: obj.description,
+          ui: obj.ui,
+          auth_qty: obj.auth_qty || 1,
+          end_item_id: end_item.id,
+          cost: (Math.random() * 1000).toFixed(2),
+        })
+        .returning('id', 'cost');
+    }
 
     if (obj.serial_number) {
       await trx('serial_component_items').insert({

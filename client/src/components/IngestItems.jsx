@@ -169,7 +169,7 @@ export default function IngestItems({ uic }) {
           <Button
             component="label"
             role={undefined}
-            variant="contained"
+            variant="outlined"
             tabIndex={-1}
             startIcon={<CloudUploadIcon />}
             sx={{ alignSelf: 'center', minWidth: 320 }}
@@ -194,31 +194,17 @@ export default function IngestItems({ uic }) {
             />
           </Button>
 
-          {status === 'success' && <p>Upload successful!</p>}
-          {status === 'fail' && <p>{errorMessage}</p>}
-          {status === 'uploading' && <p>Uploading...</p>}
+          <Stack textAlign={'center'}>
+            {status === 'success' && <div>Upload successful!</div>}
+            {status === 'fail' && <div>{errorMessage}</div>}
+            {status === 'uploading' && <div>Uploading...</div>}
+          </Stack>
 
-          <Button
-            variant="outlined"
-            size="large"
-            startIcon={<UploadFileIcon />}
-            onClick={handleUploadEndItems}
-            sx={{ alignSelf: 'center', minWidth: 320 }}
-          >
-            Upload End-Items
-          </Button>
-
-          <Button
-            variant="outlined"
-            size="large"
-            startIcon={<UploadFileIcon />}
-            onClick={handleUploadComponents}
-            sx={{ alignSelf: 'center', minWidth: 320 }}
-          >
-            Upload Components
-          </Button>
-
-          {file && <p style={{ textAlign: 'center' }}>{file.name}</p>}
+          {file && (
+            <div style={{ textAlign: 'center', margin: '0px' }}>
+              {file.name}
+            </div>
+          )}
 
           {previewData && (
             <div
@@ -280,6 +266,38 @@ export default function IngestItems({ uic }) {
               </table>
             </div>
           )}
+
+          <Stack
+            alignItems="center"
+            justifyContent="center"
+            alignSelf="center"
+            justifySelf="center"
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              gap: '1rem',
+            }}
+          >
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<UploadFileIcon />}
+              onClick={handleUploadComponents}
+              sx={{ alignSelf: 'center', minWidth: 320 }}
+            >
+              Upload Components
+            </Button>
+
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<UploadFileIcon />}
+              onClick={handleUploadEndItems}
+              sx={{ alignSelf: 'center', minWidth: 320 }}
+            >
+              Upload End-Items
+            </Button>
+          </Stack>
         </Stack>
       </Container>
     </div>
