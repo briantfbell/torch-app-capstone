@@ -27,7 +27,7 @@ exports.ingestComponents = async (file, user) => {
     if (!obj.niin || !obj.end_item_lin) continue;
 
     if (obj.serial_number) {
-      const match = await serialComponentsModels.getSerialComponentItemBySn(
+      const match = await serialComponentsModels.getSerialComponentBySn(
         obj.serial_number,
       );
       if (match) {
@@ -67,7 +67,7 @@ exports.ingestEndItems = async (file, user) => {
 
   for (const obj of objects) {
     if (obj.serial_number) {
-      const match = await serialEndItemsModels.getSerialItemBySn(
+      const match = await serialEndItemsModels.getSerialEndItemBySn(
         obj.serial_number,
       );
 
