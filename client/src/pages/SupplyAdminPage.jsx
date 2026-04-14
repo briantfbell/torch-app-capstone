@@ -63,13 +63,14 @@ export default function SupplyAdminPage() {
           spacing={2}
           sx={{
             flexDirection: { xs: 'column', sm: 'row' },
+            width: { xs: '25rem', sm: '50rem' },
           }}
           alignItems="center"
           justifyContent="center"
         >
-          <Grid size={1}></Grid>
+          <Grid size={2.5}></Grid>
 
-          <Grid size={10} spacing={0.5}>
+          <Grid size={7} spacing={0.5}>
             <Typography variant="h4" fontWeight={700} textAlign="center">
               Supply Admin Dashboard
             </Typography>
@@ -84,16 +85,17 @@ export default function SupplyAdminPage() {
           </Grid>
 
           <Grid
-            size={1}
+            size={2.5}
             alignSelf="center"
             justifySelf="center"
             sx={{
               display: 'flex',
               justifyContent: { xs: 'center', sm: 'flex-start' },
+              width: 'fit-content',
             }}
           >
             {isAdmin ? (
-              <FormControl style={{ width: '12rem' }}>
+              <FormControl>
                 <InputLabel id="select-label">Select a UIC</InputLabel>
 
                 <Select
@@ -115,7 +117,6 @@ export default function SupplyAdminPage() {
                 label={user?.uic ? `UIC: ${user.uic}` : 'No UIC assigned'}
                 variant="outlined"
                 color="primary"
-                sx={{ minWidth: 120 }}
               />
             )}
           </Grid>

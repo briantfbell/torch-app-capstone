@@ -49,7 +49,7 @@ export default function IngestItems({ uic }) {
       // Grab the first sheet by name
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
-      // Convert the sheet into a 2D array; row 0 will be the header row
+      // Convert the sheet into an array; row 0 will be the header row
       const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
       if (rows.length > 0) {
