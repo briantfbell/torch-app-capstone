@@ -3,6 +3,7 @@ exports.up = function (knex) {
     table.increments('id');
     table.integer('fsc', 50);
     table.text('description');
+    table.text('note');
     table.varchar('niin', 50).notNullable();
     table.integer('auth_qty', 50).defaultTo(1);
     table.varchar('lin');

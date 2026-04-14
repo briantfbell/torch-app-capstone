@@ -35,7 +35,7 @@ export default function MainRouter({ mode, onToggleTheme }) {
                       element={<ShortageTrackerPage />}
                     />
                     <Route
-                      path="/InventoryTable"
+                      path="/InventoryTable/:endItemId"
                       element={<InventoryTable />}
                     />
                     <Route path="/equipment/:id" element={<EndItemPage />} />

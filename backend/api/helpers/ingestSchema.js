@@ -35,7 +35,8 @@ const schema = {
     type: String,
   },
   image: {
-    column: 'Image',
+    // change to real document header
+    column: 'img',
     type: String,
   },
   // cost: {

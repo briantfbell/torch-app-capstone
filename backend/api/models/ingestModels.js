@@ -21,6 +21,7 @@ exports.insertSerializedItem = async (obj, userId) => {
           description: obj.description,
           auth_qty: obj.auth_qty || 1,
           cost: (Math.random() * 10000).toFixed(2),
+          image: obj.image
         })
         .returning(['id', 'cost']),
     ]);

@@ -2,14 +2,11 @@ import Box from '@mui/material/Box';
 import {DataGrid} from '@mui/x-data-grid';
 import {Stack, Typography} from '@mui/material';
 
-// For information on how to fill this with backend data: https://mui.com/x/api/data-grid/data-grid/
-
 const columns = [
     {
         field: 'name',
         headerName: 'Item Name',
         flex: 1,
-        minWidth: 300,
         editable: false,
     },
     {
@@ -39,6 +36,13 @@ const columns = [
     {
         field: 'auth_qty',
         headerName: 'Auth Qty',
+        type: 'number',
+        flex: 1,
+        editable: false,
+    },
+    {
+        field: 'on_hand',
+        headerName: 'On Hand',
         type: 'number',
         flex: 1,
         editable: false,
@@ -96,12 +100,13 @@ const columns = [
     },
 ];
 
-export default function ShortageDataGrid({rows = []}) {
+export default function ShortageDataGrid({rows = [], columns: columnsProp}) {
+    const resolvedColumns = columnsProp ?? columns;
     return (
         <Box sx={{height: 400, width: '100%'}}>
             <DataGrid
                 rows={rows}
-                columns={columns}
+                columns={resolvedColumns}
                 initialState={{
                     pagination: {
                         paginationModel: {

@@ -6,6 +6,7 @@ exports.up = function(knex) {
     table.string('name_first', 50).notNullable();
     table.string('name_last', 50).notNullable();
     table.varchar('email', 50).unique()
+    table.text('note');
     table.varchar('phone');
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at');
