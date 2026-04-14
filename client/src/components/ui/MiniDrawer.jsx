@@ -311,7 +311,7 @@ export default function MiniDrawer({ children, mode, onToggleTheme }) {
           <ListItem
             disablePadding
             sx={{ display: "block", mb: 1 }}
-            onClick={() => navigate("/ingest")}
+            onClick={() => navigate("/SupplyAdmin")}
           >
             <ListItemButton>
               <ListItemIcon>

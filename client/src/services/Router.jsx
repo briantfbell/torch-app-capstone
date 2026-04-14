@@ -1,5 +1,5 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Ingest from "../components/Ingest.jsx";
+import SupplyAdminPage from "../pages/SupplyAdminPage.jsx";
 import MiniDrawer from "../components/ui/MiniDrawer.jsx";
 import { AuthProvider } from "../contexts/AuthContext.jsx";
 import Dashboard from "../pages/Dashboard.jsx";
@@ -41,7 +41,7 @@ export default function MainRouter({ mode, onToggleTheme }) {
                     <Route path="/equipment/:id" element={<EndItemPage />} />
                     <Route path="/user-settings" element={<UserSettings />} />
                     <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/ingest" element={<Ingest />} />
+                    <Route path="/SupplyAdmin" element={<SupplyAdminPage />} />
                   </Routes>
                 </MiniDrawer>
               </ProtectedRoute>
