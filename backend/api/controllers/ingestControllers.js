@@ -1,12 +1,21 @@
 const ingestServices = require('../services/ingestServices');
+const { schema } = require('../helpers/ingestSchema');
+
+exports.getIngestSchema = (_req, res) => {
+  const columns = Object.values(schema).map(({ column }) => column);
+  res.json({ columns });
+};
 
 exports.ingestComponents = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded.' });
   }
 
+  const isAdmin = req.user.role?.includes('admin');
+  const overrideUic = isAdmin ? (req.query.uic ?? null) : null;
+
   try {
-    await ingestServices.ingestComponents(req.file, req.user);
+    await ingestServices.ingestComponents(req.file, req.user, overrideUic);
 
     res.status(201).json({ message: 'Upload successful.' });
   } catch (err) {
@@ -21,8 +30,11 @@ exports.ingestEndItems = async (req, res) => {
     return res.status(400).json({ message: 'No file uploaded.' });
   }
 
+  const isAdmin = req.user.role?.includes('admin');
+  const overrideUic = isAdmin ? (req.query.uic ?? null) : null;
+
   try {
-    await ingestServices.ingestEndItems(req.file, req.user);
+    await ingestServices.ingestEndItems(req.file, req.user, overrideUic);
 
     res.status(201).json({ message: 'Upload successful.' });
   } catch (err) {

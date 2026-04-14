@@ -44,7 +44,10 @@ exports.createComponentCurrentHistory = async currentHistoryData => {
 exports.updateComponentCurrentHistory = async (id, currentHistoryData) => {
   if (currentHistoryData.serial_number) {
     const serial_component_item = await db('serial_component_items')
-      .where('serial_component_items.serial_number', currentHistoryData.serial_number)
+      .where(
+        'serial_component_items.serial_number',
+        currentHistoryData.serial_number,
+      )
       .select('id')
       .first();
 
