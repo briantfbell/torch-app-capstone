@@ -1,5 +1,5 @@
 const currentHistoryComponentsModels = require('../models/currentHistoryComponentsModels');
-const serialItemsModels = require('../models/serialItemsModels');
+const serialComponentsModels = require('../models/serialComponentsModels');
 
 exports.getComponentCurrentHistory = async query => {
   return await currentHistoryComponentsModels.getComponentCurrentHistory(query);
@@ -47,7 +47,7 @@ exports.createComponentCurrentHistory = async ({
   let resolved_serial_number;
   if (serial_number) {
     const serial_component_item =
-      await serialItemsModels.getSerialComponentItemBySn(serial_number);
+      await serialComponentsModels.getSerialComponentItemBySn(serial_number);
     resolved_serial_number = serial_component_item.id;
   }
 

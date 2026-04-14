@@ -1,5 +1,5 @@
 const currentHistoryEndItemsModels = require('../models/currentHistoryEndItemsModels');
-const serialItemsModels = require('../models/serialItemsModels');
+const serialEndItemsModels = require('../models/serialEndItemsModels');
 
 exports.getCurrentHistory = async query => {
   return await currentHistoryEndItemsModels.getCurrentHistory(query);
@@ -45,7 +45,7 @@ exports.createCurrentHistory = async ({
   }
 
   const serial_end_item =
-    await serialItemsModels.getSerialItemBySn(serial_number);
+    await serialEndItemsModels.getSerialItemBySn(serial_number);
 
   return await currentHistoryEndItemsModels.createCurrentHistory({
     end_item_id,
