@@ -12,22 +12,22 @@ const makeToken = (payload = {}) =>
 
 const mockSerialComponent = {
   id: 1,
-  serial_number: 'SN-001',
+  component_id: '1',
+  user_id: '1',
+  serial_number: 'SN001',
   status: 'serviceable',
-  item_id: 1,
-  uic_id: 1,
 };
 
 afterEach(() => jest.clearAllMocks());
 
-describe('GET /serial-items', () => {
+describe('GET /serial-components', () => {
   it('returns 200 with allSerialComponents and calls getAllSerialComponents with the query object', async () => {
     serialComponentsServices.getAllSerialComponents.mockResolvedValue([
       mockSerialComponent,
     ]);
 
     const res = await request(app)
-      .get('/serial-items')
+      .get('/serial-components')
       .set('Cookie', `token=${makeToken()}`);
 
     expect(res.status).toBe(200);
@@ -44,7 +44,7 @@ describe('GET /serial-items', () => {
     ]);
 
     await request(app)
-      .get('/serial-items?status=serviceable')
+      .get('/serial-components?status=serviceable')
       .set('Cookie', `token=${makeToken()}`);
 
     expect(
@@ -55,7 +55,7 @@ describe('GET /serial-items', () => {
   });
 
   it('returns 401 with no token', async () => {
-    const res = await request(app).get('/serial-items');
+    const res = await request(app).get('/serial-components');
 
     expect(res.status).toBe(401);
     expect(
@@ -64,14 +64,14 @@ describe('GET /serial-items', () => {
   });
 });
 
-describe('GET /serial-items/:id', () => {
+describe('GET /serial-components/:id', () => {
   it('returns 200 with serialComponent and calls getSerialComponentById with the id param', async () => {
     serialComponentsServices.getSerialComponentById.mockResolvedValue(
       mockSerialComponent,
     );
 
     const res = await request(app)
-      .get('/serial-items/1')
+      .get('/serial-components/1')
       .set('Cookie', `token=${makeToken()}`);
 
     expect(res.status).toBe(200);
@@ -87,21 +87,21 @@ describe('GET /serial-items/:id', () => {
     serialComponentsServices.getSerialComponentById.mockRejectedValue(err);
 
     const res = await request(app)
-      .get('/serial-items/9999')
+      .get('/serial-components/9999')
       .set('Cookie', `token=${makeToken()}`);
 
     expect(res.status).toBe(404);
   });
 });
 
-describe('GET /serial-items/uic/:uic_id', () => {
+describe('GET /serial-components/uic/:uic_id', () => {
   it('returns 200 with serialComponents and calls getSerialComponentsByUicId with the uic_id param', async () => {
     serialComponentsServices.getSerialComponentsByUicId.mockResolvedValue([
       mockSerialComponent,
     ]);
 
     const res = await request(app)
-      .get('/serial-items/uic/1')
+      .get('/serial-components/uic/1')
       .set('Cookie', `token=${makeToken()}`);
 
     expect(res.status).toBe(200);
@@ -113,7 +113,7 @@ describe('GET /serial-items/uic/:uic_id', () => {
   });
 });
 
-describe('POST /serial-items', () => {
+describe('POST /serial-components', () => {
   const body = {
     serial_number: 'SN-001',
     status: 'serviceable',
@@ -127,7 +127,7 @@ describe('POST /serial-items', () => {
     );
 
     const res = await request(app)
-      .post('/serial-items')
+      .post('/serial-components')
       .set('Cookie', `token=${makeToken()}`)
       .send(body);
 
@@ -140,7 +140,7 @@ describe('POST /serial-items', () => {
   });
 
   it('returns 401 with no token', async () => {
-    const res = await request(app).post('/serial-items').send(body);
+    const res = await request(app).post('/serial-components').send(body);
 
     expect(res.status).toBe(401);
     expect(
@@ -149,7 +149,7 @@ describe('POST /serial-items', () => {
   });
 });
 
-describe('PATCH /serial-items/:id', () => {
+describe('PATCH /serial-components/:id', () => {
   const body = { status: 'unserviceable' };
 
   it('returns 200 with updatedSerialComponent and calls updateSerialComponent with the id and body', async () => {
@@ -159,7 +159,7 @@ describe('PATCH /serial-items/:id', () => {
     });
 
     const res = await request(app)
-      .patch('/serial-items/1')
+      .patch('/serial-components/1')
       .set('Cookie', `token=${makeToken()}`)
       .send(body);
 
@@ -173,7 +173,7 @@ describe('PATCH /serial-items/:id', () => {
   });
 
   it('returns 401 with no token', async () => {
-    const res = await request(app).patch('/serial-items/1').send(body);
+    const res = await request(app).patch('/serial-components/1').send(body);
 
     expect(res.status).toBe(401);
     expect(
@@ -182,14 +182,14 @@ describe('PATCH /serial-items/:id', () => {
   });
 });
 
-describe('DELETE /serial-items/:id', () => {
+describe('DELETE /serial-components/:id', () => {
   it('returns 200 with deletedSerialComponent and calls deleteSerialComponent with the id', async () => {
     serialComponentsServices.deleteSerialComponent.mockResolvedValue(
       mockSerialComponent,
     );
 
     const res = await request(app)
-      .delete('/serial-items/1')
+      .delete('/serial-components/1')
       .set('Cookie', `token=${makeToken()}`);
 
     expect(res.status).toBe(200);
@@ -201,7 +201,7 @@ describe('DELETE /serial-items/:id', () => {
   });
 
   it('returns 401 with no token', async () => {
-    const res = await request(app).delete('/serial-items/1');
+    const res = await request(app).delete('/serial-components/1');
 
     expect(res.status).toBe(401);
     expect(

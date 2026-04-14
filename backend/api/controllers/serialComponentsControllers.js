@@ -1,12 +1,12 @@
 const serialComponentsServices = require('../services/serialComponentsServices');
 
-exports.getAllSerialComponentItems = async (req, res) => {
+exports.getAllSerialComponents = async (req, res) => {
   try {
     const { query } = req;
-    const allSerialComponentItems =
-      await serialComponentsServices.getAllSerialComponentItems(query);
+    const allSerialComponents =
+      await serialComponentsServices.getAllSerialComponents(query);
 
-    res.status(200).json({ allSerialComponentItems });
+    res.status(200).json({ allSerialComponents });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -14,13 +14,13 @@ exports.getAllSerialComponentItems = async (req, res) => {
   }
 };
 
-exports.getSerialComponentItemById = async (req, res) => {
+exports.getSerialComponentById = async (req, res) => {
   try {
     const { id } = req.params;
-    const serialComponentItem =
-      await serialComponentsServices.getSerialComponentItemById(id);
+    const serialComponent =
+      await serialComponentsServices.getSerialComponentById(id);
 
-    res.status(200).json({ serialComponentItem });
+    res.status(200).json({ serialComponent });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -28,13 +28,13 @@ exports.getSerialComponentItemById = async (req, res) => {
   }
 };
 
-exports.getSerialComponentItemsByUicId = async (req, res) => {
+exports.getSerialComponentsByUicId = async (req, res) => {
   try {
     const { uic_id } = req.params;
-    const serialComponentItems =
-      await serialComponentsServices.getSerialComponentItemsByUicId(uic_id);
+    const serialComponents =
+      await serialComponentsServices.getSerialComponentsByUicId(uic_id);
 
-    res.status(200).json({ serialComponentItems });
+    res.status(200).json({ serialComponents });
   } catch (err) {
     res
       .status(err.status || 500)
@@ -42,14 +42,14 @@ exports.getSerialComponentItemsByUicId = async (req, res) => {
   }
 };
 
-exports.createSerialComponentItem = async (req, res) => {
+exports.createSerialComponent = async (req, res) => {
   try {
-    const newSerialComponentItem =
-      await serialComponentsServices.createSerialComponentItem(req.body);
+    const newSerialComponent =
+      await serialComponentsServices.createSerialComponent(req.body);
 
     res.status(201).json({
-      newSerialComponentItem,
-      message: `SN: ${newSerialComponentItem.serial_number} has been successfully posted.`,
+      newSerialComponent,
+      message: `SN: ${newSerialComponent.serial_number} has been successfully posted.`,
     });
   } catch (err) {
     res
@@ -58,17 +58,17 @@ exports.createSerialComponentItem = async (req, res) => {
   }
 };
 
-exports.updateSerialComponentItem = async (req, res) => {
+exports.updateSerialComponent = async (req, res) => {
   try {
-    const updatedSerialComponentItem =
-      await serialComponentsServices.updateSerialComponentItem(
+    const updatedSerialComponent =
+      await serialComponentsServices.updateSerialComponent(
         req.params.id,
         req.body,
       );
 
     res.status(200).json({
-      updatedSerialComponentItem,
-      message: `SN: ${updatedSerialComponentItem.serial_number} has been successfully updated.`,
+      updatedSerialComponent,
+      message: `SN: ${updatedSerialComponent.serial_number} has been successfully updated.`,
     });
   } catch (err) {
     res
@@ -77,14 +77,14 @@ exports.updateSerialComponentItem = async (req, res) => {
   }
 };
 
-exports.deleteSerialComponentItem = async (req, res) => {
+exports.deleteSerialComponent = async (req, res) => {
   try {
-    const deletedSerialComponentItem =
-      await serialComponentsServices.deleteSerialComponentItem(req.params.id);
+    const deletedSerialComponent =
+      await serialComponentsServices.deleteSerialComponent(req.params.id);
 
     res.status(200).json({
-      deletedSerialComponentItem,
-      message: `SN: ${deletedSerialComponentItem.serial_number} was successfully deleted.`,
+      deletedSerialComponent,
+      message: `SN: ${deletedSerialComponent.serial_number} was successfully deleted.`,
     });
   } catch (err) {
     res
