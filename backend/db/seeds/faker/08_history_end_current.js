@@ -1,17 +1,15 @@
-
 const createComponents = async (num, items, user, sn) => {
   let temp = [];
 
-  const item_id = items.map(row => row.id)
-  const user_id = user.map(row => row.id)
-  const serial_number = sn.map(row => row.id)
+  const item_id = items.map(row => row.id);
+  const user_id = user.map(row => row.id);
+  const serial_number = sn.map(row => row.id);
 
   for (let i = 0; i < num; i++) {
-
     temp.push({
       user_id: user_id[0],
       end_item_id: item_id[0],
-      serial_number: serial_number[0]
+      serial_number: serial_number[0],
     });
   }
   return temp;
