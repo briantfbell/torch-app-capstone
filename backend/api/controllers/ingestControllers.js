@@ -12,10 +12,12 @@ exports.ingestComponents = async (req, res) => {
   }
 
   const isAdmin = req.user.role?.includes('admin');
-  const overrideUic = isAdmin ? (req.query.uic ?? null) : null;
+  const uicId = isAdmin
+    ? (req.params.uic_id ?? req.user.uic_id)
+    : req.user.uic_id;
 
   try {
-    await ingestServices.ingestComponents(req.file, req.user, overrideUic);
+    await ingestServices.ingestComponents(req.file, req.user, uicId);
 
     res.status(201).json({ message: 'Upload successful.' });
   } catch (err) {
@@ -31,10 +33,12 @@ exports.ingestEndItems = async (req, res) => {
   }
 
   const isAdmin = req.user.role?.includes('admin');
-  const overrideUic = isAdmin ? (req.query.uic ?? null) : null;
+  const uicId = isAdmin
+    ? (req.params.uic_id ?? req.user.uic_id)
+    : req.user.uic_id;
 
   try {
-    await ingestServices.ingestEndItems(req.file, req.user, overrideUic);
+    await ingestServices.ingestEndItems(req.file, req.user, uicId);
 
     res.status(201).json({ message: 'Upload successful.' });
   } catch (err) {

@@ -5,17 +5,17 @@ const uicsModels = require('../models/uicsModels');
 const { readSheet, parseData } = require('read-excel-file/node');
 const { schema, normalizeHeaders } = require('../helpers/ingestSchema');
 
-const getUicId = async uicString => {
-  if (!uicString) return null;
-  const uic = await uicsModels.getUicByUic(uicString);
-  return uic?.id ?? null;
+const getUicString = async uicId => {
+  if (!uicId) return null;
+  const uic = await uicsModels.getUicById(uicId);
+  return uic?.uic ?? null;
 };
 
-exports.ingestComponents = async (file, user, overrideUic) => {
+exports.ingestComponents = async (file, user, uic) => {
   const data = await readSheet(file.buffer);
   const results = parseData(normalizeHeaders(data), schema);
-  const uicString = overrideUic ?? user.uic;
-  const uicId = await getUicId(uicString);
+  const uicId = uic ?? user.uic_id;
+
   const errors = [];
   const objects = [];
   let row = 1;
@@ -37,6 +37,7 @@ exports.ingestComponents = async (file, user, overrideUic) => {
     if (obj.serial_number) {
       const match = await serialComponentsModels.getSerialComponentBySn(
         obj.serial_number,
+        uicId,
       );
       if (match) {
         errors.push(obj);
@@ -48,17 +49,17 @@ exports.ingestComponents = async (file, user, overrideUic) => {
   }
 
   if (objects.length > 0 && errors.length === objects.length) {
+    const uicString = await getUicString(uic);
     const error = Error(`No new data for UIC ${uicString}.`);
     error.status = 400;
     throw error;
   }
 };
 
-exports.ingestEndItems = async (file, user, overrideUic) => {
+exports.ingestEndItems = async (file, user, uic) => {
   const data = await readSheet(file.buffer);
   const results = parseData(normalizeHeaders(data), schema);
-  const uicString = overrideUic ?? user.uic;
-  const uicId = await getUicId(uicString);
+  const uicId = uic ?? user.uic_id;
 
   const errors = [];
   const objects = [];
@@ -79,12 +80,14 @@ exports.ingestEndItems = async (file, user, overrideUic) => {
     if (obj.serial_number) {
       const match = await serialEndItemsModels.getSerialEndItemBySn(
         obj.serial_number,
+        uicId,
       );
 
       if (match) {
         errors.push(obj);
 
         if (objects.length === errors.length) {
+          const uicString = await getUicString(uic);
           const error = Error(`No new data for UIC ${uicString}.`);
           error.status = 400;
           throw error;

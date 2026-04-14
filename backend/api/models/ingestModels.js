@@ -2,8 +2,9 @@ const db = require('../../db/knex');
 const endItemsModels = require('../models/endItemsModels');
 
 exports.insertSerializedItem = async (obj, userId, uicId) => {
+  console.log(`UIC ID: ${uicId}`);
   const match = await db('serial_end_items')
-    .where({ serial_number: obj.serial_number })
+    .where({ serial_number: obj.serial_number, uic_id: uicId ?? null })
     .select('id')
     .first();
 

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
 
 export default function IngestItems({ uic }) {
+  const { uicId } = uic ?? {};
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState('initial');
   const [errorMessage, setErrorMessage] = useState(null);
@@ -98,16 +99,15 @@ export default function IngestItems({ uic }) {
     const formData = new FormData();
     formData.append('file', file);
 
-    const url = uic
-      ? `http://localhost:8080/ingest/end-items?uic=${encodeURIComponent(uic)}`
-      : 'http://localhost:8080/ingest/end-items';
-
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      });
+      const response = await fetch(
+        `http://localhost:8080/ingest/end-items/${uicId}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          body: formData,
+        },
+      );
 
       const body = await response.json();
 
@@ -128,16 +128,15 @@ export default function IngestItems({ uic }) {
     const formData = new FormData();
     formData.append('file', file);
 
-    const url = uic
-      ? `http://localhost:8080/ingest/components?uic=${encodeURIComponent(uic)}`
-      : 'http://localhost:8080/ingest/components';
-
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      });
+      const response = await fetch(
+        `http://localhost:8080/ingest/components/${uicId}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          body: formData,
+        },
+      );
 
       const body = await response.json();
 
