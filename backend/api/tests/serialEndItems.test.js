@@ -1,8 +1,8 @@
 const request = require('supertest');
 const jwt = require('jsonwebtoken');
 
-jest.mock('../services/serialItemsServices');
-const serialItemsServices = require('../services/serialItemsServices');
+jest.mock('../services/serialEndItemsServices');
+const serialEndItemsServices = require('../services/serialEndItemsServices');
 
 const app = require('../app');
 
@@ -10,7 +10,7 @@ const SECRET = process.env.JWT;
 const makeToken = (payload = {}) =>
   jwt.sign({ id: 1, username: 'testuser', role: 'hrh', ...payload }, SECRET);
 
-const mockSerialItem = {
+const mockSerialEndItem = {
   id: 1,
   serial_number: 'SN-001',
   status: 'serviceable',
@@ -21,27 +21,33 @@ const mockSerialItem = {
 afterEach(() => jest.clearAllMocks());
 
 describe('GET /serial-items', () => {
-  it('returns 200 with allSerialItems and calls getAllSerialItems with the query object', async () => {
-    serialItemsServices.getAllSerialItems.mockResolvedValue([mockSerialItem]);
+  it('returns 200 with allSerialEndItems and calls getAllSerialEndItems with the query object', async () => {
+    serialEndItemsServices.getAllSerialEndItems.mockResolvedValue([
+      mockSerialEndItem,
+    ]);
 
     const res = await request(app)
       .get('/serial-items')
       .set('Cookie', `token=${makeToken()}`);
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('allSerialItems');
-    expect(Array.isArray(res.body.allSerialItems)).toBe(true);
-    expect(serialItemsServices.getAllSerialItems).toHaveBeenCalledWith({});
+    expect(res.body).toHaveProperty('allSerialEndItems');
+    expect(Array.isArray(res.body.allSerialEndItems)).toBe(true);
+    expect(serialEndItemsServices.getAllSerialEndItems).toHaveBeenCalledWith(
+      {},
+    );
   });
 
-  it('passes query string filters to getAllSerialItems', async () => {
-    serialItemsServices.getAllSerialItems.mockResolvedValue([mockSerialItem]);
+  it('passes query string filters to getAllSerialEndItems', async () => {
+    serialEndItemsServices.getAllSerialEndItems.mockResolvedValue([
+      mockSerialEndItem,
+    ]);
 
     await request(app)
       .get('/serial-items?status=serviceable')
       .set('Cookie', `token=${makeToken()}`);
 
-    expect(serialItemsServices.getAllSerialItems).toHaveBeenCalledWith({
+    expect(serialEndItemsServices.getAllSerialEndItems).toHaveBeenCalledWith({
       status: 'serviceable',
     });
   });
@@ -50,27 +56,31 @@ describe('GET /serial-items', () => {
     const res = await request(app).get('/serial-items');
 
     expect(res.status).toBe(401);
-    expect(serialItemsServices.getAllSerialItems).not.toHaveBeenCalled();
+    expect(serialEndItemsServices.getAllSerialEndItems).not.toHaveBeenCalled();
   });
 });
 
 describe('GET /serial-items/:id', () => {
-  it('returns 200 with serialItem and calls getSerialItemById with the id param', async () => {
-    serialItemsServices.getSerialItemById.mockResolvedValue(mockSerialItem);
+  it('returns 200 with serialEndItem and calls getSerialEndItemById with the id param', async () => {
+    serialEndItemsServices.getSerialEndItemById.mockResolvedValue(
+      mockSerialEndItem,
+    );
 
     const res = await request(app)
       .get('/serial-items/1')
       .set('Cookie', `token=${makeToken()}`);
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('serialItem');
-    expect(serialItemsServices.getSerialItemById).toHaveBeenCalledWith('1');
+    expect(res.body).toHaveProperty('serialEndItem');
+    expect(serialEndItemsServices.getSerialEndItemById).toHaveBeenCalledWith(
+      '1',
+    );
   });
 
   it('returns 404 when serial item not found', async () => {
     const err = new Error('Serial item not found.');
     err.status = 404;
-    serialItemsServices.getSerialItemById.mockRejectedValue(err);
+    serialEndItemsServices.getSerialEndItemById.mockRejectedValue(err);
 
     const res = await request(app)
       .get('/serial-items/9999')
@@ -81,9 +91,9 @@ describe('GET /serial-items/:id', () => {
 });
 
 describe('GET /serial-items/uic/:uic_id', () => {
-  it('returns 200 with serialItems and calls getSerialItemsByUicId with the uic_id param', async () => {
-    serialItemsServices.getSerialItemsByUicId.mockResolvedValue([
-      mockSerialItem,
+  it('returns 200 with serialEndItems and calls getSerialEndItemsByUicId with the uic_id param', async () => {
+    serialEndItemsServices.getSerialEndItemsByUicId.mockResolvedValue([
+      mockSerialEndItem,
     ]);
 
     const res = await request(app)
@@ -91,9 +101,11 @@ describe('GET /serial-items/uic/:uic_id', () => {
       .set('Cookie', `token=${makeToken()}`);
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('serialItems');
-    expect(Array.isArray(res.body.serialItems)).toBe(true);
-    expect(serialItemsServices.getSerialItemsByUicId).toHaveBeenCalledWith('1');
+    expect(res.body).toHaveProperty('serialEndItems');
+    expect(Array.isArray(res.body.serialEndItems)).toBe(true);
+    expect(
+      serialEndItemsServices.getSerialEndItemsByUicId,
+    ).toHaveBeenCalledWith('1');
   });
 });
 
@@ -105,8 +117,10 @@ describe('POST /serial-items', () => {
     uic_id: 1,
   };
 
-  it('returns 201 with newSerialItem and calls createSerialItem with the request body', async () => {
-    serialItemsServices.createSerialItem.mockResolvedValue(mockSerialItem);
+  it('returns 201 with newSerialEndItem and calls createSerialEndItem with the request body', async () => {
+    serialEndItemsServices.createSerialEndItem.mockResolvedValue(
+      mockSerialEndItem,
+    );
 
     const res = await request(app)
       .post('/serial-items')
@@ -114,25 +128,27 @@ describe('POST /serial-items', () => {
       .send(body);
 
     expect(res.status).toBe(201);
-    expect(res.body).toHaveProperty('newSerialItem');
+    expect(res.body).toHaveProperty('newSerialEndItem');
     expect(res.body).toHaveProperty('message');
-    expect(serialItemsServices.createSerialItem).toHaveBeenCalledWith(body);
+    expect(serialEndItemsServices.createSerialEndItem).toHaveBeenCalledWith(
+      body,
+    );
   });
 
   it('returns 401 with no token', async () => {
     const res = await request(app).post('/serial-items').send(body);
 
     expect(res.status).toBe(401);
-    expect(serialItemsServices.createSerialItem).not.toHaveBeenCalled();
+    expect(serialEndItemsServices.createSerialEndItem).not.toHaveBeenCalled();
   });
 });
 
 describe('PATCH /serial-items/:id', () => {
   const body = { status: 'unserviceable' };
 
-  it('returns 200 with updatedSerialItem and calls updateSerialItem with the id and body', async () => {
-    serialItemsServices.updateSerialItem.mockResolvedValue({
-      ...mockSerialItem,
+  it('returns 200 with updatedSerialEndItem and calls updateSerialEndItem with the id and body', async () => {
+    serialEndItemsServices.updateSerialEndItem.mockResolvedValue({
+      ...mockSerialEndItem,
       status: 'unserviceable',
     });
 
@@ -142,9 +158,9 @@ describe('PATCH /serial-items/:id', () => {
       .send(body);
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('updatedSerialItem');
+    expect(res.body).toHaveProperty('updatedSerialEndItem');
     expect(res.body).toHaveProperty('message');
-    expect(serialItemsServices.updateSerialItem).toHaveBeenCalledWith(
+    expect(serialEndItemsServices.updateSerialEndItem).toHaveBeenCalledWith(
       '1',
       body,
     );
@@ -154,28 +170,32 @@ describe('PATCH /serial-items/:id', () => {
     const res = await request(app).patch('/serial-items/1').send(body);
 
     expect(res.status).toBe(401);
-    expect(serialItemsServices.updateSerialItem).not.toHaveBeenCalled();
+    expect(serialEndItemsServices.updateSerialEndItem).not.toHaveBeenCalled();
   });
 });
 
 describe('DELETE /serial-items/:id', () => {
-  it('returns 200 with deletedSerialItem and calls deleteSerialItem with the id', async () => {
-    serialItemsServices.deleteSerialItem.mockResolvedValue(mockSerialItem);
+  it('returns 200 with deletedSerialEndItem and calls deleteSerialEndItem with the id', async () => {
+    serialEndItemsServices.deleteSerialEndItem.mockResolvedValue(
+      mockSerialEndItem,
+    );
 
     const res = await request(app)
       .delete('/serial-items/1')
       .set('Cookie', `token=${makeToken()}`);
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('deletedSerialItem');
+    expect(res.body).toHaveProperty('deletedSerialEndItem');
     expect(res.body).toHaveProperty('message');
-    expect(serialItemsServices.deleteSerialItem).toHaveBeenCalledWith('1');
+    expect(serialEndItemsServices.deleteSerialEndItem).toHaveBeenCalledWith(
+      '1',
+    );
   });
 
   it('returns 401 with no token', async () => {
     const res = await request(app).delete('/serial-items/1');
 
     expect(res.status).toBe(401);
-    expect(serialItemsServices.deleteSerialItem).not.toHaveBeenCalled();
+    expect(serialEndItemsServices.deleteSerialEndItem).not.toHaveBeenCalled();
   });
 });
