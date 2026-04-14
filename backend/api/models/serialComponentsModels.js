@@ -27,6 +27,7 @@ exports.getSerialComponentsByUicId = async uic_id => {
     .select('serial_component_items.*');
 };
 
+<<<<<<< HEAD
 exports.getSerialComponentBySn = async (serial_number, uic_id) => {
   const query = baseComponentQuery().where(
     'serial_component_items.serial_number',
@@ -34,6 +35,12 @@ exports.getSerialComponentBySn = async (serial_number, uic_id) => {
   );
   if (uic_id != null) query.where('serial_component_items.uic_id', uic_id);
   return await query.first();
+=======
+exports.getSerialComponentBySn = async serial_number => {
+  return await baseComponentQuery()
+    .where('serial_component_items.serial_number', serial_number)
+    .first();
+>>>>>>> 91b9bdc26931b56b4f1c55a8c2b4a2772b3a8aea
 };
 
 exports.createSerialComponent = async (
