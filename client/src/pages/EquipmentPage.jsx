@@ -35,19 +35,17 @@ function SerialChip({ serial, index, onClick }) {
   const isVerified = serial.status === "verified";
   return (
     <Chip
-      label={`S/N #${index + 1} - ${serial.serial_number}`}
+      label={`#${index + 1} — ${serial.serial_number}`}
       onClick={(e) => {
         e.stopPropagation();
         onClick(serial);
       }}
       sx={{
-        width: "100%",
         border: "2px solid",
         borderColor: isVerified ? "success.main" : "error.main",
-        // color: isVerified ? "success.dark" : "error.dark",
-        color: "text.primary",
+        color: isVerified ? "success.dark" : "error.dark",
         backgroundColor: isVerified ? "success.50" : "error.50",
-        fontWeight: 400,
+        fontWeight: 600,
         fontSize: "0.8rem",
         height: 36,
         px: 1,
@@ -66,9 +64,7 @@ function GroupedEndItemCard({ group, onCardClick, onSerialClick, selected }) {
   const [expanded, setExpanded] = useState(false);
   const { representative, serials } = group;
 
-  const verifiedCount = serials.filter(
-    (s) => s.status === "inventoried",
-  ).length;
+  const verifiedCount = serials.filter((s) => s.status === "verified").length;
   const needsVerifyCount = serials.length - verifiedCount;
   const allVerified = serials.length > 0 && verifiedCount === serials.length;
 
@@ -94,10 +90,9 @@ function GroupedEndItemCard({ group, onCardClick, onSerialClick, selected }) {
           transition: "box-shadow 0.2s, border-color 0.2s, transform 0.15s",
           cursor: "pointer",
           "&:hover": {
-            boxShadow: 3,
-            backgroundColor: (theme) =>
-              theme.palette.mode === "dark" ? "#202425" : "#cfcfcf",
+            boxShadow: 6,
             borderColor: "primary.main",
+            transform: "translateY(-2px)",
           },
         }}
       >
@@ -124,7 +119,7 @@ function GroupedEndItemCard({ group, onCardClick, onSerialClick, selected }) {
                   color={allVerified ? "success.main" : "error.main"}
                   fontWeight={600}
                 >
-                  {allVerified ? "Inventory Complete" : "Needs Inventoried"}
+                  {allVerified ? "Verified" : "Needs Verification"}
                 </Typography>
               </Box>
               <Chip
@@ -233,11 +228,11 @@ function GroupedEndItemCard({ group, onCardClick, onSerialClick, selected }) {
               flexWrap="wrap"
             >
               <Typography variant="caption" fontWeight={600}>
-                View by Serial Number:
+                Verify Serial Numbers:
               </Typography>
               {verifiedCount > 0 && (
                 <Chip
-                  label={`${needsVerifyCount} ${needsVerifyCount === 1 ? "Item Found" : "Items Found"}`}
+                  label={`${verifiedCount} Verified`}
                   size="small"
                   color="success"
                   variant="outlined"
@@ -246,7 +241,7 @@ function GroupedEndItemCard({ group, onCardClick, onSerialClick, selected }) {
               )}
               {needsVerifyCount > 0 && (
                 <Chip
-                  label={`${needsVerifyCount} ${needsVerifyCount === 1 ? "Item Found" : "Items Found"}`}
+                  label={`${needsVerifyCount} Verify`}
                   size="small"
                   color="error"
                   variant="outlined"
@@ -264,13 +259,7 @@ function GroupedEndItemCard({ group, onCardClick, onSerialClick, selected }) {
             >
               Tap a serial number to view its details
             </Typography>
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 1.5,
-              }}
-            >
+            <Stack direction="row" flexWrap="wrap" gap={1.5}>
               {serials.map((serial, index) => (
                 <SerialChip
                   key={serial.id}
@@ -279,7 +268,7 @@ function GroupedEndItemCard({ group, onCardClick, onSerialClick, selected }) {
                   onClick={() => onSerialClick(serial)}
                 />
               ))}
-            </Box>
+            </Stack>
           </AccordionDetails>
         </Accordion>
       )}
@@ -300,7 +289,7 @@ export default function EquipmentPage() {
   const [loading, setLoading] = useState(true);
   const [uic, setUic] = useState("");
   const [openPdf, setOpenPdf] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [verificationFilter, setVerificationFilter] =
@@ -623,7 +612,7 @@ export default function EquipmentPage() {
   };
 
   const handleSerialClick = (serial) => {
-    navigate(`/equipment/${serial.end_item_id}?serialId=${serial.id}`);
+    navigate(`/equipment/${serial.end_item_id}`);
   };
 
   if (loading) {
@@ -645,6 +634,48 @@ export default function EquipmentPage() {
   return (
     <Box sx={{ mx: "auto", width: "100%", py: 4 }}>
       <Stack spacing={3}>
+        {/* Header */}
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          width="100%"
+        >
+          <Box sx={{ minWidth: 120 }} />
+          <Stack alignItems="center" spacing={0.5}>
+            <Typography variant="h4" fontWeight={700}>
+              Equipment
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Unit property and end item list
+            </Typography>
+          </Stack>
+          <Chip
+            label={uic ? `UIC: ${uic}` : "Loading..."}
+            variant="outlined"
+            color="primary"
+            sx={{ minWidth: 120 }}
+          />
+        </Stack>
+
+        <Divider />
+
+        {/* Sub Hand Receipt */}
+        <Stack alignItems="center">
+          <Button
+            variant="outlined"
+            startIcon={<PictureAsPdfIcon />}
+            onClick={() => setOpenPdf(true)}
+            sx={{
+              minWidth: { xs: "100%", sm: 400 },
+              py: 1.5,
+              fontSize: "1rem",
+            }}
+          >
+            Sub Hand Receipt PDF
+          </Button>
+        </Stack>
+
         <PdfModalViewer
           open={openPdf}
           onClose={() => setOpenPdf(false)}
@@ -661,31 +692,13 @@ export default function EquipmentPage() {
               alignItems="center"
               mb={2}
             >
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <Chip
-                  label={uic ? `UIC: ${uic}` : "Loading..."}
-                  variant="outlined"
-                  color="primary"
-                  sx={{ minWidth: 120 }}
-                />
-                <Typography
-                  variant="subtitle1"
-                  fontWeight={600}
-                  letterSpacing={1}
-                >
-                  Accountable End Items
-                </Typography>
-              </Stack>
-
-              <Button
-                variant="outlined"
-                startIcon={<PictureAsPdfIcon />}
-                onClick={() => setOpenPdf(true)}
-                sx={{ py: 0.75, fontSize: "0.875rem" }}
+              <Typography
+                variant="subtitle1"
+                fontWeight={600}
+                letterSpacing={1}
               >
-                Sub Hand Receipt PDF
-              </Button>
-
+                END ITEMS
+              </Typography>
               <Typography variant="caption" color="text.secondary">
                 {filteredGroups.length} of {groupedItems.length} items
               </Typography>
@@ -933,7 +946,7 @@ export default function EquipmentPage() {
                     }}
                   >
                     <ErrorOutlineIcon sx={{ fontSize: 16, mr: 0.5 }} />
-                    Needs Inventoried
+                    Needs Verification
                   </ToggleButton>
                   <ToggleButton
                     value={VERIFICATION_COMPLETE}
@@ -951,7 +964,7 @@ export default function EquipmentPage() {
                     }}
                   >
                     <CheckCircleOutlineIcon sx={{ fontSize: 16, mr: 0.5 }} />
-                    Inventory Complete
+                    Verified
                   </ToggleButton>
                 </ToggleButtonGroup>
               </Stack>
