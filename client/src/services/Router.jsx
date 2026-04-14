@@ -4,11 +4,11 @@ import { AuthProvider } from '../contexts/AuthContext.jsx';
 import Dashboard from '../pages/Dashboard.jsx';
 import EndItemPage from '../pages/EndItemPage.jsx';
 import EquipmentPage from '../pages/EquipmentPage.jsx';
-import Ingest from '../pages/Ingest.jsx';
 import InventoryTable from '../pages/InventoryTable';
 import SHRViewPage from '../pages/SHRViewPage.jsx';
 import ShortageTrackerPage from '../pages/ShortageTrackerPage';
 import SplashPage from '../pages/SplashPage';
+import SupplyAdminPage from '../pages/SupplyAdminPage.jsx';
 import UserSettings from '../pages/UserSettings.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 
@@ -41,7 +41,7 @@ export default function MainRouter({ mode, onToggleTheme }) {
                     <Route path="/equipment/:id" element={<EndItemPage />} />
                     <Route path="/user-settings" element={<UserSettings />} />
                     <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/ingest" element={<Ingest />} />
+                    <Route path="/SupplyAdmin" element={<SupplyAdminPage />} />
                   </Routes>
                 </MiniDrawer>
               </ProtectedRoute>
