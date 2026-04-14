@@ -313,7 +313,7 @@ export default function EndItemPage() {
                                 variant="contained"
                                 size="large"
                                 fullWidth
-                                onClick={() => navigate(`/InventoryTable/${id}`)}
+                                onClick={() => navigate(`/equipment/${id}/inventory`)}
                             >
                                 Start / Open Inventory
                             </Button>
