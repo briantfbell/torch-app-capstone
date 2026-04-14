@@ -1,0 +1,30 @@
+### GET all serial component items
+GET http://localhost:8080/serial-components
+
+### GET serial component item by id
+GET http://localhost:8080/serial-components/1
+
+### GET serial component items by uic id
+GET http://localhost:8080/serial-components/uic/1
+
+### Create a serial component item
+POST http://localhost:8080/serial-components
+Content-Type: application/json
+
+{
+  "serial_number": "SN-012",
+  "status": "serviceable",
+  "component_id": 1,
+  "user_id": 1
+}
+
+### Update serial component item by id
+PATCH http://localhost:8080/serial-components/4
+Content-Type: application/json
+
+{
+  "status": "unserviceable"
+}
+
+### Delete serial component item by id
+DELETE http://localhost:8080/serial-components/4
