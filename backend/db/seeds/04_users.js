@@ -7,15 +7,27 @@ const createUsers = async num => {
 
   let temp = [
     {
-      username: faker.internet.username(),
+      username: 'hrh',
       password: hashWord,
-      name_first: faker.person.firstName(),
-      name_last: faker.person.lastName(),
+      name_first: 'hrh',
+      name_last: 'hrh',
       email: 'hrh',
       phone: faker.phone.number(),
       rank_id: faker.number.int({ min: 2, max: 21 }),
       uic_id: faker.number.int({ min: 1, max: 2 }),
       role: ['hrh'],
+      dodid: faker.string.numeric(10),
+    },
+    {
+      username: 'admin',
+      password: hashWord,
+      name_first: 'admin',
+      name_last: 'admin',
+      email: 'admin',
+      phone: faker.phone.number(),
+      rank_id: faker.number.int({ min: 2, max: 21 }),
+      uic_id: faker.number.int({ min: 1, max: 2 }),
+      role: ['admin'],
       dodid: faker.string.numeric(10),
     },
   ];

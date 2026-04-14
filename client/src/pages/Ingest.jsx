@@ -7,8 +7,6 @@ import Select from '@mui/material/Select';
 import { useEffect, useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
 
-const normalizeStr = str => String(str).toLowerCase().replace(/[\s_]/g, '');
-
 export default function Ingest() {
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState(null);
@@ -17,6 +15,8 @@ export default function Ingest() {
   const [previewData, setPreviewData] = useState(null);
   const [schemaColumns, setSchemaColumns] = useState(null);
   const fileInputRef = useRef(null);
+
+  const normalizeStr = str => String(str).toLowerCase().replace(/[\s_]/g, '');
 
   useEffect(() => {
     fetch('http://localhost:8080/ingest/schema', { credentials: 'include' })
@@ -158,11 +158,11 @@ export default function Ingest() {
   return (
     <div>
       <input
+        style={{ display: 'none' }}
         type="file"
+        onChange={handleFileChange}
         accept=".xlsx, .xls, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
         ref={fileInputRef}
-        onChange={handleFileChange}
-        style={{ display: 'none' }}
       />
 
       {itemType === null && (
