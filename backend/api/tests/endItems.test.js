@@ -42,7 +42,10 @@ describe('GET /end-items', () => {
       .get('/end-items?lin=A12345&sort_by=lin')
       .set('Cookie', `token=${makeToken()}`);
 
-    expect(endItemsServices.getAllEndItems).toHaveBeenCalledWith({ lin: 'A12345', sort_by: 'lin' });
+    expect(endItemsServices.getAllEndItems).toHaveBeenCalledWith({
+      lin: 'A12345',
+      sort_by: 'lin',
+    });
   });
 
   it('returns 401 with no token', async () => {
@@ -95,7 +98,12 @@ describe('GET /end-items/uic/:uic_id', () => {
 });
 
 describe('POST /end-items', () => {
-  const body = { lin: 'A12345', niin: '001234567', description: 'Test', uic_id: 1 };
+  const body = {
+    lin: 'A12345',
+    niin: '001234567',
+    description: 'Test',
+    uic_id: 1,
+  };
 
   it('returns 201 with newEndItem and calls createEndItem with the request body', async () => {
     endItemsServices.createEndItem.mockResolvedValue(mockEndItem);
@@ -123,7 +131,10 @@ describe('PATCH /end-items/:id', () => {
   const body = { description: 'Updated' };
 
   it('returns 200 with updatedEndItem and calls updateEndItem with the id and body', async () => {
-    endItemsServices.updateEndItem.mockResolvedValue({ ...mockEndItem, description: 'Updated' });
+    endItemsServices.updateEndItem.mockResolvedValue({
+      ...mockEndItem,
+      description: 'Updated',
+    });
 
     const res = await request(app)
       .patch('/end-items/1')
@@ -146,7 +157,10 @@ describe('PATCH /end-items/:id', () => {
 
 describe('PATCH /end-items/:id/complete', () => {
   it('returns 200 and calls updateEndItem with hardcoded { completed: true }', async () => {
-    endItemsServices.updateEndItem.mockResolvedValue({ ...mockEndItem, completed: true });
+    endItemsServices.updateEndItem.mockResolvedValue({
+      ...mockEndItem,
+      completed: true,
+    });
 
     const res = await request(app)
       .patch('/end-items/1/complete')
@@ -155,7 +169,9 @@ describe('PATCH /end-items/:id/complete', () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('updatedEndItem');
     expect(res.body).toHaveProperty('message');
-    expect(endItemsServices.updateEndItem).toHaveBeenCalledWith('1', { completed: true });
+    expect(endItemsServices.updateEndItem).toHaveBeenCalledWith('1', {
+      completed: true,
+    });
   });
 
   it('returns 401 with no token', async () => {
