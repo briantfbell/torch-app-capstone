@@ -43,6 +43,26 @@ export const tryGetSerialItems = async () => {
     }
 };
 
+export const tryGetSerialComponents = async () => {
+    try {
+        const res = await fetch(`${API_URL}/serial-components`, {
+            method: "GET",
+            headers: {"Content-type": "application/json; charset=UTF-8"},
+            credentials: 'include'
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+            return data;
+        }
+
+        return data;
+    } catch (e) {
+        console.error(e);
+        return {message: "Unable to reach the server."};
+    }
+};
+
 export const tryGetComponents = async () => {
     try {
         const res = await fetch(`${API_URL}/components`, {
