@@ -20,12 +20,14 @@ import SaveIcon from "@mui/icons-material/Save";
 import PdfModalViewer from "../components/PdfModalViewer";
 import { getEndItemById, updateEndItemNotes } from "../api/endItems";
 import PdfGenerator from "../components/PdfGenerator";
+import { savePdf, getPdfsByEndItem } from "../utils/pdfStorage";
+import PdfFillModal from "../components/PdfFillModal";
 
 export default function EndItemPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [uic, setUic] = useState("");
 
+  const [uic, setUic] = useState("");
   const [item, setItem] = useState(null);
   const [openPdf, setOpenPdf] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -34,6 +36,63 @@ export default function EndItemPage() {
   const [savingNotes, setSavingNotes] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [localPdfs, setLocalPdfs] = useState([]);
+  const [openFillModal, setOpenFillModal] = useState(false);
+
+  const loadPdfs = async () => {
+    try {
+      const results = await getPdfsByEndItem(id);
+      const withUrls = results.map((pdf) => ({
+        ...pdf,
+        url: URL.createObjectURL(pdf.blob),
+      }));
+      setLocalPdfs(withUrls);
+    } catch (err) {
+      console.error("Error loading saved PDFs:", err);
+      setLocalPdfs([]);
+    }
+  };
+
+  useEffect(() => {
+    fetch("http://localhost:8080/auth/me", { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => setUic(data.user?.uic ?? ""))
+      .catch((err) => console.error("Failed to load user:", err));
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadPage = async () => {
+      setLoading(true);
+      setError("");
+
+      try {
+        await loadPdfs();
+        const data = await getEndItemById(id);
+
+        if (!isMounted) return;
+
+        setItem(data);
+        setNotes(data?.endItem?.note || "");
+      } catch (err) {
+        console.error("Fetch error:", err);
+        if (isMounted) {
+          setError("Error loading item");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadPage();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
 
   useEffect(() => {
     if (!item?.endItem?.lin) {
@@ -45,13 +104,16 @@ export default function EndItemPage() {
 
     fetch("/pdfs/pdfManifest.json")
       .then((res) => {
-        if (!res.ok) throw new Error("Could not load PDF manifest");
+        if (!res.ok) {
+          throw new Error("Could not load PDF manifest");
+        }
         return res.json();
       })
       .then((files) => {
         const match = files.find((file) =>
           String(file).trim().toLowerCase().includes(currentLin),
         );
+
         setPdfUrl(match ? `/pdfs/${match}` : null);
       })
       .catch((err) => {
@@ -60,30 +122,15 @@ export default function EndItemPage() {
       });
   }, [item]);
 
-  // Loads UIC data for display in the chip later on
   useEffect(() => {
-    fetch("http://localhost:8080/auth/me", { credentials: "include" })
-      .then((res) => res.json())
-      .then((data) => setUic(data.user?.uic ?? ""))
-      .catch((err) => console.error("Failed to load user:", err));
-  }, []);
-
-  useEffect(() => {
-    setLoading(true);
-    setError("");
-
-    getEndItemById(id)
-      .then((data) => {
-        setItem(data);
-        setNotes(data?.endItem?.note || "");
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Fetch error:", err);
-        setError("Error loading item");
-        setLoading(false);
+    return () => {
+      localPdfs.forEach((pdf) => {
+        if (pdf.url) {
+          URL.revokeObjectURL(pdf.url);
+        }
       });
-  }, [id]);
+    };
+  }, [localPdfs]);
 
   const handleSaveNotes = () => {
     setSavingNotes(true);
@@ -137,8 +184,6 @@ export default function EndItemPage() {
 
   const endItem = item.endItem;
   const imageUrl = endItem.image || "/no_image_found_placeholder.png";
-  console.log(`image path is -> ${endItem}`);
-  console.table(endItem);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -162,6 +207,7 @@ export default function EndItemPage() {
               {endItem.description}
             </Typography>
           </Box>
+
           <Stack>
             <Chip
               label={uic ? `UIC: ${uic}` : "Loading..."}
@@ -180,7 +226,12 @@ export default function EndItemPage() {
                 alignItems="stretch"
               >
                 <Stack spacing={2} sx={{ flex: 1.2 }}>
-                  <Stack direction="row" spacing={1} alignItems="center">
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    alignItems="center"
+                    flexWrap="wrap"
+                  >
                     {pdfUrl ? (
                       <Button
                         variant="outlined"
@@ -196,49 +247,56 @@ export default function EndItemPage() {
                       </Typography>
                     )}
 
-                    <PdfGenerator />
+                    <PdfGenerator
+                      onComplete={async ({ blob, fileName }) => {
+                        await savePdf({
+                          endItemId: id,
+                          name: fileName,
+                          blob,
+                        });
+                        await loadPdfs();
+                      }}
+                    />
                   </Stack>
 
-                  <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                    <Card variant="outlined" sx={{ flex: 2 }}>
-                      <CardContent
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          gap: 2,
-                          flexWrap: "wrap",
-                        }}
-                      >
-                        {[
-                          { label: `FSC: ${endItem.fsc}`, color: "primary" },
-                          { label: `LIN: ${endItem.lin}`, color: "primary" },
-                          { label: `NIIN: ${endItem.niin}`, color: "primary" },
-                          { label: `Cost: $${endItem.cost}`, color: "success" },
-                        ].map(({ label, color }) => (
-                          <Chip
-                            key={label}
-                            label={label}
-                            variant="outlined"
-                            color={color}
-                            sx={{ minWidth: 140, flexBasis: "calc(50% - 8px)" }}
-                          />
-                        ))}
-                      </CardContent>
-                    </Card>
+                  <Card variant="outlined">
+                    <CardContent
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: 2,
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      {[
+                        { label: `FSC: ${endItem.fsc}`, color: "primary" },
+                        { label: `LIN: ${endItem.lin}`, color: "primary" },
+                        { label: `NIIN: ${endItem.niin}`, color: "primary" },
+                        { label: `Cost: $${endItem.cost}`, color: "success" },
+                      ].map(({ label, color }) => (
+                        <Chip
+                          key={label}
+                          label={label}
+                          variant="outlined"
+                          color={color}
+                          sx={{ minWidth: 140, flexBasis: "calc(50% - 8px)" }}
+                        />
+                      ))}
+                    </CardContent>
+                  </Card>
 
-                    <Card variant="outlined" sx={{ flex: 1 }}>
-                      <CardContent sx={{ textAlign: "center" }}>
-                        <Typography variant="subtitle2" color="text.secondary">
-                          Authorized Quantity
-                        </Typography>
-                        <br />
-                        <Typography variant="h6" fontWeight={600}>
-                          {endItem.auth_qty}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Stack>
+                  <Card variant="outlined">
+                    <CardContent sx={{ textAlign: "center" }}>
+                      <Typography variant="subtitle2" color="text.secondary">
+                        Authorized Quantity
+                      </Typography>
+                      <br />
+                      <Typography variant="h6" fontWeight={600}>
+                        {endItem.auth_qty}
+                      </Typography>
+                    </CardContent>
+                  </Card>
 
                   <Card variant="outlined">
                     <CardContent>
@@ -278,7 +336,58 @@ export default function EndItemPage() {
                       </Stack>
                     </CardContent>
                   </Card>
+
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Stack spacing={2}>
+                        <Typography variant="h6">Custom 2062</Typography>
+
+                        <Button
+                          variant="contained"
+                          onClick={() => setOpenFillModal(true)}
+                        >
+                          Fill Out 2062 Form
+                        </Button>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom>
+                        Saved PDFs
+                      </Typography>
+
+                      {localPdfs.length === 0 && (
+                        <Typography variant="body2" color="text.secondary">
+                          No saved PDFs for this item.
+                        </Typography>
+                      )}
+
+                      <Stack spacing={1}>
+                        {localPdfs.map((pdf) => (
+                          <Button
+                            key={pdf.id}
+                            variant="outlined"
+                            onClick={() => {
+                              setPdfUrl(pdf.url);
+                              setOpenPdf(true);
+                            }}
+                          >
+                            {pdf.name}
+                          </Button>
+                        ))}
+                      </Stack>
+                    </CardContent>
+                  </Card>
                 </Stack>
+
+                <Divider
+                  flexItem
+                  orientation="vertical"
+                  sx={{ display: { xs: "none", md: "block" } }}
+                />
+                <Divider sx={{ display: { xs: "block", md: "none" } }} />
 
                 <Card
                   variant="outlined"
@@ -323,6 +432,20 @@ export default function EndItemPage() {
             pdfUrl={pdfUrl}
           />
         )}
+
+        <PdfFillModal
+          open={openFillModal}
+          onClose={() => setOpenFillModal(false)}
+          templateUrl="/templates/2062MainTemplate.pdf"
+          onUpload={async (pdf) => {
+            await savePdf({
+              endItemId: id,
+              name: pdf.name,
+              blob: pdf.file,
+            });
+            await loadPdfs();
+          }}
+        />
       </Stack>
     </Container>
   );
