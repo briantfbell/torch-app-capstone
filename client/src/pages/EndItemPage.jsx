@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import SaveIcon from "@mui/icons-material/Save";
@@ -26,6 +26,8 @@ import PdfFillModal from "../components/PdfFillModal";
 export default function EndItemPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const selectedSerialId = searchParams.get("serialId");
 
   const [uic, setUic] = useState("");
   const [item, setItem] = useState(null);
@@ -38,6 +40,13 @@ export default function EndItemPage() {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [localPdfs, setLocalPdfs] = useState([]);
   const [openFillModal, setOpenFillModal] = useState(false);
+
+  const matchingSerialItems = serialEndItemsData.filter(
+        (serialItem) => Number(serialItem.end_item_id) === Number(id)
+    );
+  const selectedSerial = matchingSerialItems.find(
+        (serialItem) => String(serialItem.id) === String(selectedSerialId)
+    );
 
   const loadPdfs = async () => {
     try {
@@ -270,9 +279,9 @@ export default function EndItemPage() {
                       }}
                     >
                       {[
-                        { label: `FSC: ${endItem.fsc}`, color: "primary" },
-                        { label: `LIN: ${endItem.lin}`, color: "primary" },
                         { label: `NIIN: ${endItem.niin}`, color: "primary" },
+                        { label: `LIN: ${endItem.lin}`, color: "primary" },
+                        { label: `SERIAL: ${selectedSerial.serial_number}`, color: "primary" }
                         { label: `Cost: $${endItem.cost}`, color: "success" },
                       ].map(({ label, color }) => (
                         <Chip
