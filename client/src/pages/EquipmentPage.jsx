@@ -275,7 +275,7 @@ export default function EquipmentPage() {
   const [loading, setLoading] = useState(true);
   const [uic, setUic] = useState("");
   const [openPdf, setOpenPdf] = useState(false);
-  const [showFilters, setShowFilters] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [verificationFilter, setVerificationFilter] =
@@ -601,7 +601,7 @@ export default function EquipmentPage() {
   };
 
   const handleSerialClick = (serial) => {
-    navigate(`/equipment/${serial.end_item_id}`);
+    navigate(`/equipment/${serial.end_item_id}?serialId=${serial.id}`);
   };
 
   if (loading) {
