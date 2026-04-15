@@ -283,6 +283,7 @@ export default function EndItemPage() {
                                         </Card>
                                     </Stack>
 
+                                    {/* Notes Section */}
                                     <Card variant="outlined">
                                         <CardContent>
                                             <Stack spacing={2}>
@@ -321,6 +322,8 @@ export default function EndItemPage() {
                                             </Stack>
                                         </CardContent>
                                     </Card>
+
+                                    {/* Custom 2062 Form Section */}
                                     <Card varient="outlined">
                                         <CardContent>
                                             <Stack spacing={2}>
@@ -332,6 +335,8 @@ export default function EndItemPage() {
                                             </Stack>
                                         </CardContent>
                                     </Card>
+                                    
+                                    {/*Local PDFs Section*/}
                                     <Card variant="outlined">
                                         <CardContent>
                                                 <Typography variant="h6">Saved PDFs</Typography>
