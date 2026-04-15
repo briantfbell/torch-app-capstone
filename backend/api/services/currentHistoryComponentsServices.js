@@ -48,6 +48,11 @@ exports.createComponentCurrentHistory = async ({
   if (serial_number) {
     const serial_component_item =
       await serialComponentsModels.getSerialComponentItemBySn(serial_number);
+    if (!serial_component_item) {
+      const error = new Error(`Serial number ${serial_number} not found.`);
+      error.status = 404;
+      throw error;
+    }
     resolved_serial_number = serial_component_item.id;
   }
 

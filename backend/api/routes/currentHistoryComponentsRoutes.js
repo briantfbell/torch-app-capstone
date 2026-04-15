@@ -1,5 +1,5 @@
 const express = require('express');
-const adminAuth = require('../middleware/adminAuth');
+const auth = require('../middleware/auth');
 const hrhAuth = require('../middleware/hrhAuth');
 
 const router = express.Router();
@@ -12,8 +12,8 @@ const {
   del,
 } = require('../controllers/currentHistoryComponentsControllers');
 
-router.get('/:id', getById);
-router.get('/', getAll);
+router.get('/:id', auth, getById);
+router.get('/', auth, getAll);
 router.post('/', hrhAuth, create);
 router.patch('/:id', hrhAuth, update);
 // router.delete('/:id', hrhAuth, del);
