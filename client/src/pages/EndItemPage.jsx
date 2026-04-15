@@ -20,8 +20,9 @@ import SaveIcon from "@mui/icons-material/Save";
 import PdfModalViewer from "../components/PdfModalViewer";
 import { getEndItemById, updateEndItemNotes } from "../api/endItems";
 import PdfGenerator from "../components/PdfGenerator";
-import {savePdf, getPdfsByEndItem} from "../utils/pdfStorage";
+import {savePdf, deletePdf, getPdfsByEndItem} from "../utils/pdfStorage";
 import PdfFillModal from "../components/PdfFillModal";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function EndItemPage() {
     const { id } = useParams();
