@@ -68,7 +68,7 @@ exports.insertComponent = async (obj, userId, uicId) => {
           end_item_id: end_item.id,
           cost: (Math.random() * 1000).toFixed(2),
         })
-        .returning('id', 'cost');
+        .returning(['id', 'cost']);
     }
 
     if (obj.serial_number) {
