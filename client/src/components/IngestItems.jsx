@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
 
 export default function IngestItems({ uic }) {
+  const { uicId } = uic ?? {};
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState('initial');
   const [errorMessage, setErrorMessage] = useState(null);
@@ -99,7 +100,7 @@ export default function IngestItems({ uic }) {
     formData.append('file', file);
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch(`http://localhost:8080/ingest/end-items/${uicId}`, {
         method: 'POST',
         credentials: 'include',
         body: formData,
@@ -125,7 +126,7 @@ export default function IngestItems({ uic }) {
     formData.append('file', file);
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch(`http://localhost:8080/ingest/components/${uicId}`, {
         method: 'POST',
         credentials: 'include',
         body: formData,
