@@ -13,7 +13,12 @@ const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 
 router.get('/schema', getIngestSchema);
-router.post('/components', upload.single('file'), hrhAuth, ingestComponents);
-router.post('/end-items', upload.single('file'), hrhAuth, ingestEndItems);
+router.post(
+  '/components/:uic_id',
+  upload.single('file'),
+  auth,
+  ingestComponents,
+);
+router.post('/end-items/:uic_id', upload.single('file'), auth, ingestEndItems);
 
 module.exports = router;

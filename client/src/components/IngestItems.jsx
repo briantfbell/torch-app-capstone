@@ -98,10 +98,6 @@ export default function IngestItems({ uic }) {
     const formData = new FormData();
     formData.append('file', file);
 
-    const url = uic
-      ? `http://localhost:8080/ingest/end-items?uic=${encodeURIComponent(uic)}`
-      : 'http://localhost:8080/ingest/end-items';
-
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -127,10 +123,6 @@ export default function IngestItems({ uic }) {
     setStatus('uploading');
     const formData = new FormData();
     formData.append('file', file);
-
-    const url = uic
-      ? `http://localhost:8080/ingest/components?uic=${encodeURIComponent(uic)}`
-      : 'http://localhost:8080/ingest/components';
 
     try {
       const response = await fetch(url, {
