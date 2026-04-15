@@ -12,7 +12,7 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
@@ -20,6 +20,8 @@ import SaveIcon from "@mui/icons-material/Save";
 import PdfModalViewer from "../components/PdfModalViewer";
 import { getEndItemById, updateEndItemNotes } from "../api/endItems";
 import PdfGenerator from "../components/PdfGenerator";
+import {savePdf, getPdfsByEndItem} from "../utils/pdfStorage";
+import PdfFillModal from "../components/PdfFillModal";
 
 export default function EndItemPage() {
     const { id } = useParams();
@@ -33,6 +35,8 @@ export default function EndItemPage() {
     const [savingNotes, setSavingNotes] = useState(false);
     const [saveMessage, setSaveMessage] = useState("");
     const [pdfUrl, setPdfUrl] = useState(null);
+    const [localPdfs, setLocalPdfs] = useState([]);
+    const [openFillModal, setOpenFillModal] = useState(false);
 
     useEffect(() => {
         if (!item?.endItem?.lin) {
@@ -61,10 +65,20 @@ export default function EndItemPage() {
                 setPdfUrl(null);
             });
     }, [item]);
+
+    const loadPdfs = async () => {
+        const results = await getPdfsByEndItem(id);
+        const withUrls = results.map((pdf) => ({
+            ...pdf,
+            url: URL.createObjectURL(pdf.blob),
+        }));
+        setLocalPdfs(withUrls);
+    }
+
     useEffect(() => {
         setLoading(true);
         setError("");
-
+        loadPdfs();
         getEndItemById(id)
             .then((data) => {
                 setItem(data);
@@ -77,6 +91,16 @@ export default function EndItemPage() {
                 setLoading(false);
             });
     }, [id]);
+
+    useEffect(() => {
+        return () => {
+            localPdfs.forEach((pdf) => {
+                if (pdf.url) {
+                    URL.revokeObjectURL(pdf.url);
+                }
+            })
+        }
+    }, [localPdfs]);
 
     const handleSaveNotes = () => {
         setSavingNotes(true);
@@ -203,7 +227,18 @@ export default function EndItemPage() {
                                             </Typography>
                                         )}
 
-                                        <PdfGenerator />
+                                        <PdfGenerator 
+                                            onComplete={async ({blob, fileName}) => {
+                                                await savePdf({
+                                                    endItemId: id,
+                                                    name: fileName,
+                                                    blob,
+                                                })
+                                                loadPdfs()
+                                            }}
+                                        
+                                        />
+
                                     </Stack>
 
                                     <Card variant="outlined">
@@ -283,6 +318,43 @@ export default function EndItemPage() {
                                             </Stack>
                                         </CardContent>
                                     </Card>
+                                    <Card varient="outlined">
+                                        <CardContent>
+                                            <Stack spacing={2}>
+                                                <Typography variant="h6">Custom 2062</Typography>
+
+                                                <Button variant="contained" onClick={() => setOpenFillModal(true)}>
+                                                    Fill Out 2062 Form
+                                                </Button>
+                                            </Stack>
+                                        </CardContent>
+                                    </Card>
+                                    <Card variant="outlined">
+                                        <CardContent>
+                                                <Typography variant="h6">Saved PDFs</Typography>
+
+                                                {localPdfs.length === 0 && (
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        No saved PDFs for this item.
+                                                    </Typography>
+                                                )}
+
+                                                <Stack spacing={1}>
+                                                    {localPdfs.map((pdf) => (
+                                                        <Button
+                                                            key={pdf.id}
+                                                            variant="outlined"
+                                                            onClick={() => {
+                                                                setPdfUrl(pdf.url);
+                                                                setOpenPdf(true);
+                                                            }}
+                                                        >
+                                                            {pdf.name}
+                                                        </Button>
+                                                    ))}
+                                                </Stack>
+                                            </CardContent>
+                                        </Card>
                                 </Stack>
 
                                 <Card
@@ -328,6 +400,20 @@ export default function EndItemPage() {
                         pdfUrl={pdfUrl}
                     />
                 )}
+
+                <PdfFillModal
+                    open={openFillModal}
+                    onClose={() => setOpenFillModal(false)}
+                    templateUrl="/templates/2062MainTemplate.pdf"
+                    onUpload={async (pdf) => {
+                        await savePdf({
+                            endItemId: id,
+                            name: pdf.name,
+                            blob: pdf.file,
+                        })
+                        loadPdfs(); 
+                    }}
+                />
             </Stack>
         </Container>
     );

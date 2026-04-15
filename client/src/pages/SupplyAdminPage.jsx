@@ -17,22 +17,20 @@ import { useAuth } from '../hooks/useAuth.jsx';
 export default function SupplyAdminPage() {
   const { user, loading: authLoading } = useAuth();
   const [uics, setUics] = useState([]);
+  const [selectedUic, setSelectedUic] = useState(null);
+
   const isAdmin = user?.role?.includes('admin');
-  const [adminSelectedUic, setAdminSelectedUic] = useState(null);
-  const selectedUic = isAdmin
-    ? adminSelectedUic
-    : user?.uic_id
-      ? { uicId: user.uic_id, uicName: user.uic }
-      : null;
+
+  // selectedUic is null until the admin explicitly picks one;
+  // fall back to the logged-in user's own UIC until then
+  const effectiveUic = selectedUic ?? user?.uic ?? null;
 
   useEffect(() => {
     if (!isAdmin) return;
 
     fetch('http://localhost:8080/uics', { credentials: 'include' })
       .then(res => res.json())
-      .then(data =>
-        setUics(data.allUics.map(i => ({ uicId: i.id, uicName: i.uic }))),
-      )
+      .then(data => setUics(data.allUics.map(i => i.uic)))
       .catch(err => console.error('Failed to get UICs:', err));
   }, [isAdmin]);
 
@@ -67,17 +65,14 @@ export default function SupplyAdminPage() {
           spacing={2}
           sx={{
             flexDirection: { xs: 'column', sm: 'row' },
-            width: { xs: '30rem', sm: '50rem' },
+            width: { xs: '25rem', sm: '50rem' },
           }}
           alignItems="center"
           justifyContent="center"
         >
-          <Grid
-            size={{ xs: 0, sm: 2.5 }}
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-          ></Grid>
+          <Grid size={2.5}></Grid>
 
-          <Grid size={{ xs: 12, sm: 7 }} spacing={0.5}>
+          <Grid size={7} spacing={0.5}>
             <Typography variant="h4" fontWeight={700} textAlign="center">
               Supply Admin Dashboard
             </Typography>
@@ -92,30 +87,29 @@ export default function SupplyAdminPage() {
           </Grid>
 
           <Grid
-            size={{ xs: 12, sm: 2.5 }}
+            size={2.5}
+            alignSelf="center"
+            justifySelf="center"
             sx={{
               display: 'flex',
               justifyContent: { xs: 'center', sm: 'flex-start' },
+              width: 'fit-content',
             }}
           >
             {isAdmin ? (
-              <FormControl sx={{ minWidth: '9rem' }}>
+              <FormControl>
                 <InputLabel id="select-label">Select a UIC</InputLabel>
 
                 <Select
                   labelId="select-label"
                   id="select"
-                  value={selectedUic?.uicId ?? ''}
-                  label=""
-                  onChange={e =>
-                    setAdminSelectedUic(
-                      uics.find(u => u.uicId === e.target.value),
-                    )
-                  }
+                  value={effectiveUic ?? ''}
+                  label="Select a UIC"
+                  onChange={e => setSelectedUic(e.target.value)}
                 >
                   {uics.map(u => (
-                    <MenuItem key={u.uicId} value={u.uicId}>
-                      {u.uicName}
+                    <MenuItem key={u} value={u}>
+                      {u}
                     </MenuItem>
                   ))}
                 </Select>
@@ -130,7 +124,7 @@ export default function SupplyAdminPage() {
           </Grid>
         </Grid>
 
-        <IngestItems uic={selectedUic} />
+        <IngestItems uic={effectiveUic} />
       </Stack>
     </Stack>
   );

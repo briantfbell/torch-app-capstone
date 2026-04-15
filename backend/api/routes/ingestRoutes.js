@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
-const auth = require('../middleware/auth');
+const adminAuth = require('../middleware/adminAuth');
+const hrhAuth = require('../middleware/hrhAuth');
 
 const {
   getIngestSchema,

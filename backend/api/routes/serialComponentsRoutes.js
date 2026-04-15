@@ -1,6 +1,5 @@
 const express = require('express');
 const hrhAuth = require('../middleware/hrhAuth');
-const auth = require('../middleware/auth');
 
 const router = express.Router();
 

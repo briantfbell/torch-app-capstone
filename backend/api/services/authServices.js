@@ -184,7 +184,6 @@ exports.login = async (email, password) => {
       email: user.email,
       phone: user.phone,
       rank_id: user.rank_id,
-      uic_id: user.uic_id,
       uic: user.uic,
       role: user.role,
     },
