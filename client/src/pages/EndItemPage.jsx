@@ -281,8 +281,8 @@ export default function EndItemPage() {
                       {[
                         { label: `NIIN: ${endItem.niin}`, color: "primary" },
                         { label: `LIN: ${endItem.lin}`, color: "primary" },
-                        { label: `SERIAL: ${selectedSerial.serial_number}`, color: "primary" },
-                        { label: `Cost: $${endItem.cost}`, color: "success" }
+                        { label: `SERIAL: ${selectedSerial.serial_number}`, color: "primary" }
+                        { label: `Cost: $${endItem.cost}`, color: "success" },
                       ].map(({ label, color }) => (
                         <Chip
                           key={label}
