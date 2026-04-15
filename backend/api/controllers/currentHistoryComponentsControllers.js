@@ -35,34 +35,35 @@ exports.create = async (req, res) => {
 
     if (req.body.serial_number) {
       existing =
-        await currentHistoryComponentsServices.getComponentCurrentHistoryBySn(
-          req.body.serial_number,
-        );
+      await currentHistoryComponentsServices.getComponentCurrentHistoryBySn(
+        req.body.serial_number,
+      );
     } else {
       existing =
-        await currentHistoryComponentsServices.getUnserializedComponentCurrentHistory(
-          req.body.component_id,
-        );
-    }
-
-    if (existing) {
-      await archivedHistoryComponentsServices.createComponentArchivedHistory(
-        existing,
-      );
-      await currentHistoryComponentsServices.deleteComponentCurrentHistory(
-        existing.id,
+      await currentHistoryComponentsServices.getUnserializedComponentCurrentHistory(
+        req.body.component_id,
       );
     }
 
-    const newCurrentHistory =
-      await currentHistoryComponentsServices.createComponentCurrentHistory(
-        req.body,
-      );
+    // if (existing) {
+    //   await archivedHistoryComponentsServices.createComponentArchivedHistory(
+    //     existing,
+    //   );
+    //   await currentHistoryComponentsServices.deleteComponentCurrentHistory(
+    //     existing.id,
+    //   );
+    // }
 
-    res.status(201).json({
-      newCurrentHistory,
-      message: `ID: ${newCurrentHistory.id} has been successfully created.`,
-    });
+    // console.log(req.body)
+    // const newCurrentHistory =
+    await currentHistoryComponentsServices.createComponentCurrentHistory(
+      req.body,
+    );
+
+    // res.status(201).json({
+    //   newCurrentHistory,
+    //   message: `ID: ${newCurrentHistory.id} has been successfully created.`,
+    // });
   } catch (err) {
     res
       .status(err.status || 500)
