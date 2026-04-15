@@ -14,6 +14,9 @@ import {
   Box,
   Alert,
   MenuItem,
+  Select,
+  FormControl,
+  InputLabel
 } from "@mui/material";
 
 function InventoryTable() {
@@ -28,7 +31,7 @@ function InventoryTable() {
   const [completionWarning, setCompletionWarning] = useState("");
 
   useEffect(() => {
-    console.log("endItemId:", endItemId);
+
     fetch(`http://localhost:8080/components?end_item_id=${endItemId}`, {
       credentials: "include",
     })
@@ -39,7 +42,7 @@ function InventoryTable() {
         return res.json();
       })
       .then((data) => {
-        console.log("API data:", data);
+        // console.log(data)
 
         const components = Array.isArray(data.allComponents)
           ? data.allComponents
@@ -48,11 +51,11 @@ function InventoryTable() {
         const mappedItems = components.map((item) => ({
           id: item.id,
           niin: item.niin,
-          partNumber: item.part_number || item.partNumber || "",
+          ui: item.ui || "",
+          user_id: item.user_id || "",
           displayName: item.description || item.display_name || "",
           authQty: item.auth_qty ?? item.authorized_quantity ?? "",
         }));
-
         setItems(mappedItems);
         setApiError("");
       })
@@ -64,14 +67,31 @@ function InventoryTable() {
   }, [endItemId]);
 
   useEffect(() => {
-    const savedInventoryData = localStorage.getItem(storageKey);
+    try {
+      async function checkHistory() {
+        fetch('http://localhost:8080/current-history/components', {
+          credentials: "include",
+        })
+        .then(resp => resp.json())
+        .then(out => console.log(out))
 
-    if (savedInventoryData) {
-      setInventoryData(JSON.parse(savedInventoryData));
-    } else {
-      setInventoryData({});
-    }
-  }, [storageKey]);
+        // const data = await response();
+        // console.log(data)
+        // return data;
+
+      };
+
+      checkHistory()
+
+    } catch (err) {
+
+      console.log(err)
+
+    } finally {
+    console.log('History check complete.');
+  }
+
+  }, [])
 
   const handleQuantityChange = (id, value) => {
     const numeric = value.replace(/[^0-9]/g, "");
@@ -82,6 +102,7 @@ function InventoryTable() {
         onHandQty: numeric,
       },
     }));
+    // console.log(inventoryData)
     setCompletionWarning("");
   };
 
@@ -95,45 +116,62 @@ function InventoryTable() {
     }));
   };
 
-  const handleNeedsReplacementChange = (id, value) => {
+  const handleSeenChange = (id, value) => {
+
     setInventoryData((prev) => ({
       ...prev,
       [id]: {
         ...prev[id],
-        needsReplacement: value,
+        seen: value
       },
     }));
   };
 
-  const handleSave = () => {
+
+  const handleSave = async () => {
     try {
+      const component_id = items[0].id
       const stampedInventoryData = Object.fromEntries(
         Object.entries(inventoryData).map(([id, row]) => [
           id,
           {
             ...row,
-            countedBy:
-              row.onHandQty !== undefined ||
-              row.location ||
-              row.needsReplacement
-                ? "Current User"
-                : row.countedBy || "",
-            lastCounted:
-              row.onHandQty !== undefined ||
-              row.location ||
-              row.needsReplacement
-                ? new Date().toLocaleDateString()
-                : row.lastCounted || "",
+            "seen": row.seen,
+            "component_id": component_id,
+            // "user_id": ,
+            "location": row.location,
           },
+          // console.log(row)
         ]),
       );
 
       setInventoryData(stampedInventoryData);
-      localStorage.setItem(storageKey, JSON.stringify(stampedInventoryData));
-      console.log("Saved inventory data:", stampedInventoryData);
-      setSaveStatus("success");
+
+      const sData = {
+        "component_id": 2,
+        "user_id": 1,
+        "seen": true,
+        "location": "Arms Room",
+      }
+
+      const response = await fetch(`http://localhost:8080/current-history/components`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        credentials: 'include',
+        body: JSON.stringify(stampedInventoryData),
+      });
+
+      if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      console.log('Success:', result);
+
     } catch (e) {
-      setSaveStatus("error");
+      console.error('Error during POST:', e);
+
     } finally {
       setTimeout(() => setSaveStatus(null), 4000);
     }
@@ -175,7 +213,7 @@ function InventoryTable() {
         throw new Error(`HTTP ${res.status}`);
       }
 
-      console.log("End item marked complete.");
+      // console.log("End item marked complete.");
       navigate("/equipment");
     } catch (err) {
       console.error("Failed to mark inventory complete:", err);
@@ -188,7 +226,7 @@ function InventoryTable() {
   return (
     <div>
       <Typography variant="h4" component="h1" gutterBottom>
-        End Item Inventory
+        Component Inventory
       </Typography>
 
       {apiError && (
@@ -201,24 +239,24 @@ function InventoryTable() {
         <Table stickyHeader aria-label="inventory table">
           <TableHead>
             <TableRow>
+              <TableCell>UI</TableCell>
               <TableCell>NIIN</TableCell>
-              <TableCell>Part Number</TableCell>
               <TableCell>Display Name</TableCell>
               <TableCell>Authorized Qty</TableCell>
               <TableCell>On Hand Qty</TableCell>
               <TableCell>Variance</TableCell>
               <TableCell>Location</TableCell>
-              <TableCell>Needs Replacement</TableCell>
-              <TableCell>Counted By</TableCell>
-              <TableCell>Last Counted</TableCell>
+              <TableCell>Seen</TableCell>
+              {/* <TableCell>Counted By</TableCell> */}
+              {/* <TableCell>Last Counted</TableCell> */}
             </TableRow>
           </TableHead>
 
           <TableBody>
             {items.map((item) => (
               <TableRow key={item.id}>
+                <TableCell>{item.ui}</TableCell>
                 <TableCell>{item.niin}</TableCell>
-                <TableCell>{item.partNumber}</TableCell>
                 <TableCell>{item.displayName}</TableCell>
                 <TableCell>{item.authQty}</TableCell>
                 <TableCell>
@@ -255,24 +293,24 @@ function InventoryTable() {
                 </TableCell>
 
                 <TableCell>
-                  <TextField
-                    select
-                    size="small"
-                    value={inventoryData[item.id]?.needsReplacement || ""}
-                    onChange={(e) =>
-                      handleNeedsReplacementChange(item.id, e.target.value)
-                    }
-                    sx={{ minWidth: 120 }}
-                  >
-                    <MenuItem value="Yes">Yes</MenuItem>
-                    <MenuItem value="No">No</MenuItem>
-                  </TextField>
+                  <FormControl fullWidth>
+                    <TextField
+                      select
+                      defaultValue={false}
+                      onChange={(e) => handleSeenChange(e, e.target.value)}
+                      sx={{ minWidth: 120 }}
+                    >
+                      <MenuItem value={true}>Yes</MenuItem>
+                      <MenuItem value={false}>No</MenuItem>
+                    </TextField>
+                  </FormControl>
+
                 </TableCell>
 
-                <TableCell>{inventoryData[item.id]?.countedBy || ""}</TableCell>
-                <TableCell>
+                {/* <TableCell>{inventoryData[item.id]?.countedBy || ""}</TableCell> */}
+                {/* <TableCell>
                   {inventoryData[item.id]?.lastCounted || ""}
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
 
@@ -292,13 +330,13 @@ function InventoryTable() {
           Save
         </Button>
 
-        <Button
+        {/* <Button
           variant="contained"
           color="success"
           onClick={handleMarkComplete}
         >
           Mark Complete
-        </Button>
+        </Button> */}
 
         {saveStatus === "success" && (
           <Alert severity="success">Inventory saved successfully.</Alert>
