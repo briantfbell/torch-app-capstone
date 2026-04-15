@@ -7,17 +7,8 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
   Stack,
   Typography,
-} from '@mui/material';
-import { useEffect, useState } from 'react';
-import IngestItems from '../components/IngestItems.jsx';
-import { useAuth } from '../hooks/useAuth.jsx';
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import IngestItems from '../components/IngestItems.jsx';
@@ -46,14 +37,12 @@ export default function SupplyAdminPage() {
   }, [isAdmin]);
 
   if (authLoading) {
-  if (authLoading) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Stack
           spacing={2}
           alignItems="center"
           justifyContent="center"
-          sx={{ minHeight: '60vh' }}
           sx={{ minHeight: '60vh' }}
         >
           <CircularProgress />
@@ -64,17 +53,6 @@ export default function SupplyAdminPage() {
   }
 
   return (
-    <Stack
-      maxWidth="lg"
-      sx={{ py: 4 }}
-      alignItems="center"
-      justifyContent="center"
-      alignSelf="center"
-      justifySelf="center"
-    >
-      <Stack spacing={3} alignItems="center" justifyContent="center">
-        <Grid
-          container
     <Stack
       maxWidth="lg"
       sx={{ py: 4 }}
@@ -103,13 +81,6 @@ export default function SupplyAdminPage() {
             <Typography variant="h4" fontWeight={700} textAlign="center">
               Supply Admin Dashboard
             </Typography>
-
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              textAlign="center"
-            >
-              Upload CSV, XLSX, or XLS files
 
             <Typography
               variant="body2"
@@ -163,7 +134,4 @@ export default function SupplyAdminPage() {
       </Stack>
     </Stack>
   );
-    </Stack>
-  );
 }
-

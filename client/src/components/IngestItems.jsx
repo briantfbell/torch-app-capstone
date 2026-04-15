@@ -28,76 +28,8 @@ export default function IngestItems({ uic }) {
   };
 
   const normalizeStr = str => String(str).toLowerCase().replace(/[\s_]/g, '');
-  const [previewData, setPreviewData] = useState(null);
-  const [schemaColumns, setSchemaColumns] = useState(null);
-  const fileInputRef = useRef(null);
-
-  const setFailureStates = body => {
-    setStatus('fail');
-    setErrorMessage(body.message || 'Upload failed.');
-    setFile(null);
-    setPreviewData(null);
-  };
-
-  const setSuccessStates = () => {
-    setStatus('success');
-    setErrorMessage(null);
-    setFile(null);
-    setPreviewData(null);
-  };
-
-  const normalizeStr = str => String(str).toLowerCase().replace(/[\s_]/g, '');
 
   const handleFileChange = e => {
-    const selected = e.target.files[0];
-    if (!selected) return;
-
-    setFile(selected);
-    setStatus(null);
-
-    // Browser API for reading local files as raw binary data
-    const reader = new FileReader();
-
-    // Fires once the file has been fully loaded into memory
-    reader.onload = event => {
-      // Convert the raw ArrayBuffer into bytes that XLSX can parse
-      const data = new Uint8Array(event.target.result);
-
-      // Parse the byte array into a workbook (contains all sheets)
-      const workbook = XLSX.read(data, { type: 'array' });
-
-      // Grab the first sheet by name
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-
-      // Convert the sheet into an array; row 0 will be the header row
-      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-      if (rows.length > 0) {
-        // Row 0 contains all column names from the spreadsheet
-        const allHeaders = rows[0];
-
-        // If a schema is loaded, keep only matching column indices; otherwise keep all
-        const filteredIndices = schemaColumns
-          ? allHeaders.reduce((acc, h, i) => {
-              if (schemaColumns.has(normalizeStr(h))) acc.push(i);
-              return acc;
-            }, [])
-          : allHeaders.map((_, i) => i);
-
-        // Remap column names through the filtered indices
-        const headers = filteredIndices.map(i => allHeaders[i]);
-
-        // Take up to 5 data rows and pluck only the schema-matching columns
-        const filteredRows = rows
-          .slice(1, 6)
-          .map(row => filteredIndices.map(i => row[i]));
-
-        // Store headers + rows in state to render the preview table
-        setPreviewData({ headers, rows: filteredRows });
-      }
-    };
-    // Trigger the read — fires onload when complete
-    reader.readAsArrayBuffer(selected);
     const selected = e.target.files[0];
     if (!selected) return;
 
@@ -175,10 +107,6 @@ export default function IngestItems({ uic }) {
     const formData = new FormData();
     formData.append('file', file);
 
-    const url = uic
-      ? `http://localhost:8080/ingest/end-items?uic=${encodeURIComponent(uic)}`
-      : 'http://localhost:8080/ingest/end-items';
-
     try {
       const response = await fetch(
         `http://localhost:8080/ingest/end-items/${uicId}`,
@@ -210,10 +138,6 @@ export default function IngestItems({ uic }) {
     setStatus('uploading');
     const formData = new FormData();
     formData.append('file', file);
-
-    const url = uic
-      ? `http://localhost:8080/ingest/components?uic=${encodeURIComponent(uic)}`
-      : 'http://localhost:8080/ingest/components';
 
     try {
       const response = await fetch(

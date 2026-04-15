@@ -2,9 +2,6 @@ const ingestModels = require('../models/ingestModels');
 const serialEndItemsModels = require('../models/serialEndItemsModels');
 const serialComponentsModels = require('../models/serialComponentsModels');
 const uicsModels = require('../models/uicsModels');
-const serialEndItemsModels = require('../models/serialEndItemsModels');
-const serialComponentsModels = require('../models/serialComponentsModels');
-const uicsModels = require('../models/uicsModels');
 const { readSheet, parseData } = require('read-excel-file/node');
 const { schema, normalizeHeaders } = require('../helpers/ingestSchema');
 
@@ -83,7 +80,6 @@ exports.ingestEndItems = async (file, user, uic) => {
   for (const obj of objects) {
     if (obj.serial_number) {
       const match = await serialEndItemsModels.getSerialEndItemBySn(
-      const match = await serialEndItemsModels.getSerialEndItemBySn(
         obj.serial_number,
         uicId,
       );
@@ -98,7 +94,6 @@ exports.ingestEndItems = async (file, user, uic) => {
           throw error;
         }
       } else {
-        await ingestModels.insertSerializedItem(obj, user.id, uicId);
         await ingestModels.insertSerializedItem(obj, user.id, uicId);
       }
     }
