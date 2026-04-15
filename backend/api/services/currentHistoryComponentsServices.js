@@ -37,10 +37,8 @@ exports.createComponentCurrentHistory = async ({
   location,
   last_seen,
   serial_number,
-  oh_qty,
 }) => {
-  console.log(oh_qty)
-  if (!component_id || !user_id || seen == null) {
+  if (!component_id || !user_id || seen == null || !location || !last_seen) {
     const error = new Error('All fields are required.');
     error.status = 400;
     throw error;
@@ -50,6 +48,11 @@ exports.createComponentCurrentHistory = async ({
   if (serial_number) {
     const serial_component_item =
       await serialComponentsModels.getSerialComponentItemBySn(serial_number);
+    if (!serial_component_item) {
+      const error = new Error(`Serial number ${serial_number} not found.`);
+      error.status = 404;
+      throw error;
+    }
     resolved_serial_number = serial_component_item.id;
   }
 

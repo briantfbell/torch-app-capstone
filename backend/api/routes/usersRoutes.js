@@ -1,6 +1,6 @@
 const express = require('express');
+const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
-const hrhAuth = require('../middleware/hrhAuth');
 
 const router = express.Router();
 
@@ -11,9 +11,9 @@ const {
   deleteUser,
 } = require('../controllers/usersControllers');
 
-router.get('/:id', getUserById);
-router.get('/', getAllUsers);
-router.patch('/:id', hrhAuth, updateUser);
-router.delete('/:id', hrhAuth, deleteUser);
+router.get('/:id', auth, getUserById);
+router.get('/', auth, getAllUsers);
+router.patch('/:id', adminAuth, updateUser);
+router.delete('/:id', adminAuth, deleteUser);
 
 module.exports = router;
