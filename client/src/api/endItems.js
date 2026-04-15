@@ -1,7 +1,7 @@
-const BASE_URL = "http://localhost:8080/end-items";
+const BASE_URL = "http://localhost:8080";
 
 export async function getEndItemById(id) {
-    const response = await fetch(`${BASE_URL}/${id}`, {
+    const response = await fetch(`${BASE_URL}/end-items/${id}`, {
         credentials: "include",
     });
 
@@ -13,7 +13,7 @@ export async function getEndItemById(id) {
 }
 
 export async function updateEndItemNotes(id, note) {
-    const response = await fetch(`http://localhost:8080/end-items/${id}`, {
+    const response = await fetch(`${BASE_URL}/serial-items/${id}`, {
         method: "PATCH",
         credentials: "include",
         headers: {
@@ -25,6 +25,50 @@ export async function updateEndItemNotes(id, note) {
     if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Failed to save notes: ${response.status} ${errorText}`);
+    }
+
+    return response.json();
+}
+
+// export async function getEndItemSeenStatus(serialEndItemId) {
+//     const response = await fetch(`${BASE_URL}/current-history/end-items/${serialEndItemId}`, {
+//         credentials: "include",
+//     });
+//
+//     if (!response.ok) {
+//         throw new Error("Failed to fetch seen status");
+//     }
+//
+//     const data = await response.json();
+//     return data.currentHistory?.[0] ?? null;
+// }
+
+export async function getEndItemCurrentHistory() {
+    const response = await fetch(`${BASE_URL}/current-history/end-items/`, {
+        credentials: "include",
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch seen status");
+    }
+
+    const data = await response.json();
+    return await data.currentHistory;
+}
+
+export async function postEndItemSeen(seen, location, last_seen, note, user_id, end_item_id, serial_number) {
+    const response = await fetch(`${BASE_URL}/current-history/end-items`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ seen, location, last_seen, note, user_id, end_item_id, serial_number }),
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to save new end item history: ${response.status} ${errorText}`);
     }
 
     return response.json();
