@@ -1,17 +1,12 @@
 const express = require('express');
 const hrhAuth = require('../middleware/hrhAuth');
-const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-const {
-  getAll,
-  getById,
-  create,
-} = require('../controllers/archivedHistoryEndItemsControllers');
+const { getAll, getById, create } = require('../controllers/archivedHistoryEndItemsControllers');
 
-router.get('/:id', auth, getById);
-router.get('/', auth, getAll);
+router.get('/:id', getById);
+router.get('/', getAll);
 router.post('/', hrhAuth, create);
 
 module.exports = router;
