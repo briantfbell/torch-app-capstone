@@ -74,10 +74,25 @@ export default function IngestItems({ uic }) {
         // Row 0 contains all column names from the spreadsheet
         const allHeaders = rows[0];
 
+        const isXS = window.matchMedia('(max-width: 640px)').matches;
+        const ALWAYS_HIDE = new Set(['stock', 'img', 'unitofmeasure']);
+        const XS_HIDE = new Set(['fsc', 'material']);
+
         // If a schema is loaded, keep only matching column indices; otherwise keep all
         const filteredIndices = schemaColumns
           ? allHeaders.reduce((acc, h, i) => {
-              if (schemaColumns.has(normalizeStr(h))) acc.push(i);
+              const normalized = normalizeStr(h);
+
+              // 1. Never preview these columns
+              if (ALWAYS_HIDE.has(normalized)) return acc;
+
+              // 2. Hide these only on xs screens
+              if (isXS && XS_HIDE.has(normalized)) return acc;
+
+              // 3. Schema filtering
+              if (schemaColumns && !schemaColumns.has(normalized)) return acc;
+
+              acc.push(i);
               return acc;
             }, [])
           : allHeaders.map((_, i) => i);
@@ -103,9 +118,9 @@ export default function IngestItems({ uic }) {
       credentials: 'include',
     })
       .then(res => res.json())
-      .then(({ columns }) =>
-        setSchemaColumns(new Set(columns.map(normalizeStr))),
-      )
+      .then(({ columns }) => {
+        setSchemaColumns(new Set(columns.map(normalizeStr)));
+      })
       .catch(() => {});
   }, []);
 
@@ -169,13 +184,7 @@ export default function IngestItems({ uic }) {
 
   return (
     <div>
-      <Container
-        maxWidth="lg"
-        alignItems="center"
-        justifyContent="center"
-        alignSelf="center"
-        justifySelf="center"
-      >
+      <Container maxWidth="lg">
         <Stack spacing={3} alignItems="center" justifyContent="center">
           <input
             style={{ display: 'none' }}
@@ -351,11 +360,11 @@ export default function IngestItems({ uic }) {
                         style={{
                           border: '1px solid #ccc',
                           padding: '4px 8px',
-                          minWidth: '6rem',
-                          maxWidth: '12rem',
+                          width: 'fit-content',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
                           whiteSpace: 'nowrap',
+                          textAlign: 'center',
                         }}
                         title={h}
                       >
@@ -376,6 +385,8 @@ export default function IngestItems({ uic }) {
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap',
+
+                            textAlign: 'center',
                           }}
                           title={cell ?? ''}
                         >
