@@ -4,36 +4,91 @@ A web-based military property accountability application designed for use at the
 
 ## Tech Stack
 
-- React (Vite) - Frontend
-- Express - Backend
-- PostgreSQL - Database
+**Frontend**
+- React 19 (Vite) — UI framework
+- Material UI (MUI) v7 — component library with dark/light theme toggle
+- MUI X Charts / MUI X Data Grid — dashboard charts and shortage grids
+- TanStack React Query v5 — data fetching with 5-second polling
+- react-pdf / jspdf — PDF viewing and generation
+- xlsx — client-side Excel file preview
+- react-router-dom v7 — client-side routing
+
+**Backend**
+- Express 5 — API server
+- PostgreSQL — relational database
+- Knex — query builder and migrations
+- bcrypt — password hashing
+- jsonwebtoken — JWT auth via httpOnly cookies
+- multer — multipart file upload handling
+- read-excel-file — server-side Excel parsing
+- nodemon — dev server with hot reload
 
 ## Getting Started
 
-### Prerequisites
+### Option 1 — Docker Compose (recommended)
 
-- Node.js v18+
-- PostgreSQL
-
-### Install Dependencies
+Requires Docker and Docker Compose. Runs the client, backend, and database together. Migrations and seeds run automatically on startup.
 
 ```bash
-# Install client dependencies
+# Copy and fill in environment files before starting
+cp backend/db/.env.example backend/db/.env
+cp client/.env.example client/.env
+
+docker compose up --build
+```
+
+| Service  | URL                     |
+|----------|-------------------------|
+| Client   | http://localhost:5173   |
+| Backend  | http://localhost:8080   |
+| Database | localhost:5432          |
+
+### Option 2 — Manual
+
+**Prerequisites:** Node.js v18+, PostgreSQL running locally.
+
+```bash
+# Install dependencies
 cd client && npm install
+cd ../backend && npm install
 
-# Install server dependencies
-cd backend && npm install
-```
+# Run database migrations and seed data
+cd backend && npm run migrate && npm run seed
 
-### Run the App
+# Start the backend (in one terminal)
+cd backend && npm run start
 
-```bash
-# Run client
+# Start the frontend (in another terminal)
 cd client && npm run dev
-
-# Run server
-cd backend && npm run dev
 ```
+
+**Database scripts (backend/):**
+
+| Command         | Description                        |
+|-----------------|------------------------------------|
+| `npm run migrate` | Run pending migrations             |
+| `npm run rollback`| Roll back the last migration batch |
+| `npm run seed`    | Seed the database                  |
+| `npm run reset`   | Rollback, migrate, and seed        |
+| `npm test`        | Run Jest integration tests         |
+
+---
+
+## Frontend Pages
+
+All routes except `/` are protected and require a valid login session.
+
+| Route | Page | Description |
+|-------|------|-------------|
+| `/` | SplashPage | Login and registration forms |
+| `/dashboard` | Dashboard | Unit readiness overview — pie/bar charts, KPI cards, shortage summary grid with live polling |
+| `/equipment` | EquipmentPage | Searchable, filterable list of all end item types with completion status and serial chip cards |
+| `/equipment/:id` | EndItemPage | Detail view for a single end item serial — mark seen/not seen, save notes, generate/view PDFs |
+| `/equipment/:endItemId/inventory` | InventoryTable | Component inventory table for an end item — count on-hand vs authorized |
+| `/equipment/shr-viewer` | SHRViewPage | Sub Hand Receipt PDF viewer with page navigation |
+| `/shortages` | ShortageTrackerPage | Shortage tracker table (work in progress — currently displays mock data) |
+| `/user-settings` | UserSettings | Update username, email, and password |
+| `/SupplyAdmin` | SupplyAdminPage | Admin console for bulk-importing end items and components via Excel upload |
 
 ---
 
@@ -195,6 +250,10 @@ after 7 days, and is named `token`.
 | `hrh`   | Can create resources (POST endpoints)                    |
 | `admin` | Can update and delete resources (PATCH/DELETE endpoints) |
 
+> `hrh` and `admin` are distinct roles. A user must have the role string `"hrh"` (or a string containing it) to call
+> HRH-gated endpoints, and similarly for `"admin"`. Admins do not automatically inherit HRH permissions unless their
+> role string includes both.
+
 ### Error Format
 
 All errors return:
@@ -338,7 +397,7 @@ Clear the session cookie.
 
 ### Users — `/users`
 
-All endpoints require authentication. PATCH and DELETE require `hrh` role.
+All endpoints require authentication. PATCH and DELETE require `admin` role.
 
 #### `GET /users`
 
@@ -456,7 +515,7 @@ Delete a user by ID.
 
 ### UICs — `/uics`
 
-GET endpoints are public. POST requires `hrh` role. PATCH and DELETE require `hrh` role.
+GET endpoints are public. POST requires `hrh` role. PATCH and DELETE require `admin` role.
 
 #### `GET /uics`
 
@@ -590,7 +649,7 @@ Delete a UIC by ID.
 
 ### End Items — `/end-items`
 
-All endpoints require authentication. POST requires `hrh` role. PATCH and DELETE require `hrh` role.
+All endpoints require authentication. POST requires `hrh` role. PATCH and DELETE require `admin` role.
 
 #### `GET /end-items`
 
@@ -775,7 +834,7 @@ Delete an end item by ID.
 
 ### Components — `/components`
 
-All endpoints require authentication. POST requires `hrh` role. PATCH and DELETE require `hrh` role.
+All endpoints require authentication. POST requires `hrh` role. PATCH and DELETE require `admin` role.
 
 #### `GET /components`
 
@@ -941,7 +1000,7 @@ Delete a component by ID.
 
 ---
 
-### Serial Items — `/serial-items`
+### Serial End Items — `/serial-items`
 
 All endpoints require authentication. POST requires `hrh` role. PATCH and DELETE require `hrh` role.
 
@@ -1051,7 +1110,7 @@ DoDID.
 
 ---
 
-#### `PATCH /serial-items/:id` — Admin required
+#### `PATCH /serial-items/:id` — HRH role required
 
 Update a serial item. All fields optional.
 
@@ -1079,7 +1138,7 @@ Update a serial item. All fields optional.
 
 ---
 
-#### `DELETE /serial-items/:id` — Admin required
+#### `DELETE /serial-items/:id` — HRH role required
 
 Delete a serial item by ID.
 
@@ -1098,12 +1157,113 @@ Delete a serial item by ID.
 
 ---
 
+### Serial Component Items — `/serial-components`
+
+All endpoints require authentication. POST requires `hrh` role. PATCH and DELETE require `hrh` role.
+
+#### `GET /serial-components`
+
+Get all serial component items. Supports filtering, sorting, and pagination.
+
+**Query params:** Same as `/serial-items`.
+
+**Response `200`:**
+
+```json
+{
+  "allSerialComponentItems": [
+    {
+      "id": 1,
+      "serial_number": "SN-MAG-001",
+      "status": "serviceable",
+      "component_id": 2,
+      "user_id": 3,
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    }
+  ]
+}
+```
+
+---
+
+#### `GET /serial-components/:id`
+
+Get a single serial component item by ID.
+
+**Response `200`:**
+
+```json
+{
+  "serialComponentItem": {
+    "/* same shape as GET /serial-components item */"
+  }
+}
+```
+
+**Errors `404`:** Serial component item not found.
+
+---
+
+#### `GET /serial-components/uic/:uic_id`
+
+Get all serial component items assigned to a UIC.
+
+**Response `200`:**
+
+```json
+{
+  "serialComponentItems": [
+    {
+      "/* serial component item objects */"
+    }
+  ]
+}
+```
+
+**Errors `404`:** UIC does not exist or no serial component items recorded.
+
+---
+
+#### `POST /serial-components` — HRH role required
+
+Create a new serial component item.
+
+**Response `201`:**
+
+```json
+{
+  "newSerialComponentItem": {
+    "/* serial component item object */"
+  },
+  "message": "SN: SN-MAG-001 has been successfully posted."
+}
+```
+
+---
+
+#### `PATCH /serial-components/:id` — HRH role required
+
+Update a serial component item.
+
+**Errors `404`:** Serial component item not found.
+
+---
+
+#### `DELETE /serial-components/:id` — HRH role required
+
+Delete a serial component item by ID.
+
+**Errors `404`:** Serial component item not found.
+
+---
+
 ### Current History (End Items) — `/current-history/end-items`
 
 Tracks the current property record for each serialized end item. Only one record per serial number can exist at a time —
 creating or updating a record for an existing serial number automatically archives the old one.
 
-All endpoints require authentication. POST requires `hrh` role. PATCH requires `hrh` role.
+All endpoints require authentication. POST requires `hrh` role. PATCH requires `admin` role.
 
 #### `GET /current-history/end-items`
 
@@ -1239,7 +1399,7 @@ The existing record is archived before the update is applied.
 Tracks the current property record for each component. For serialized components, only one record per serial number can
 exist at a time. Unserialized (bulk) components are tracked by `component_id`.
 
-All endpoints require authentication. POST requires `hrh` role. PATCH requires `hrh` role.
+All endpoints require authentication. POST requires `hrh` role. PATCH requires `admin` role.
 
 #### `GET /current-history/components`
 
