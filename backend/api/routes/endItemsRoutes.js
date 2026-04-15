@@ -1,6 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth');
-// const adminAuth = require('../middleware/adminAuth');
+const hrhAuth = require('../middleware/hrhAuth');
 
 const router = express.Router();
 
@@ -17,10 +17,10 @@ const {
 router.get('/uic/:uic_id', auth, getEndItemsByUicId);
 router.get('/:id', auth, getEndItemById);
 router.get('/', auth, getAllEndItems);
-router.post('/', auth, createEndItem);
-router.patch('/:id/complete', auth, markEndItemComplete);
-router.patch('/:id', auth, updateEndItem);
-router.delete('/:id', auth, deleteEndItem);
-router.put('/:id', auth, updateEndItem);
+router.post('/', hrhAuth, createEndItem);
+router.patch('/:id/complete', hrhAuth, markEndItemComplete);
+router.patch('/:id', hrhAuth, updateEndItem);
+router.delete('/:id', hrhAuth, deleteEndItem);
+router.put('/:id', hrhAuth, updateEndItem);
 
 module.exports = router;
