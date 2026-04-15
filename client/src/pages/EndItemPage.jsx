@@ -1,16 +1,16 @@
 import {
-    Alert,
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    CircularProgress,
-    Container,
-    Divider,
-    Stack,
-    TextField,
-    Typography,
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  Container,
+  Divider,
+  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -22,313 +22,308 @@ import { getEndItemById, updateEndItemNotes } from "../api/endItems";
 import PdfGenerator from "../components/PdfGenerator";
 
 export default function EndItemPage() {
-    const { id } = useParams();
-    const navigate = useNavigate();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [uic, setUic] = useState("");
 
-    const [item, setItem] = useState(null);
-    const [openPdf, setOpenPdf] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-    const [notes, setNotes] = useState("");
-    const [savingNotes, setSavingNotes] = useState(false);
-    const [saveMessage, setSaveMessage] = useState("");
-    const [pdfUrl, setPdfUrl] = useState(null);
+  const [item, setItem] = useState(null);
+  const [openPdf, setOpenPdf] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [notes, setNotes] = useState("");
+  const [savingNotes, setSavingNotes] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
+  const [pdfUrl, setPdfUrl] = useState(null);
 
-    useEffect(() => {
-        if (!item?.endItem?.lin) {
-            setPdfUrl(null);
-            return;
-        }
-
-        const currentLin = String(item.endItem.lin).trim().toLowerCase();
-
-        fetch("/pdfs/pdfManifest.json")
-            .then((res) => {
-                if (!res.ok) {
-                    throw new Error("Could not load PDF manifest");
-                }
-                return res.json();
-            })
-            .then((files) => {
-                const match = files.find((file) =>
-                    String(file).trim().toLowerCase().includes(currentLin)
-                );
-
-                setPdfUrl(match ? `/pdfs/${match}` : null);
-            })
-            .catch((err) => {
-                console.error("PDF manifest error:", err);
-                setPdfUrl(null);
-            });
-    }, [item]);
-    useEffect(() => {
-        setLoading(true);
-        setError("");
-
-        getEndItemById(id)
-            .then((data) => {
-                setItem(data);
-                setNotes(data?.endItem?.note || "");
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.error("Fetch error:", err);
-                setError("Error loading item");
-                setLoading(false);
-            });
-    }, [id]);
-
-    const handleSaveNotes = () => {
-        setSavingNotes(true);
-        setSaveMessage("");
-
-        updateEndItemNotes(id, notes)
-            .then(() => getEndItemById(id))
-            .then((freshItem) => {
-                setItem(freshItem);
-                setSaveMessage("Notes saved.");
-                setSavingNotes(false);
-            })
-            .catch((err) => {
-                console.error("Save error:", err);
-                setSaveMessage("Could not save notes.");
-                setSavingNotes(false);
-            });
-    };
-
-    if (loading) {
-        return (
-            <Container maxWidth="lg" sx={{ py: 4 }}>
-                <Stack
-                    spacing={2}
-                    alignItems="center"
-                    justifyContent="center"
-                    sx={{ minHeight: "60vh" }}
-                >
-                    <CircularProgress />
-                    <Typography>Loading end item...</Typography>
-                </Stack>
-            </Container>
-        );
+  useEffect(() => {
+    if (!item?.endItem?.lin) {
+      setPdfUrl(null);
+      return;
     }
 
-    if (error) {
-        return (
-            <Container maxWidth="lg" sx={{ py: 4 }}>
-                <Alert severity="error">{error}</Alert>
-            </Container>
+    const currentLin = String(item.endItem.lin).trim().toLowerCase();
+
+    fetch("/pdfs/pdfManifest.json")
+      .then((res) => {
+        if (!res.ok) throw new Error("Could not load PDF manifest");
+        return res.json();
+      })
+      .then((files) => {
+        const match = files.find((file) =>
+          String(file).trim().toLowerCase().includes(currentLin),
         );
-    }
+        setPdfUrl(match ? `/pdfs/${match}` : null);
+      })
+      .catch((err) => {
+        console.error("PDF manifest error:", err);
+        setPdfUrl(null);
+      });
+  }, [item]);
 
-    if (!item || !item.endItem) {
-        return (
-            <Container maxWidth="lg" sx={{ py: 4 }}>
-                <Alert severity="warning">Item not found</Alert>
-            </Container>
-        );
-    }
+  // Loads UIC data for display in the chip later on
+  useEffect(() => {
+    fetch("http://localhost:8080/auth/me", { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => setUic(data.user?.uic ?? ""))
+      .catch((err) => console.error("Failed to load user:", err));
+  }, []);
 
-    const endItem = item.endItem;
-    const imageUrl = endItem.image || "/no_image_found_placeholder.png";
-    console.log(`image path is -> ${endItem}`)
-    console.table(endItem)
+  useEffect(() => {
+    setLoading(true);
+    setError("");
 
+    getEndItemById(id)
+      .then((data) => {
+        setItem(data);
+        setNotes(data?.endItem?.note || "");
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Fetch error:", err);
+        setError("Error loading item");
+        setLoading(false);
+      });
+  }, [id]);
+
+  const handleSaveNotes = () => {
+    setSavingNotes(true);
+    setSaveMessage("");
+
+    updateEndItemNotes(id, notes)
+      .then(() => getEndItemById(id))
+      .then((freshItem) => {
+        setItem(freshItem);
+        setSaveMessage("Notes saved.");
+        setSavingNotes(false);
+      })
+      .catch((err) => {
+        console.error("Save error:", err);
+        setSaveMessage("Could not save notes.");
+        setSavingNotes(false);
+      });
+  };
+
+  if (loading) {
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Stack
+          spacing={2}
+          alignItems="center"
+          justifyContent="center"
+          sx={{ minHeight: "60vh" }}
+        >
+          <CircularProgress />
+          <Typography>Loading end item...</Typography>
+        </Stack>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Alert severity="error">{error}</Alert>
+      </Container>
+    );
+  }
+
+  if (!item || !item.endItem) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Alert severity="warning">Item not found</Alert>
+      </Container>
+    );
+  }
+
+  const endItem = item.endItem;
+  const imageUrl = endItem.image || "/no_image_found_placeholder.png";
+  console.log(`image path is -> ${endItem}`);
+  console.table(endItem);
+
+  return (
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Stack spacing={3}>
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          justifyContent="space-between"
+          alignItems={{ xs: "flex-start", md: "center" }}
+          spacing={2}
+        >
+          <Button
+            startIcon={<ArrowBackIcon />}
+            onClick={() => navigate("/equipment")}
+            variant="outlined"
+          >
+            Back to Equipment
+          </Button>
+
+          <Box>
+            <Typography variant="h4" fontWeight={700}>
+              {endItem.description}
+            </Typography>
+          </Box>
+          <Stack>
+            <Chip
+              label={uic ? `UIC: ${uic}` : "Loading..."}
+              variant="outlined"
+              color="primary"
+            />
+          </Stack>
+        </Stack>
+
+        <Card variant="outlined">
+          <CardContent>
             <Stack spacing={3}>
-                <Stack
-                    direction={{ xs: "column", md: "row" }}
-                    justifyContent="space-between"
-                    alignItems={{ xs: "flex-start", md: "center" }}
-                    spacing={2}
-                >
-                    <Button
-                        startIcon={<ArrowBackIcon />}
-                        onClick={() => navigate("/equipment")}
+              <Stack
+                direction={{ xs: "column", md: "row" }}
+                spacing={3}
+                alignItems="stretch"
+              >
+                <Stack spacing={2} sx={{ flex: 1.2 }}>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    {pdfUrl ? (
+                      <Button
                         variant="outlined"
-                    >
-                        Back to Equipment
-                    </Button>
+                        startIcon={<PictureAsPdfIcon />}
+                        onClick={() => setOpenPdf(true)}
+                        sx={{ alignSelf: "flex-start" }}
+                      >
+                        Open End Item BOM PDF
+                      </Button>
+                    ) : (
+                      <Typography variant="body2" color="text.secondary">
+                        No BOM for this item.
+                      </Typography>
+                    )}
 
-                    <Box>
-                        <Typography variant="h4" fontWeight={700}>
-                            End Item Details
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            Detailed equipment information
-                        </Typography>
-                    </Box>
+                    <PdfGenerator />
+                  </Stack>
 
-                    <Chip
-                        label={`NIIN: ${endItem.niin}`}
-                        variant="outlined"
-                        color="primary"
-                    />
+                  <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                    <Card variant="outlined" sx={{ flex: 2 }}>
+                      <CardContent
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          gap: 2,
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        {[
+                          { label: `FSC: ${endItem.fsc}`, color: "primary" },
+                          { label: `LIN: ${endItem.lin}`, color: "primary" },
+                          { label: `NIIN: ${endItem.niin}`, color: "primary" },
+                          { label: `Cost: $${endItem.cost}`, color: "success" },
+                        ].map(({ label, color }) => (
+                          <Chip
+                            key={label}
+                            label={label}
+                            variant="outlined"
+                            color={color}
+                            sx={{ minWidth: 140, flexBasis: "calc(50% - 8px)" }}
+                          />
+                        ))}
+                      </CardContent>
+                    </Card>
+
+                    <Card variant="outlined" sx={{ flex: 1 }}>
+                      <CardContent sx={{ textAlign: "center" }}>
+                        <Typography variant="subtitle2" color="text.secondary">
+                          Authorized Quantity
+                        </Typography>
+                        <br />
+                        <Typography variant="h6" fontWeight={600}>
+                          {endItem.auth_qty}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Stack>
+
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Stack spacing={2}>
+                        <Typography variant="subtitle1" fontWeight={600}>
+                          Notes
+                        </Typography>
+
+                        <TextField
+                          multiline
+                          minRows={5}
+                          fullWidth
+                          value={notes}
+                          onChange={(e) => setNotes(e.target.value)}
+                          placeholder="Add notes for this end item..."
+                        />
+
+                        <Stack
+                          direction={{ xs: "column", sm: "row" }}
+                          spacing={2}
+                          justifyContent="space-between"
+                          alignItems={{ xs: "stretch", sm: "center" }}
+                        >
+                          <Typography variant="body2" color="text.secondary">
+                            {saveMessage}
+                          </Typography>
+
+                          <Button
+                            variant="contained"
+                            startIcon={<SaveIcon />}
+                            onClick={handleSaveNotes}
+                            disabled={savingNotes}
+                          >
+                            {savingNotes ? "Saving..." : "Save Notes"}
+                          </Button>
+                        </Stack>
+                      </Stack>
+                    </CardContent>
+                  </Card>
                 </Stack>
 
-                <Divider />
-
-                <Card variant="outlined">
-                    <CardContent>
-                        <Stack spacing={3}>
-                            <Box>
-                                <Typography variant="h5" fontWeight={600}>
-                                    {endItem.description}
-                                </Typography>
-                                <Typography variant="body1" color="text.secondary">
-                                    LIN: {endItem.lin}
-                                </Typography>
-                            </Box>
-
-                            <Stack
-                                direction={{ xs: "column", md: "row" }}
-                                spacing={3}
-                                alignItems="stretch"
-                            >
-                                <Stack spacing={2} sx={{ flex: 1.2 }}>
-                                    <Stack direction="row" spacing={1} alignItems="center">
-
-                                        {pdfUrl ? (
-                                            <Button
-                                                variant="outlined"
-                                                startIcon={<PictureAsPdfIcon />}
-                                                onClick={() => setOpenPdf(true)}
-                                                sx={{ alignSelf: "flex-start" }}
-                                            >
-                                                Open End Item BOM PDF
-                                            </Button>
-                                        ) : (
-                                            <Typography variant="body2" color="text.secondary">
-                                                No BOM for this item.
-                                            </Typography>
-                                        )}
-
-                                        <PdfGenerator />
-                                    </Stack>
-
-                                    <Card variant="outlined">
-                                        <CardContent>
-                                            <Typography
-                                                variant="subtitle2"
-                                                color="text.secondary"
-                                                gutterBottom
-                                            >
-                                                Description
-                                            </Typography>
-                                            <Typography variant="body1" fontWeight={500}>
-                                                {endItem.description}
-                                            </Typography>
-                                        </CardContent>
-                                    </Card>
-
-                                    <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                                        <Card variant="outlined" sx={{ flex: 1 }}>
-                                            <CardContent sx={{ textAlign: "center" }}>
-                                                <Typography variant="subtitle2" color="text.secondary">
-                                                    FSC
-                                                </Typography>
-                                                <Typography variant="h6" fontWeight={600}>
-                                                    {endItem.fsc}
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-
-                                        <Card variant="outlined" sx={{ flex: 1 }}>
-                                            <CardContent sx={{ textAlign: "center" }}>
-                                                <Typography variant="subtitle2" color="text.secondary">
-                                                    Auth Qty
-                                                </Typography>
-                                                <Typography variant="h6" fontWeight={600}>
-                                                    {endItem.auth_qty}
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-                                    </Stack>
-
-                                    <Card variant="outlined">
-                                        <CardContent>
-                                            <Stack spacing={2}>
-                                                <Typography variant="subtitle1" fontWeight={600}>
-                                                    Notes
-                                                </Typography>
-
-                                                <TextField
-                                                    multiline
-                                                    minRows={5}
-                                                    fullWidth
-                                                    value={notes}
-                                                    onChange={(e) => setNotes(e.target.value)}
-                                                    placeholder="Add notes for this end item..."
-                                                />
-
-                                                <Stack
-                                                    direction={{ xs: "column", sm: "row" }}
-                                                    spacing={2}
-                                                    justifyContent="space-between"
-                                                    alignItems={{ xs: "stretch", sm: "center" }}
-                                                >
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        {saveMessage}
-                                                    </Typography>
-
-                                                    <Button
-                                                        variant="contained"
-                                                        startIcon={<SaveIcon />}
-                                                        onClick={handleSaveNotes}
-                                                        disabled={savingNotes}
-                                                    >
-                                                        {savingNotes ? "Saving..." : "Save Notes"}
-                                                    </Button>
-                                                </Stack>
-                                            </Stack>
-                                        </CardContent>
-                                    </Card>
-                                </Stack>
-
-                                <Card
-                                    variant="outlined"
-                                    sx={{
-                                        flex: 1,
-                                        minHeight: 280,
-                                        overflow: "hidden",
-                                        bgcolor: "grey.50",
-                                    }}
-                                >
-                                    <Box
-                                        component="img"
-                                        src={imageUrl}
-                                        alt={endItem.description}
-                                        sx={{
-                                            width: "100%",
-                                            height: "100%",
-                                            minHeight: 280,
-                                            objectFit: "cover",
-                                            display: "block",
-                                        }}
-                                    />
-                                </Card>
-                            </Stack>
-
-                            <Button
-                                variant="contained"
-                                size="large"
-                                fullWidth
-                                onClick={() => navigate(`/equipment/${id}/inventory`)}
-                            >
-                                Start / Open Inventory
-                            </Button>
-                        </Stack>
-                    </CardContent>
+                <Card
+                  variant="outlined"
+                  sx={{
+                    flex: 1,
+                    minHeight: 280,
+                    overflow: "hidden",
+                    bgcolor: "grey.50",
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={imageUrl}
+                    alt={endItem.description}
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      minHeight: 280,
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                  />
                 </Card>
+              </Stack>
 
-                {pdfUrl && (
-                    <PdfModalViewer
-                        open={openPdf}
-                        onClose={() => setOpenPdf(false)}
-                        pdfUrl={pdfUrl}
-                    />
-                )}
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                onClick={() => navigate(`/equipment/${id}/inventory`)}
+              >
+                Start / Open Inventory
+              </Button>
             </Stack>
-        </Container>
-    );
+          </CardContent>
+        </Card>
+
+        {pdfUrl && (
+          <PdfModalViewer
+            open={openPdf}
+            onClose={() => setOpenPdf(false)}
+            pdfUrl={pdfUrl}
+          />
+        )}
+      </Stack>
+    </Container>
+  );
 }
