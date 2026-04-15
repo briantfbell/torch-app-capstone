@@ -623,7 +623,7 @@ export default function EquipmentPage() {
   };
 
   const handleSerialClick = (serial) => {
-    navigate(`/equipment/${serial.end_item_id}`);
+    navigate(`/equipment/${serial.end_item_id}?serialId=${serial.id}`);
   };
 
   if (loading) {
