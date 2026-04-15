@@ -6,3 +6,4 @@ coverage/
 .idea/
 ./backend/db/docker_db
 docker_db/
+.run/

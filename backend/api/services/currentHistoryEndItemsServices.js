@@ -45,7 +45,7 @@ exports.createCurrentHistory = async ({
   }
 
   const serial_end_item =
-    await serialEndItemsModels.getSerialItemBySn(serial_number);
+    await serialEndItemsModels.getSerialEndItemBySn(serial_number);
 
   return await currentHistoryEndItemsModels.createCurrentHistory({
     end_item_id,
