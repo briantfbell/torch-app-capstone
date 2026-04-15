@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   ButtonGroup,
@@ -150,7 +151,7 @@ export default function IngestItems({ uic }) {
       const body = await response.json();
 
       if (response.ok) {
-        setSuccessStates();
+        setSuccessStates(body);
       } else {
         setFailureStates(body);
       }
@@ -244,6 +245,17 @@ export default function IngestItems({ uic }) {
       {status === 'fail' && (
         <Alert severity="error" onClose={clearAllStates}>
           {errorMessage}
+        </Alert>
+      )}
+
+      {status === 'partial' && (
+        <Alert severity="warning" onClose={clearAllStates}>
+          <strong>Upload partially successful.</strong>
+          <div style={{ margin: '4px 0 0', paddingLeft: 20 }}>
+            {warnings.map((w, i) => (
+              <div key={i}>{w}</div>
+            ))}
+          </div>
         </Alert>
       )}
 
