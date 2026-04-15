@@ -22,6 +22,8 @@ import { getEndItemById, updateEndItemNotes } from "../api/endItems";
 import PdfGenerator from "../components/PdfGenerator";
 import { savePdf, getPdfsByEndItem } from "../utils/pdfStorage";
 import PdfFillModal from "../components/PdfFillModal";
+import { useQuery } from "@tanstack/react-query";
+import {tryGetSerialItems} from "../api/data.js";
 
 export default function EndItemPage() {
   const { id } = useParams();
@@ -40,6 +42,12 @@ export default function EndItemPage() {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [localPdfs, setLocalPdfs] = useState([]);
   const [openFillModal, setOpenFillModal] = useState(false);
+
+  const { data: serialEndItemsData = [] } = useQuery({
+    queryKey: ["serialEndItems"],
+    queryFn: tryGetSerialItems,
+    select: (d) => d.allSerialEndItems ?? [],
+  });
 
   const matchingSerialItems = serialEndItemsData.filter(
         (serialItem) => Number(serialItem.end_item_id) === Number(id)
