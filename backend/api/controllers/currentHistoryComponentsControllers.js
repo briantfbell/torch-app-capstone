@@ -29,6 +29,20 @@ exports.getById = async (req, res) => {
   }
 };
 
+exports.getByEndItemId = async (req, res) => {
+  try {
+    const currentHistory =
+      await currentHistoryComponentsServices.getComponentsCurrentHistoryByEndItemId(
+        req.params.id,
+      );
+    res.status(200).json({ currentHistory });
+  } catch (err) {
+    res
+      .status(err.status || 500)
+      .json({ message: err.message || 'Internal server error.' });
+  }
+};
+
 exports.create = async (req, res) => {
   try {
     let existing;
@@ -64,6 +78,7 @@ exports.create = async (req, res) => {
       message: `ID: ${newCurrentHistory.id} has been successfully created.`,
     });
   } catch (err) {
+    console.log(err);
     res
       .status(err.status || 500)
       .json({ message: err.message || 'Internal server error.' });

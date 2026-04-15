@@ -26,6 +26,12 @@ export default function SupplyAdminPage() {
       : null;
 
   useEffect(() => {
+    if (user?.uic_id && adminSelectedUic === null) {
+      setAdminSelectedUic({ uicId: user.uic_id, uicName: user.uic });
+    }
+  }, [user]);
+
+  useEffect(() => {
     if (!isAdmin) return;
 
     fetch('http://localhost:8080/uics', { credentials: 'include' })

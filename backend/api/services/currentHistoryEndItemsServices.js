@@ -45,7 +45,13 @@ exports.createCurrentHistory = async ({
   }
 
   const serial_end_item =
-    await serialEndItemsModels.getSerialItemBySn(serial_number);
+    await serialEndItemsModels.getSerialEndItemBySn(serial_number);
+
+  if (!serial_end_item) {
+    const error = new Error(`Serial number ${serial_number} not found.`);
+    error.status = 404;
+    throw error;
+  }
 
   return await currentHistoryEndItemsModels.createCurrentHistory({
     end_item_id,

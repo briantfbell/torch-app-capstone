@@ -1,13 +1,21 @@
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
-import { Button, Container, Stack } from '@mui/material';
+import {
+  Button,
+  ButtonGroup,
+  Container,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+} from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
 
 export default function IngestItems({ uic }) {
   const { uicId } = uic ?? {};
   const [file, setFile] = useState(null);
-  const [status, setStatus] = useState('initial');
+  const [itemType, setItemType] = useState(null);
+  const [status, setStatus] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [previewData, setPreviewData] = useState(null);
   const [schemaColumns, setSchemaColumns] = useState(null);
@@ -17,6 +25,7 @@ export default function IngestItems({ uic }) {
     setStatus('fail');
     setErrorMessage(body.message || 'Upload failed.');
     setFile(null);
+    setItemType(null);
     setPreviewData(null);
   };
 
@@ -24,6 +33,14 @@ export default function IngestItems({ uic }) {
     setStatus('success');
     setErrorMessage(null);
     setFile(null);
+    setItemType(null);
+    setPreviewData(null);
+  };
+  const clearAllStates = () => {
+    setStatus(null);
+    setErrorMessage(null);
+    setFile(null);
+    setItemType(null);
     setPreviewData(null);
   };
 
@@ -150,49 +167,98 @@ export default function IngestItems({ uic }) {
     }
   };
 
-  // const VisuallyHiddenInput = styled('input')({
-  //   clip: 'rect(0 0 0 0)',
-  //   clipPath: 'inset(50%)',
-  //   height: 1,
-  //   overflow: 'hidden',
-  //   position: 'absolute',
-  //   bottom: 0,
-  //   left: 0,
-  //   whiteSpace: 'nowrap',
-  //   width: 1,
-  // });
-
   return (
     <div>
-      <Container maxWidth="lg">
-        <Stack spacing={3}>
-          <Button
-            component="label"
-            role={undefined}
-            variant="outlined"
-            tabIndex={-1}
-            startIcon={<CloudUploadIcon />}
-            sx={{ alignSelf: 'center', minWidth: 320 }}
-          >
-            Select file
-            {/* hid this component because there was a React error about potentially infinitely rendering, feel free to bring it back */}
-            {/* <VisuallyHiddenInput
-              type="file"
-              onChange={handleFileChange}
-              ref={fileInputRef}
-              accept=".xlsx, .xls, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-              multiple
-            /> */}
-            <input
-              style={{ display: 'none' }}
-              type="file"
-              onChange={handleFileChange}
-              ref={fileInputRef}
-              accept=".xlsx, .xls, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-              // commenting out multiple since the current ingest/preview logic is setup for one file
-              // multiple
-            />
-          </Button>
+      <Container
+        maxWidth="lg"
+        alignItems="center"
+        justifyContent="center"
+        alignSelf="center"
+        justifySelf="center"
+      >
+        <Stack spacing={3} alignItems="center" justifyContent="center">
+          <input
+            style={{ display: 'none' }}
+            type="file"
+            onChange={handleFileChange}
+            accept=".xlsx, .xls, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            ref={fileInputRef}
+          />
+
+          {itemType === null && (
+            <div>
+              <FormControl style={{ width: '20rem' }}>
+                <InputLabel id="select-label">
+                  What kind of items are you uploading?
+                </InputLabel>
+
+                <Select
+                  labelId="select-label"
+                  id="select"
+                  value={itemType}
+                  label="What kind of items are you uploading?"
+                  onChange={() => {}}
+                >
+                  <MenuItem
+                    value={'components'}
+                    onClick={() => {
+                      setItemType('components');
+                      fileInputRef.current.value = null;
+                      setErrorMessage(null);
+
+                      // Create a listener for when the OS file picker closes,
+                      window.addEventListener(
+                        'focus',
+                        () => {
+                          // Small delay because focus fires
+                          // before the browser updates the input's file list
+                          setTimeout(() => {
+                            // If no file was selected (user cancelled the picker), reset state
+                            if (!fileInputRef.current?.files?.length) {
+                              clearAllStates();
+                            }
+                          }, 100);
+                        },
+
+                        // auto-removes this listener after it fires
+                        { once: true },
+                      );
+
+                      // lastly, actually click the selection
+                      fileInputRef.current.click();
+                    }}
+                  >
+                    Components
+                  </MenuItem>
+
+                  <MenuItem
+                    value={'end-items'}
+                    onClick={() => {
+                      setItemType('end-items');
+                      fileInputRef.current.value = null;
+                      setErrorMessage(null);
+                      // same as above
+                      window.addEventListener(
+                        'focus',
+                        () => {
+                          setTimeout(() => {
+                            if (!fileInputRef.current?.files?.length) {
+                              setItemType(null);
+                              setErrorMessage(null);
+                            }
+                          }, 300);
+                        },
+                        { once: true },
+                      );
+                      fileInputRef.current.click();
+                    }}
+                  >
+                    End Items
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+          )}
 
           <Stack textAlign={'center'}>
             {status === 'success' && <div>Upload successful!</div>}
@@ -204,6 +270,62 @@ export default function IngestItems({ uic }) {
             <div style={{ textAlign: 'center', margin: '0px' }}>
               {file.name}
             </div>
+          )}
+
+          {file && itemType === 'end-items' && (
+            <>
+              <ButtonGroup
+                variant="outlined"
+                aria-label="component-button-group"
+              >
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    clearAllStates();
+                  }}
+                  disabled={status === 'uploading'}
+                >
+                  Cancel
+                </Button>
+
+                <Button
+                  variant="contained"
+                  onClick={handleUploadEndItems}
+                  loading={status === 'uploading'}
+                  loadingPosition={'start'}
+                >
+                  Upload
+                </Button>
+              </ButtonGroup>
+            </>
+          )}
+
+          {file && itemType === 'components' && (
+            <>
+              <ButtonGroup
+                variant="outlined"
+                aria-label="component-button-group"
+              >
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    clearAllStates();
+                  }}
+                  disabled={status === 'uploading'}
+                >
+                  Cancel
+                </Button>
+
+                <Button
+                  variant="contained"
+                  onClick={handleUploadComponents}
+                  loading={status === 'uploading'}
+                  loadingPosition={'start'}
+                >
+                  Upload
+                </Button>
+              </ButtonGroup>
+            </>
           )}
 
           {previewData && (
@@ -266,38 +388,6 @@ export default function IngestItems({ uic }) {
               </table>
             </div>
           )}
-
-          <Stack
-            alignItems="center"
-            justifyContent="center"
-            alignSelf="center"
-            justifySelf="center"
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' },
-              gap: '1rem',
-            }}
-          >
-            <Button
-              variant="contained"
-              size="large"
-              startIcon={<UploadFileIcon />}
-              onClick={handleUploadComponents}
-              sx={{ alignSelf: 'center', minWidth: 320 }}
-            >
-              Upload Components
-            </Button>
-
-            <Button
-              variant="contained"
-              size="large"
-              startIcon={<UploadFileIcon />}
-              onClick={handleUploadEndItems}
-              sx={{ alignSelf: 'center', minWidth: 320 }}
-            >
-              Upload End-Items
-            </Button>
-          </Stack>
         </Stack>
       </Container>
     </div>

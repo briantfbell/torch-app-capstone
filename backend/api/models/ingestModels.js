@@ -46,7 +46,7 @@ exports.insertComponent = async (obj, userId, uicId) => {
 
   if (!end_item) {
     const error = new Error(
-      `No end item exists for NIIN: ${obj.niin}. Upload associated end item first.`,
+      `No end item exists for LIN: ${obj.end_item_lin}. Upload associated end item first.`,
     );
     error.status = 400;
     throw error;

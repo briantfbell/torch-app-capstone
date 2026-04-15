@@ -1,5 +1,6 @@
 const currentHistoryComponentsModels = require('../models/currentHistoryComponentsModels');
 const serialComponentsModels = require('../models/serialComponentsModels');
+const endItemsModels = require('../models/endItemsModels');
 
 exports.getComponentCurrentHistory = async query => {
   return await currentHistoryComponentsModels.getComponentCurrentHistory(query);
@@ -30,6 +31,23 @@ exports.getComponentCurrentHistoryById = async id => {
   return record;
 };
 
+exports.getComponentsCurrentHistoryByEndItemId = async id => {
+  const endItem = await endItemsModels.getEndItemById(id);
+
+  if (!endItem) {
+    const error = new Error('End item does not exist.');
+    error.status = 404;
+    throw error;
+  }
+
+  const components =
+    await currentHistoryComponentsModels.getComponentsCurrentHistoryByEndItemId(
+      id,
+    );
+
+  return components;
+};
+
 exports.createComponentCurrentHistory = async ({
   component_id,
   user_id,
@@ -47,7 +65,8 @@ exports.createComponentCurrentHistory = async ({
   let resolved_serial_number;
   if (serial_number) {
     const serial_component_item =
-      await serialComponentsModels.getSerialComponentItemBySn(serial_number);
+      await serialComponentsModels.getSerialComponentBySn(serial_number);
+
     if (!serial_component_item) {
       const error = new Error(`Serial number ${serial_number} not found.`);
       error.status = 404;
@@ -81,7 +100,7 @@ exports.updateComponentCurrentHistory = async (id, currentHistoryData) => {
       await currentHistoryComponentsModels.getComponentCurrentHistoryBySn(
         currentHistoryData.serial_number,
       );
-    if (conflict && conflict.id !== id) {
+    if (conflict && conflict.id !== Number(id)) {
       const error = new Error(
         `Serial number ${currentHistoryData.serial_number} already has a current history record.`,
       );
