@@ -15,7 +15,7 @@ exports.insertSerializedItem = async (obj, userId, uicId) => {
   }
 
   await db.transaction(async trx => {
-    const endItem = await trx('end_items')
+    let endItem = await trx('end_items')
       .where({ fsc: obj.fsc, niin: obj.niin, lin: obj.lin })
       .select('id', 'cost')
       .first();

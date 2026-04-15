@@ -13,7 +13,7 @@ exports.ingestComponents = async (req, res) => {
 
   const isAdmin = req.user.role?.includes('admin');
   const uicId = isAdmin
-    ? (req.params.uic_id ?? req.user.uic_id)
+    ? (req.params.uic_id ? parseInt(req.params.uic_id, 10) : req.user.uic_id)
     : req.user.uic_id;
 
   try {
@@ -41,7 +41,7 @@ exports.ingestEndItems = async (req, res) => {
 
   const isAdmin = req.user.role?.includes('admin');
   const uicId = isAdmin
-    ? (req.params.uic_id ?? req.user.uic_id)
+    ? (req.params.uic_id ? parseInt(req.params.uic_id, 10) : req.user.uic_id)
     : req.user.uic_id;
 
   try {

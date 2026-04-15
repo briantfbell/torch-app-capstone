@@ -286,11 +286,11 @@ export default function IngestItems({ uic }) {
             {status === 'partial' && (
               <div>
                 <div>Upload partially successful.</div>
-                <ul style={{ textAlign: 'left', marginTop: 8 }}>
+                <div style={{ textAlign: 'center', marginTop: 8 }}>
                   {warnings.map((w, i) => (
-                    <li key={i}>{w}</li>
+                    <div key={i} style={{ whiteSpace: 'pre-line' }}>{w}</div>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
           </Stack>

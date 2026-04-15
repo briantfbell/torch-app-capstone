@@ -69,24 +69,28 @@ exports.ingestComponents = async (file, user, uic) => {
     insertedCount++;
   }
 
-  if (insertedCount === 0) {
-    const uicString = await getUicString(uic);
-    const uicLabel = uicString ? ` for UIC ${uicString}` : '';
-    const error = new Error(`No new data${uicLabel}.`);
-    error.status = 400;
-    throw error;
-  }
-
   const warnings = [];
+
   if (crossUicSns.length > 0) {
     warnings.push(
       `The following SNs are assigned to another UIC and were skipped: ${crossUicSns.join(', ')}.`,
     );
   }
+
   if (missingEndItemLins.size > 0) {
     warnings.push(
-      `The following components were skipped because their end items have not been uploaded yet. Upload end items with these LINs first: ${[...missingEndItemLins].join(', ')}.`,
+      `Components were skipped because their end items have not been uploaded yet. Upload end items with these LINs first:\n\n${[...missingEndItemLins].join(', ')}.`,
     );
+  }
+
+  if (
+    insertedCount === 0 &&
+    crossUicSns.length < 1 &&
+    missingEndItemLins.size < 1
+  ) {
+    const uicString = await getUicString(uic);
+    const uicLabel = uicString ? ` for UIC ${uicString}` : '';
+    warnings.push(`No new data${uicLabel}.`);
   }
 
   return warnings.length > 0 ? { warnings } : null;
@@ -136,7 +140,7 @@ exports.ingestEndItems = async (file, user, uic) => {
     insertedCount++;
   }
 
-  if (insertedCount === 0) {
+  if (insertedCount === 0 && crossUicSns.length < 1) {
     const uicString = await getUicString(uic);
     const uicLabel = uicString ? ` for UIC ${uicString}` : '';
     const error = new Error(`No new data${uicLabel}.`);
@@ -147,7 +151,7 @@ exports.ingestEndItems = async (file, user, uic) => {
   if (crossUicSns.length > 0) {
     return {
       warnings: [
-        `The following SNs are assigned to another UIC and were skipped: ${crossUicSns.join(', ')}.`,
+        `The following SNs are assigned to another UIC and were skipped:\n\n${crossUicSns.join(', ')}.`,
       ],
     };
   }
