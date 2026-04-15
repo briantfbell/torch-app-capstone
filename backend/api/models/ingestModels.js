@@ -11,12 +11,11 @@ exports.insertSerializedItem = async (obj, userId, uicId) => {
 
   if (match) {
     duplicates.push(match);
-    console.log(match, duplicates);
     return;
   }
 
   await db.transaction(async trx => {
-    let endItem = await trx('end_items')
+    const endItem = await trx('end_items')
       .where({ fsc: obj.fsc, niin: obj.niin, lin: obj.lin })
       .select('id', 'cost')
       .first();

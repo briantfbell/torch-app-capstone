@@ -17,7 +17,14 @@ exports.ingestComponents = async (req, res) => {
     : req.user.uic_id;
 
   try {
-    await ingestServices.ingestComponents(req.file, req.user, uicId);
+    const result = await ingestServices.ingestComponents(req.file, req.user, uicId);
+
+    if (result?.warnings?.length) {
+      return res.status(200).json({
+        message: 'Upload partially successful.',
+        warnings: result.warnings,
+      });
+    }
 
     res.status(201).json({ message: 'Upload successful.' });
   } catch (err) {
@@ -38,7 +45,14 @@ exports.ingestEndItems = async (req, res) => {
     : req.user.uic_id;
 
   try {
-    await ingestServices.ingestEndItems(req.file, req.user, uicId);
+    const result = await ingestServices.ingestEndItems(req.file, req.user, uicId);
+
+    if (result?.warnings?.length) {
+      return res.status(200).json({
+        message: 'Upload partially successful.',
+        warnings: result.warnings,
+      });
+    }
 
     res.status(201).json({ message: 'Upload successful.' });
   } catch (err) {

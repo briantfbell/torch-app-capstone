@@ -78,7 +78,6 @@ exports.create = async (req, res) => {
       message: `ID: ${newCurrentHistory.id} has been successfully created.`,
     });
   } catch (err) {
-    console.log(err);
     res
       .status(err.status || 500)
       .json({ message: err.message || 'Internal server error.' });

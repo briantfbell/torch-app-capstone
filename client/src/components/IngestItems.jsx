@@ -17,6 +17,7 @@ export default function IngestItems({ uic }) {
   const [itemType, setItemType] = useState(null);
   const [status, setStatus] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [warnings, setWarnings] = useState([]);
   const [previewData, setPreviewData] = useState(null);
   const [schemaColumns, setSchemaColumns] = useState(null);
   const fileInputRef = useRef(null);
@@ -24,21 +25,30 @@ export default function IngestItems({ uic }) {
   const setFailureStates = body => {
     setStatus('fail');
     setErrorMessage(body.message || 'Upload failed.');
+    setWarnings([]);
     setFile(null);
     setItemType(null);
     setPreviewData(null);
   };
 
-  const setSuccessStates = () => {
-    setStatus('success');
+  const setSuccessStates = (body = {}) => {
+    if (body.warnings?.length) {
+      setStatus('partial');
+      setWarnings(body.warnings);
+    } else {
+      setStatus('success');
+      setWarnings([]);
+    }
     setErrorMessage(null);
     setFile(null);
     setItemType(null);
     setPreviewData(null);
   };
+
   const clearAllStates = () => {
     setStatus(null);
     setErrorMessage(null);
+    setWarnings([]);
     setFile(null);
     setItemType(null);
     setPreviewData(null);
@@ -144,7 +154,7 @@ export default function IngestItems({ uic }) {
       const body = await response.json();
 
       if (response.ok) {
-        setSuccessStates();
+        setSuccessStates(body);
       } else {
         setFailureStates(body);
       }
@@ -173,7 +183,7 @@ export default function IngestItems({ uic }) {
       const body = await response.json();
 
       if (response.ok) {
-        setSuccessStates();
+        setSuccessStates(body);
       } else {
         setFailureStates(body);
       }
@@ -269,10 +279,20 @@ export default function IngestItems({ uic }) {
             </div>
           )}
 
-          <Stack textAlign={'center'}>
+          <Stack textAlign={'center'} spacing={1}>
             {status === 'success' && <div>Upload successful!</div>}
             {status === 'fail' && <div>{errorMessage}</div>}
             {status === 'uploading' && <div>Uploading...</div>}
+            {status === 'partial' && (
+              <div>
+                <div>Upload partially successful.</div>
+                <ul style={{ textAlign: 'left', marginTop: 8 }}>
+                  {warnings.map((w, i) => (
+                    <li key={i}>{w}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </Stack>
 
           {file && (

@@ -1,6 +1,7 @@
 const ingestModels = require('../models/ingestModels');
 const serialEndItemsModels = require('../models/serialEndItemsModels');
 const serialComponentsModels = require('../models/serialComponentsModels');
+const endItemsModels = require('../models/endItemsModels');
 const uicsModels = require('../models/uicsModels');
 const { readSheet, parseData } = require('read-excel-file/node');
 const { schema, normalizeHeaders } = require('../helpers/ingestSchema');
@@ -16,14 +17,14 @@ exports.ingestComponents = async (file, user, uic) => {
   const results = parseData(normalizeHeaders(data), schema);
   const uicId = uic ?? user.uic_id;
 
-  const errors = [];
+  const parseErrors = [];
   const objects = [];
   let row = 1;
 
   for (const { errors: errorsInRow, object } of results) {
     if (errorsInRow) {
       for (const error of errorsInRow) {
-        errors.push({ error, row });
+        parseErrors.push({ error, row });
       }
     } else {
       objects.push(object);
@@ -31,32 +32,64 @@ exports.ingestComponents = async (file, user, uic) => {
     row++;
   }
 
+  const crossUicSns = [];
+  const missingEndItemLins = new Set();
+  let insertedCount = 0;
+
   for (const obj of objects) {
     if (!obj.niin || !obj.end_item_lin) {
-      errors.push(obj);
+      parseErrors.push(obj);
+      continue;
+    }
+
+    // Check if the referenced end item exists before inserting
+    const endItem = await endItemsModels.getEndItemByLin(obj.end_item_lin);
+    if (!endItem) {
+      missingEndItemLins.add(obj.end_item_lin);
       continue;
     }
 
     if (obj.serial_number) {
-      const match = await serialComponentsModels.getSerialComponentBySn(
+      // Global SN check (null uicId = no UIC filter) to detect cross-UIC assignments
+      const globalMatch = await serialComponentsModels.getSerialComponentBySn(
         obj.serial_number,
-        uicId,
+        null,
       );
-      if (match) {
-        errors.push(obj);
+      if (globalMatch) {
+        if (globalMatch.uic_id === uicId) {
+          parseErrors.push(obj); // duplicate within the same UIC
+        } else {
+          crossUicSns.push(obj.serial_number); // already assigned to a different UIC
+        }
         continue;
       }
     }
 
     await ingestModels.insertComponent(obj, user.id, uicId);
+    insertedCount++;
   }
 
-  if (objects.length > 0 && errors.length === objects.length) {
+  if (insertedCount === 0) {
     const uicString = await getUicString(uic);
-    const error = Error(`No new data for UIC ${uicString}.`);
+    const uicLabel = uicString ? ` for UIC ${uicString}` : '';
+    const error = new Error(`No new data${uicLabel}.`);
     error.status = 400;
     throw error;
   }
+
+  const warnings = [];
+  if (crossUicSns.length > 0) {
+    warnings.push(
+      `The following SNs are assigned to another UIC and were skipped: ${crossUicSns.join(', ')}.`,
+    );
+  }
+  if (missingEndItemLins.size > 0) {
+    warnings.push(
+      `The following components were skipped because their end items have not been uploaded yet. Upload end items with these LINs first: ${[...missingEndItemLins].join(', ')}.`,
+    );
+  }
+
+  return warnings.length > 0 ? { warnings } : null;
 };
 
 exports.ingestEndItems = async (file, user, uic) => {
@@ -64,14 +97,14 @@ exports.ingestEndItems = async (file, user, uic) => {
   const results = parseData(normalizeHeaders(data), schema);
   const uicId = uic ?? user.uic_id;
 
-  const errors = [];
+  const parseErrors = [];
   const objects = [];
   let row = 1;
 
   for (const { errors: errorsInRow, object } of results) {
     if (errorsInRow) {
       for (const error of errorsInRow) {
-        errors.push({ error, row });
+        parseErrors.push({ error, row });
       }
     } else {
       objects.push(object);
@@ -79,25 +112,45 @@ exports.ingestEndItems = async (file, user, uic) => {
     row++;
   }
 
+  const crossUicSns = [];
+  let insertedCount = 0;
+
   for (const obj of objects) {
     if (obj.serial_number) {
-      const match = await serialEndItemsModels.getSerialEndItemBySn(
+      // Global SN check (null uicId = no UIC filter) to detect cross-UIC assignments
+      const globalMatch = await serialEndItemsModels.getSerialEndItemBySn(
         obj.serial_number,
-        uicId,
+        null,
       );
-
-      if (match) {
-        errors.push(obj);
-
-        if (objects.length === errors.length) {
-          const uicString = await getUicString(uic);
-          const error = Error(`No new data for UIC ${uicString}.`);
-          error.status = 400;
-          throw error;
+      if (globalMatch) {
+        if (globalMatch.uic_id === uicId) {
+          parseErrors.push(obj); // duplicate within the same UIC — skip silently
+        } else {
+          crossUicSns.push(obj.serial_number); // already assigned to a different UIC
         }
-      } else {
-        await ingestModels.insertSerializedItem(obj, user.id, uicId);
+        continue;
       }
     }
+
+    await ingestModels.insertSerializedItem(obj, user.id, uicId);
+    insertedCount++;
   }
+
+  if (insertedCount === 0) {
+    const uicString = await getUicString(uic);
+    const uicLabel = uicString ? ` for UIC ${uicString}` : '';
+    const error = new Error(`No new data${uicLabel}.`);
+    error.status = 400;
+    throw error;
+  }
+
+  if (crossUicSns.length > 0) {
+    return {
+      warnings: [
+        `The following SNs are assigned to another UIC and were skipped: ${crossUicSns.join(', ')}.`,
+      ],
+    };
+  }
+
+  return null;
 };
