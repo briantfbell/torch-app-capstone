@@ -342,16 +342,40 @@ export default function EndItemPage() {
 
                                                 <Stack spacing={1}>
                                                     {localPdfs.map((pdf) => (
-                                                        <Button
+                                                        <Box
                                                             key={pdf.id}
-                                                            variant="outlined"
+                                                            sx={{
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                gap: 1,
+                                                                border: "1px solid",
+                                                                borderColor: "divider",
+                                                                borderRadius: 1,
+                                                                p: 1,
+                                                            }}
+                                                        >
+                                                        <Button
+                                                            variant="text"
+                                                            sx={{ flex: 1, justifyContent: "flex-start" }}
                                                             onClick={() => {
-                                                                setPdfUrl(pdf.url);
-                                                                setOpenPdf(true);
+                                                            setPdfUrl(pdf.url);
+                                                            setOpenPdf(true);
                                                             }}
                                                         >
                                                             {pdf.name}
                                                         </Button>
+                                                        <IconButton
+                                                            color="error"
+                                                            size="small"
+                                                            onClick={async (e) => {
+                                                            e.stopPropagation();
+                                                            await deletePdf(pdf.id);
+                                                            loadPdfs();
+                                                            }}
+                                                        >
+                                                            <DeleteIcon />
+                                                        </IconButton>
+                                                        </Box>                                                       
                                                     ))}
                                                 </Stack>
                                             </CardContent>
