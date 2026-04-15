@@ -10,20 +10,8 @@ const columns = [
         editable: false,
     },
     {
-        field: 'fsc',
-        headerName: 'FSC',
-        flex: 1,
-        editable: false,
-    },
-    {
         field: 'lin',
         headerName: 'LIN',
-        flex: 1,
-        editable: false,
-    },
-    {
-        field: 'niin',
-        headerName: 'NIIN',
         flex: 1,
         editable: false,
     },
@@ -114,7 +102,7 @@ export default function ShortageDataGrid({rows = [], columns: columnsProp}) {
                         },
                     },
                 }}
-                pageSizeOptions={[5]}
+                pageSizeOptions={[5, 10, 25, 50, 100]}
                 disableRowSelectionOnClick
                 sx={{border: 'none'}}
             />

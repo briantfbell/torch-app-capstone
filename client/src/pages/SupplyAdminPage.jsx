@@ -1,9 +1,11 @@
 import {
+  Box,
+  Card,
+  CardContent,
   Chip,
   CircularProgress,
-  Container,
+  Divider,
   FormControl,
-  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -31,6 +33,7 @@ export default function SupplyAdminPage() {
     }
   }, [user]);
 
+
   useEffect(() => {
     if (!isAdmin) return;
 
@@ -44,100 +47,76 @@ export default function SupplyAdminPage() {
 
   if (authLoading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Stack
-          spacing={2}
-          alignItems="center"
-          justifyContent="center"
-          sx={{ minHeight: '60vh' }}
-        >
+      <Box sx={{ mx: 'auto', width: '100%', py: 4 }}>
+        <Stack spacing={2} alignItems="center" justifyContent="center" sx={{ minHeight: '60vh' }}>
           <CircularProgress />
           <Typography>Loading Admin Console...</Typography>
         </Stack>
-      </Container>
+      </Box>
     );
   }
 
   return (
-    <Stack
-      maxWidth="lg"
-      sx={{ py: 4 }}
-      alignItems="center"
-      justifyContent="center"
-      alignSelf="center"
-      justifySelf="center"
-    >
-      <Stack spacing={3} alignItems="center" justifyContent="center">
-        <Grid
-          container
-          spacing={2}
-          sx={{
-            flexDirection: { xs: 'column', sm: 'row' },
-            width: { xs: '30rem', sm: '50rem' },
-          }}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Grid
-            size={{ xs: 0, sm: 2.5 }}
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-          ></Grid>
+    <Box sx={{ mx: 'auto', width: '100%' }}>
+      <Stack spacing={3}>
+        <Card elevation={0} sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider' }}>
+          <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+            <Stack spacing={3}>
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent="space-between"
+                alignItems={{ xs: 'flex-start', sm: 'center' }}
+                spacing={2}
+              >
+                <Stack spacing={0.5}>
+                  <Typography variant="overline" color="primary" fontWeight={700}>
+                    Admin Console
+                  </Typography>
+                  <Typography variant="h4" fontWeight={800}>
+                    Supply Admin Dashboard
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Upload CSV, XLSX, or XLS files to ingest end items or components.
+                  </Typography>
+                </Stack>
 
-          <Grid size={{ xs: 12, sm: 7 }} spacing={0.5}>
-            <Typography variant="h4" fontWeight={700} textAlign="center">
-              Supply Admin Dashboard
-            </Typography>
+                {isAdmin ? (
+                  <FormControl sx={{ minWidth: '9rem' }}>
+                    <InputLabel id="uic-select-label">Select a UIC</InputLabel>
+                    <Select
+                      labelId="uic-select-label"
+                      id="uic-select"
+                      value={selectedUic?.uicId ?? ''}
+                      label="Select a UIC"
+                      onChange={e =>
+                        setAdminSelectedUic(
+                          uics.find(u => u.uicId === e.target.value),
+                        )
+                      }
+                    >
+                      {uics.map(u => (
+                        <MenuItem key={u.uicId} value={u.uicId}>
+                          {u.uicName}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                ) : (
+                  <Chip
+                    label={user?.uic ? `UIC: ${user.uic}` : 'No UIC assigned'}
+                    variant="outlined"
+                    color="primary"
+                  />
+                )}
+              </Stack>
 
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              textAlign="center"
-            >
-              Upload CSV, XLSX, or XLS files
-            </Typography>
-          </Grid>
+              <Divider />
 
-          <Grid
-            size={{ xs: 12, sm: 2.5 }}
-            sx={{
-              display: 'flex',
-              justifyContent: { xs: 'center', sm: 'flex-start' },
-            }}
-          >
-            {isAdmin ? (
-              <FormControl sx={{ minWidth: '9rem' }}>
-                <InputLabel id="select-label">Select a UIC</InputLabel>
-
-                <Select
-                  labelId="select-label"
-                  id="select"
-                  value={selectedUic?.uicId ?? ''}
-                  label=""
-                  onChange={e =>
-                    setAdminSelectedUic(
-                      uics.find(u => u.uicId === e.target.value),
-                    )
-                  }
-                >
-                  {uics.map(u => (
-                    <MenuItem key={u.uicId} value={u.uicId}>
-                      {u.uicName}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ) : (
-              <Chip
-                label={user?.uic ? `UIC: ${user.uic}` : 'No UIC assigned'}
-                variant="outlined"
-                color="primary"
-              />
-            )}
-          </Grid>
-        </Grid>
-
-        <IngestItems uic={selectedUic} />
+              <IngestItems uic={selectedUic} />
+            </Stack>
+          </CardContent>
+        </Card>
       </Stack>
-    </Stack>
+    </Box>
   );
 }
