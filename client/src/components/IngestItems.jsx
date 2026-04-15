@@ -90,14 +90,6 @@ export default function IngestItems({ uic }) {
         setSchemaColumns(new Set(columns.map(normalizeStr))),
       )
       .catch(() => {});
-    fetch('http://localhost:8080/ingest/schema', {
-      credentials: 'include',
-    })
-      .then(res => res.json())
-      .then(({ columns }) =>
-        setSchemaColumns(new Set(columns.map(normalizeStr))),
-      )
-      .catch(() => {});
   }, []);
 
   const handleUploadEndItems = async () => {
@@ -121,13 +113,10 @@ export default function IngestItems({ uic }) {
 
       if (response.ok) {
         setSuccessStates();
-        setSuccessStates();
       } else {
-        setFailureStates(body);
         setFailureStates(body);
       }
     } catch (err) {
-      setFailureStates(err);
       setFailureStates(err);
     }
   };
@@ -153,28 +142,14 @@ export default function IngestItems({ uic }) {
 
       if (response.ok) {
         setSuccessStates();
-        setSuccessStates();
       } else {
-        setFailureStates(body);
         setFailureStates(body);
       }
     } catch (err) {
       setFailureStates(err);
-      setFailureStates(err);
     }
   };
 
-  // const VisuallyHiddenInput = styled('input')({
-  //   clip: 'rect(0 0 0 0)',
-  //   clipPath: 'inset(50%)',
-  //   height: 1,
-  //   overflow: 'hidden',
-  //   position: 'absolute',
-  //   bottom: 0,
-  //   left: 0,
-  //   whiteSpace: 'nowrap',
-  //   width: 1,
-  // });
   // const VisuallyHiddenInput = styled('input')({
   //   clip: 'rect(0 0 0 0)',
   //   clipPath: 'inset(50%)',
