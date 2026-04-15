@@ -32,7 +32,10 @@ exports.ingestComponents = async (file, user, uic) => {
   }
 
   for (const obj of objects) {
-    if (!obj.niin || !obj.end_item_lin) continue;
+    if (!obj.niin || !obj.end_item_lin) {
+      errors.push(obj);
+      continue;
+    }
 
     if (obj.serial_number) {
       const match = await serialComponentsModels.getSerialComponentBySn(
