@@ -11,7 +11,6 @@ import {
   Chip,
   CircularProgress,
   Collapse,
-  Container,
   Divider,
   InputAdornment,
   MenuItem,
@@ -31,29 +30,24 @@ import PdfModalViewer from "../components/PdfModalViewer";
 
 const str = (val) => (val == null ? "" : String(val));
 
-function SerialChip({ serial, index, onClick }) {
-  const isVerified = serial.status === "verified";
+function SerialChip({ serial, index, isSeen, onClick }) {
   return (
     <Chip
-      label={`S/N #${index + 1} - ${serial.serial_number}`}
+      label={`#${index + 1} — ${serial.serial_number}`}
       onClick={(e) => {
         e.stopPropagation();
         onClick(serial);
       }}
       sx={{
-        width: "100%",
         border: "2px solid",
-        borderColor: isVerified ? "success.main" : "error.main",
-        // color: isVerified ? "success.dark" : "error.dark",
-        color: "text.primary",
-        backgroundColor: isVerified ? "success.50" : "error.50",
-        fontWeight: 400,
+        borderColor: isSeen ? "success.main" : "error.main",
+        fontWeight: 600,
         fontSize: "0.8rem",
         height: 36,
         px: 1,
         cursor: "pointer",
         "&:hover": {
-          backgroundColor: isVerified ? "success.100" : "error.100",
+          opacity: 0.85,
           transform: "scale(1.03)",
           transition: "transform 0.15s",
         },
@@ -62,43 +56,31 @@ function SerialChip({ serial, index, onClick }) {
   );
 }
 
-function GroupedEndItemCard({ group, onCardClick, onSerialClick, selected }) {
+function GroupedEndItemCard({
+  group,
+  onSerialClick,
+  selected,
+  seenBySerialId,
+}) {
   const [expanded, setExpanded] = useState(false);
   const { representative, serials } = group;
 
-  const verifiedCount = serials.filter(
-    (s) => s.status === "inventoried",
-  ).length;
+  const verifiedCount = serials.filter((s) => seenBySerialId[s.id]).length;
   const needsVerifyCount = serials.length - verifiedCount;
   const allVerified = serials.length > 0 && verifiedCount === serials.length;
-
-  const firstSerial = serials[0];
-
-  const handleCardClick = () => {
-    if (firstSerial) onCardClick(firstSerial.end_item_id);
-    else onCardClick(representative.id);
-  };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <Card
         variant="outlined"
-        onClick={handleCardClick}
         sx={{
-          borderColor: selected ? "primary.main" : "grey.300",
-          borderWidth: 1,
+          borderColor: selected ? "primary.main" : "grey.500",
+          borderWidth: 1.5,
           borderBottomLeftRadius: serials.length > 0 ? 0 : undefined,
           borderBottomRightRadius: serials.length > 0 ? 0 : undefined,
           borderBottom: serials.length > 0 ? "none" : undefined,
-          backgroundColor: selected ? "primary.light" : "background.paper",
-          transition: "box-shadow 0.2s, border-color 0.2s, transform 0.15s",
-          cursor: "pointer",
-          "&:hover": {
-            boxShadow: 3,
-            backgroundColor: (theme) =>
-              theme.palette.mode === "dark" ? "#202425" : "#cfcfcf",
-            borderColor: "primary.main",
-          },
+          backgroundColor: "background.paper",
+          boxShadow: 3,
         }}
       >
         <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
@@ -122,9 +104,9 @@ function GroupedEndItemCard({ group, onCardClick, onSerialClick, selected }) {
                 <Typography
                   variant="caption"
                   color={allVerified ? "success.main" : "error.main"}
-                  fontWeight={600}
+                  fontWeight={700}
                 >
-                  {allVerified ? "Inventory Complete" : "Needs Inventoried"}
+                  {allVerified ? "Verified" : "Needs Verification"}
                 </Typography>
               </Box>
               <Chip
@@ -175,23 +157,19 @@ function GroupedEndItemCard({ group, onCardClick, onSerialClick, selected }) {
                 { label: "NIIN", value: representative.niin },
               ].map(({ label, value }) => (
                 <Box key={label} textAlign="center">
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    fontWeight={600}
+                  >
                     {label}
                   </Typography>
-                  <Typography variant="body2" fontWeight={600}>
+                  <Typography variant="body2" fontWeight={700}>
                     {str(value)}
                   </Typography>
                 </Box>
               ))}
             </Stack>
-
-            <Typography
-              variant="caption"
-              color="text.disabled"
-              sx={{ fontStyle: "italic" }}
-            >
-              Tap to view details
-            </Typography>
           </Stack>
         </CardContent>
       </Card>
@@ -204,16 +182,17 @@ function GroupedEndItemCard({ group, onCardClick, onSerialClick, selected }) {
           elevation={0}
           TransitionProps={{ unmountOnExit: true }}
           sx={{
-            border: "1px solid",
-            borderColor: selected ? "primary.main" : "grey.300",
+            border: "1.5px solid",
+            borderColor: selected ? "primary.main" : "grey.500",
             borderTop: "1px solid",
-            borderTopColor: "grey.200",
+            borderTopColor: "grey.300",
             borderBottomLeftRadius: "4px !important",
             borderBottomRightRadius: "4px !important",
             borderTopLeftRadius: "0 !important",
             borderTopRightRadius: "0 !important",
             "&:before": { display: "none" },
             backgroundColor: "background.paper",
+            boxShadow: 3,
           }}
         >
           <AccordionSummary
@@ -232,12 +211,12 @@ function GroupedEndItemCard({ group, onCardClick, onSerialClick, selected }) {
               alignItems="center"
               flexWrap="wrap"
             >
-              <Typography variant="caption" fontWeight={600}>
-                View by Serial Number:
+              <Typography variant="caption" fontWeight={700}>
+                Verify Serial Numbers:
               </Typography>
               {verifiedCount > 0 && (
                 <Chip
-                  label={`${needsVerifyCount} ${needsVerifyCount === 1 ? "Item Found" : "Items Found"}`}
+                  label={`${verifiedCount} Verified`}
                   size="small"
                   color="success"
                   variant="outlined"
@@ -246,7 +225,7 @@ function GroupedEndItemCard({ group, onCardClick, onSerialClick, selected }) {
               )}
               {needsVerifyCount > 0 && (
                 <Chip
-                  label={`${needsVerifyCount} ${needsVerifyCount === 1 ? "Item Found" : "Items Found"}`}
+                  label={`${needsVerifyCount} Verify`}
                   size="small"
                   color="error"
                   variant="outlined"
@@ -264,22 +243,17 @@ function GroupedEndItemCard({ group, onCardClick, onSerialClick, selected }) {
             >
               Tap a serial number to view its details
             </Typography>
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 1.5,
-              }}
-            >
+            <Stack direction="row" flexWrap="wrap" gap={1.5}>
               {serials.map((serial, index) => (
                 <SerialChip
                   key={serial.id}
                   serial={serial}
                   index={index}
+                  isSeen={seenBySerialId[serial.id] ?? false}
                   onClick={() => onSerialClick(serial)}
                 />
               ))}
-            </Box>
+            </Stack>
           </AccordionDetails>
         </Accordion>
       )}
@@ -297,6 +271,7 @@ export default function EquipmentPage() {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [endItems, setEndItems] = useState([]);
   const [serialItems, setSerialItems] = useState([]);
+  const [historyItems, setHistoryItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uic, setUic] = useState("");
   const [openPdf, setOpenPdf] = useState(false);
@@ -325,10 +300,14 @@ export default function EquipmentPage() {
       fetch("http://localhost:8080/serial-items", {
         credentials: "include",
       }).then((r) => r.json()),
+      fetch("http://localhost:8080/current-history/end-items", {
+        credentials: "include",
+      }).then((r) => r.json()),
     ])
-      .then(([endData, serialData]) => {
-        setEndItems(endData.allEndItems);
+      .then(([endData, serialData, historyData]) => {
+        setEndItems(endData.allEndItems ?? []);
         setSerialItems(serialData.allSerialEndItems ?? []);
+        setHistoryItems(historyData.currentHistory ?? []);
         setLoading(false);
       })
       .catch((err) => {
@@ -337,12 +316,16 @@ export default function EquipmentPage() {
       });
   }, []);
 
-  // Diagnostic — remove once working
-  useEffect(() => {
-    console.log("serialItems updated:", serialItems.length, serialItems[0]);
-  }, [serialItems]);
+  const seenBySerialId = useMemo(() => {
+    const map = {};
+    historyItems.forEach((h) => {
+      if (h.serial_number != null) {
+        map[h.serial_number] = h.seen === true;
+      }
+    });
+    return map;
+  }, [historyItems]);
 
-  // Each end_item_id maps to an ARRAY of serials
   const serialByEndItemId = useMemo(() => {
     const map = {};
     serialItems.forEach((s) => {
@@ -352,7 +335,6 @@ export default function EquipmentPage() {
     return map;
   }, [serialItems]);
 
-  // Group end items by LIN+NIIN+FSC+description, spreading all matching serials in
   const groupedItems = useMemo(() => {
     const groupMap = {};
     endItems.forEach((item) => {
@@ -390,7 +372,7 @@ export default function EquipmentPage() {
         descFilter === ALL || str(r.description) === descFilter;
 
       const verifiedCount = group.serials.filter(
-        (s) => s.status === "verified",
+        (s) => seenBySerialId[s.id],
       ).length;
       const needsVerify = verifiedCount < group.serials.length;
       const allVerified =
@@ -418,6 +400,7 @@ export default function EquipmentPage() {
     fscFilter,
     descFilter,
     verificationFilter,
+    seenBySerialId,
   ]);
 
   const linOptions = useMemo(() => {
@@ -617,18 +600,13 @@ export default function EquipmentPage() {
     setVerificationFilter(VERIFICATION_ALL);
   };
 
-  const handleCardClick = (endItemId) => {
-    setSelectedGroup(endItemId);
-    navigate(`/equipment/${endItemId}`);
-  };
-
   const handleSerialClick = (serial) => {
     navigate(`/equipment/${serial.end_item_id}?serialId=${serial.id}`);
   };
 
   if (loading) {
     return (
-      <Box sx={{ mx: "auto", width: "100%", py: 4 }}>
+      <Box sx={{ mx: "auto", width: "100%", py: 4, minHeight: "100vh" }}>
         <Stack
           spacing={2}
           alignItems="center"
@@ -643,8 +621,50 @@ export default function EquipmentPage() {
   }
 
   return (
-    <Box sx={{ mx: "auto", width: "100%", py: 4 }}>
-      <Stack spacing={3}>
+    <Box sx={{ mx: "auto", width: "100%", py: 4, minHeight: "100vh" }}>
+      <Stack spacing={3} sx={{ px: { xs: 2, sm: 3 } }}>
+        {/* Header */}
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          width="100%"
+        >
+          <Box sx={{ minWidth: 120 }} />
+          <Stack alignItems="center" spacing={0.5}>
+            <Typography variant="h4" fontWeight={700}>
+              Equipment
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Unit property and end item list
+            </Typography>
+          </Stack>
+          <Chip
+            label={uic ? `UIC: ${uic}` : "Loading..."}
+            variant="outlined"
+            color="primary"
+            sx={{ minWidth: 120 }}
+          />
+        </Stack>
+
+        <Divider />
+
+        {/* Sub Hand Receipt */}
+        <Stack alignItems="center">
+          <Button
+            variant="contained"
+            startIcon={<PictureAsPdfIcon />}
+            onClick={() => setOpenPdf(true)}
+            sx={{
+              minWidth: { xs: "100%", sm: 400 },
+              py: 1.5,
+              fontSize: "1rem",
+            }}
+          >
+            Sub Hand Receipt PDF
+          </Button>
+        </Stack>
+
         <PdfModalViewer
           open={openPdf}
           onClose={() => setOpenPdf(false)}
@@ -652,7 +672,15 @@ export default function EquipmentPage() {
         />
 
         {/* End Items card */}
-        <Card variant="outlined">
+        <Card
+          variant="outlined"
+          sx={{
+            backgroundColor: "background.paper",
+            boxShadow: 3,
+            borderColor: "grey.500",
+            borderWidth: 1.5,
+          }}
+        >
           <CardContent>
             {/* Title + count */}
             <Stack
@@ -661,32 +689,18 @@ export default function EquipmentPage() {
               alignItems="center"
               mb={2}
             >
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <Chip
-                  label={uic ? `UIC: ${uic}` : "Loading..."}
-                  variant="outlined"
-                  color="primary"
-                  sx={{ minWidth: 120 }}
-                />
-                <Typography
-                  variant="subtitle1"
-                  fontWeight={600}
-                  letterSpacing={1}
-                >
-                  Accountable End Items
-                </Typography>
-              </Stack>
-
-              <Button
-                variant="outlined"
-                startIcon={<PictureAsPdfIcon />}
-                onClick={() => setOpenPdf(true)}
-                sx={{ py: 0.75, fontSize: "0.875rem" }}
+              <Typography
+                variant="subtitle1"
+                fontWeight={700}
+                letterSpacing={1}
               >
-                Sub Hand Receipt PDF
-              </Button>
-
-              <Typography variant="caption" color="text.secondary">
+                END ITEMS
+              </Typography>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                fontWeight={600}
+              >
                 {filteredGroups.length} of {groupedItems.length} items
               </Typography>
             </Stack>
@@ -711,24 +725,20 @@ export default function EquipmentPage() {
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    "& fieldset": { borderColor: "divider" },
-                    "&:hover fieldset": { borderColor: "text.secondary" },
+                    "& fieldset": { borderColor: "grey.500" },
+                    "&:hover fieldset": { borderColor: "grey.700" },
                     "&.Mui-focused fieldset": { borderColor: "primary.main" },
                   },
                 }}
               />
               <Button
-                variant={
-                  showFilters || dropdownsActive ? "contained" : "outlined"
-                }
+                variant={dropdownsActive ? "contained" : "outlined"}
                 startIcon={<FilterListIcon />}
                 onClick={() => setShowFilters((prev) => !prev)}
                 sx={{
                   whiteSpace: "nowrap",
                   minWidth: 130,
                   py: 1.85,
-                  borderColor: "divider",
-                  "&.MuiButton-outlined": { borderColor: "divider" },
                 }}
               >
                 {dropdownsActive ? "Filtered" : "Filters"}
@@ -761,125 +771,93 @@ export default function EquipmentPage() {
 
             {/* Collapsible dropdown filters */}
             <Collapse in={showFilters}>
-              <Box
-                sx={{
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 2,
-                  p: 2,
-                  mb: 2,
-                  backgroundColor: "action.hover",
-                }}
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={2}
+                flexWrap="wrap"
+                mb={2}
               >
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  fontWeight={600}
-                  sx={{ mb: 1.5, display: "block" }}
-                >
-                  FILTER BY FIELD
-                </Typography>
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={2}
-                  flexWrap="wrap"
-                >
-                  {[
-                    {
-                      label: "LIN",
-                      id: "filter-lin",
-                      value: linFilter,
-                      options: linOptions,
-                      onChange: handleLinChange,
-                      minWidth: 140,
-                    },
-                    {
-                      label: "FSC",
-                      id: "filter-fsc",
-                      value: fscFilter,
-                      options: fscOptions,
-                      onChange: handleFscChange,
-                      minWidth: 140,
-                    },
-                    {
-                      label: "NIIN",
-                      id: "filter-niin",
-                      value: niinFilter,
-                      options: niinOptions,
-                      onChange: handleNiinChange,
-                      minWidth: 180,
-                    },
-                    {
-                      label: "Description",
-                      id: "filter-desc",
-                      value: descFilter,
-                      options: descOptions,
-                      onChange: handleDescChange,
-                      minWidth: 220,
-                      flex: 1,
-                    },
-                  ].map(
-                    ({
-                      label,
-                      id,
-                      value,
-                      options,
-                      onChange,
-                      minWidth,
-                      flex,
-                    }) => (
-                      <TextField
-                        key={label}
-                        select
-                        label={label}
-                        value={value}
-                        onChange={(e) => onChange(e.target.value)}
-                        size="small"
-                        inputProps={{ id, name: id }}
-                        sx={{
-                          minWidth: { xs: "100%", sm: minWidth },
-                          ...(flex ? { flex } : {}),
-                          backgroundColor: "background.paper",
-                          borderRadius: 1,
-                          "& .MuiSelect-select": { color: "text.primary" },
-                          "& .MuiInputLabel-root": { color: "text.secondary" },
-                          "& .MuiOutlinedInput-root": {
-                            "& fieldset": { borderColor: "divider" },
-                            "&:hover fieldset": {
-                              borderColor: "text.secondary",
-                            },
-                            "&.Mui-focused fieldset": {
-                              borderColor: "primary.main",
+                {[
+                  {
+                    label: "LIN",
+                    id: "filter-lin",
+                    value: linFilter,
+                    options: linOptions,
+                    onChange: handleLinChange,
+                    minWidth: 140,
+                  },
+                  {
+                    label: "FSC",
+                    id: "filter-fsc",
+                    value: fscFilter,
+                    options: fscOptions,
+                    onChange: handleFscChange,
+                    minWidth: 140,
+                  },
+                  {
+                    label: "NIIN",
+                    id: "filter-niin",
+                    value: niinFilter,
+                    options: niinOptions,
+                    onChange: handleNiinChange,
+                    minWidth: 180,
+                  },
+                  {
+                    label: "Description",
+                    id: "filter-desc",
+                    value: descFilter,
+                    options: descOptions,
+                    onChange: handleDescChange,
+                    minWidth: 220,
+                    flex: 1,
+                  },
+                ].map(
+                  ({ label, id, value, options, onChange, minWidth, flex }) => (
+                    <TextField
+                      key={label}
+                      select
+                      label={label}
+                      value={value}
+                      onChange={(e) => onChange(e.target.value)}
+                      size="small"
+                      inputProps={{ id, name: id }}
+                      sx={{
+                        minWidth: { xs: "100%", sm: minWidth },
+                        ...(flex ? { flex } : {}),
+                        "& .MuiSelect-select": { color: "text.primary" },
+                        "& .MuiInputLabel-root": { color: "text.secondary" },
+                        "& .MuiOutlinedInput-root": {
+                          "& fieldset": { borderColor: "grey.500" },
+                          "&:hover fieldset": { borderColor: "grey.700" },
+                          "&.Mui-focused fieldset": {
+                            borderColor: "primary.main",
+                          },
+                        },
+                      }}
+                      SelectProps={{
+                        MenuProps: {
+                          PaperProps: {
+                            sx: {
+                              bgcolor: "background.paper",
+                              "& .MuiMenuItem-root": { color: "text.primary" },
                             },
                           },
-                        }}
-                        SelectProps={{
-                          MenuProps: {
-                            PaperProps: {
-                              sx: {
-                                bgcolor: "background.paper",
-                                "& .MuiMenuItem-root": {
-                                  color: "text.primary",
-                                },
-                              },
-                            },
-                          },
-                        }}
-                      >
-                        {options.map((v) => (
-                          <MenuItem
-                            key={v}
-                            value={v}
-                            sx={{ color: "text.primary" }}
-                          >
-                            {v}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                    ),
-                  )}
-                </Stack>
-              </Box>
+                        },
+                      }}
+                    >
+                      {options.map((v) => (
+                        <MenuItem
+                          key={v}
+                          value={v}
+                          sx={{ color: "text.primary" }}
+                        >
+                          {v}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  ),
+                )}
+              </Stack>
             </Collapse>
 
             {/* Verification status toggle + clear */}
@@ -894,7 +872,7 @@ export default function EquipmentPage() {
                 <Typography
                   variant="caption"
                   color="text.secondary"
-                  fontWeight={600}
+                  fontWeight={700}
                 >
                   SHOW
                 </Typography>
@@ -905,53 +883,41 @@ export default function EquipmentPage() {
                     if (val !== null) setVerificationFilter(val);
                   }}
                   size="small"
-                  sx={{
-                    "& .MuiToggleButtonGroup-grouped": {
-                      borderColor: "divider",
-                    },
-                  }}
                 >
-                  <ToggleButton
-                    value={VERIFICATION_ALL}
-                    sx={{ px: 2, borderColor: "divider" }}
-                  >
+                  <ToggleButton value={VERIFICATION_ALL} sx={{ px: 2 }}>
                     All
                   </ToggleButton>
                   <ToggleButton
                     value={VERIFICATION_NEEDED}
                     sx={{
                       px: 2,
-                      borderColor: "divider",
                       color: "error.main",
                       "&:hover": { backgroundColor: "error.50" },
                       "&.Mui-selected": {
                         backgroundColor: "error.main",
                         color: "white",
-                        borderColor: "error.main",
                         "&:hover": { backgroundColor: "error.dark" },
                       },
                     }}
                   >
                     <ErrorOutlineIcon sx={{ fontSize: 16, mr: 0.5 }} />
-                    Needs Inventoried
+                    Needs Verification
                   </ToggleButton>
                   <ToggleButton
                     value={VERIFICATION_COMPLETE}
                     sx={{
                       px: 2,
-                      borderColor: "divider",
                       color: "success.main",
                       "&:hover": { backgroundColor: "success.50" },
                       "&.Mui-selected": {
                         backgroundColor: "success.main",
                         color: "white",
-                        borderColor: "success.main",
                         "&:hover": { backgroundColor: "success.dark" },
                       },
                     }}
                   >
                     <CheckCircleOutlineIcon sx={{ fontSize: 16, mr: 0.5 }} />
-                    Inventory Complete
+                    Verified
                   </ToggleButton>
                 </ToggleButtonGroup>
               </Stack>
@@ -1017,9 +983,9 @@ export default function EquipmentPage() {
                     <GroupedEndItemCard
                       key={group.key}
                       group={group}
-                      onCardClick={handleCardClick}
                       onSerialClick={handleSerialClick}
                       selected={selectedGroup === group.representative.id}
+                      seenBySerialId={seenBySerialId}
                     />
                   ))}
                 </Box>

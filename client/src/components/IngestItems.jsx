@@ -1,7 +1,6 @@
 import {
   Button,
   ButtonGroup,
-  Container,
   FormControl,
   InputLabel,
   MenuItem,
@@ -63,21 +62,12 @@ export default function IngestItems({ uic }) {
     setFile(selected);
     setStatus(null);
 
-    // Browser API for reading local files as raw binary data
     const reader = new FileReader();
 
-    // Fires once the file has been fully loaded into memory
     reader.onload = event => {
-      // Convert the raw ArrayBuffer into bytes that XLSX can parse
       const data = new Uint8Array(event.target.result);
-
-      // Parse the byte array into a workbook (contains all sheets)
       const workbook = XLSX.read(data, { type: 'array' });
-
-      // Grab the first sheet by name
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
-
-      // Convert the sheet into an array; row 0 will be the header row
       const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
       if (rows.length > 0) {
@@ -107,19 +97,15 @@ export default function IngestItems({ uic }) {
             }, [])
           : allHeaders.map((_, i) => i);
 
-        // Remap column names through the filtered indices
         const headers = filteredIndices.map(i => allHeaders[i]);
-
-        // Take up to 5 data rows and pluck only the schema-matching columns
         const filteredRows = rows
           .slice(1, 6)
           .map(row => filteredIndices.map(i => row[i]));
 
-        // Store headers + rows in state to render the preview table
         setPreviewData({ headers, rows: filteredRows });
       }
     };
-    // Trigger the read — fires onload when complete
+
     reader.readAsArrayBuffer(selected);
   };
 
@@ -134,7 +120,7 @@ export default function IngestItems({ uic }) {
       .catch(() => {});
   }, []);
 
-  const handleUploadEndItems = async () => {
+  const handleUpload = async () => {
     if (!file) return;
 
     setStatus('uploading');
@@ -205,78 +191,68 @@ export default function IngestItems({ uic }) {
           />
 
           {itemType === null && (
-            <div>
-              <FormControl style={{ width: '20rem' }}>
-                <InputLabel id="select-label">
-                  What kind of items are you uploading?
-                </InputLabel>
+            <FormControl sx={{ width: '100%', alignSelf: 'center' }}>
+              <InputLabel id="item-type-label">
+                What kind of items are you uploading?
+              </InputLabel>
+              <Select
+                labelId="item-type-label"
+                id="item-type-select"
+                value={itemType ?? ''}
+                label="What kind of items are you uploading?"
+                onChange={() => {}}
+              >
+                <MenuItem
+                  value="components"
+                  onClick={() => {
+                    setItemType('components');
+                    fileInputRef.current.value = null;
+                    setErrorMessage(null);
 
-                <Select
-                  labelId="select-label"
-                  id="select"
-                  value={itemType}
-                  label="What kind of items are you uploading?"
-                  onChange={() => {}}
+                    window.addEventListener(
+                      'focus',
+                      () => {
+                        setTimeout(() => {
+                          if (!fileInputRef.current?.files?.length) {
+                            clearAllStates();
+                          }
+                        }, 100);
+                      },
+                      { once: true },
+                    );
+
+                    fileInputRef.current.click();
+                  }}
                 >
-                  <MenuItem
-                    value={'components'}
-                    onClick={() => {
-                      setItemType('components');
-                      fileInputRef.current.value = null;
-                      setErrorMessage(null);
+                  Components
+                </MenuItem>
 
-                      // Create a listener for when the OS file picker closes,
-                      window.addEventListener(
-                        'focus',
-                        () => {
-                          // Small delay because focus fires
-                          // before the browser updates the input's file list
-                          setTimeout(() => {
-                            // If no file was selected (user cancelled the picker), reset state
-                            if (!fileInputRef.current?.files?.length) {
-                              clearAllStates();
-                            }
-                          }, 100);
-                        },
-
-                        // auto-removes this listener after it fires
-                        { once: true },
-                      );
-
-                      // lastly, actually click the selection
-                      fileInputRef.current.click();
-                    }}
-                  >
-                    Components
-                  </MenuItem>
-
-                  <MenuItem
-                    value={'end-items'}
-                    onClick={() => {
-                      setItemType('end-items');
-                      fileInputRef.current.value = null;
-                      setErrorMessage(null);
-                      // same as above
-                      window.addEventListener(
-                        'focus',
-                        () => {
-                          setTimeout(() => {
-                            if (!fileInputRef.current?.files?.length) {
-                              setItemType(null);
-                              setErrorMessage(null);
-                            }
-                          }, 300);
-                        },
-                        { once: true },
-                      );
-                      fileInputRef.current.click();
-                    }}
-                  >
-                    End Items
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </div>
+                <MenuItem
+                  value={'end-items'}
+                  onClick={() => {
+                    setItemType('end-items');
+                    fileInputRef.current.value = null;
+                    setErrorMessage(null);
+                    // same as above
+                    window.addEventListener(
+                      'focus',
+                      () => {
+                        setTimeout(() => {
+                          if (!fileInputRef.current?.files?.length) {
+                            setItemType(null);
+                            setErrorMessage(null);
+                          }
+                        }, 300);
+                      },
+                      { once: true },
+                    );
+                    fileInputRef.current.click();
+                  }}
+                >
+                  End Items
+                </MenuItem>
+              </Select>
+            </FormControl>
           )}
 
           <Stack textAlign={'center'} spacing={1}>
@@ -288,7 +264,9 @@ export default function IngestItems({ uic }) {
                 <div>Upload partially successful.</div>
                 <div style={{ textAlign: 'center', marginTop: 8 }}>
                   {warnings.map((w, i) => (
-                    <div key={i} style={{ whiteSpace: 'pre-line' }}>{w}</div>
+                    <div key={i} style={{ whiteSpace: 'pre-line' }}>
+                      {w}
+                    </div>
                   ))}
                 </div>
               </div>
