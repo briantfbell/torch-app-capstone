@@ -2,14 +2,7 @@
   "jest.enable": true,
   "jest.jestCommandLine": "backend/node_modules/.bin/jest",
   "jest.rootPath": "backend",
-  "cSpell.words": [
-    "dodid",
-    "niin",
-    "officedocument",
-    "openxmlformats",
-    "spreadsheetml",
-    "uics"
-  ],
+  "cSpell.words": ["dodid", "niin", "uics"],
   "sqltools.connections": [
     {
       "ssh": "Disabled",

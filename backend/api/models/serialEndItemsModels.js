@@ -21,20 +21,10 @@ exports.getSerialEndItemsByUicId = async uic_id => {
     .select('serial_end_items.*');
 };
 
-<<<<<<< HEAD
-exports.getSerialEndItemBySn = async (serial_number, uic_id) => {
-  const query = baseEndQuery().where(
-    'serial_end_items.serial_number',
-    serial_number,
-  );
-  if (uic_id != null) query.where('serial_end_items.uic_id', uic_id);
-  return await query.first();
-=======
 exports.getSerialEndItemBySn = async serial_number => {
   return await baseEndQuery()
     .where('serial_end_items.serial_number', serial_number)
     .first();
->>>>>>> 91b9bdc26931b56b4f1c55a8c2b4a2772b3a8aea
 };
 
 exports.createSerialEndItem = async (

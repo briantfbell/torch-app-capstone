@@ -5,12 +5,6 @@ exports.getIngestSchema = (_req, res) => {
   const columns = Object.values(schema).map(({ column }) => column);
   res.json({ columns });
 };
-const { schema } = require('../helpers/ingestSchema');
-
-exports.getIngestSchema = (_req, res) => {
-  const columns = Object.values(schema).map(({ column }) => column);
-  res.json({ columns });
-};
 
 exports.ingestComponents = async (req, res) => {
   if (!req.file) {
@@ -18,12 +12,10 @@ exports.ingestComponents = async (req, res) => {
   }
 
   const isAdmin = req.user.role?.includes('admin');
-  const uicId = isAdmin
-    ? (req.params.uic_id ?? req.user.uic_id)
-    : req.user.uic_id;
+  const overrideUic = isAdmin ? (req.query.uic ?? null) : null;
 
   try {
-    await ingestServices.ingestComponents(req.file, req.user, uicId);
+    await ingestServices.ingestComponents(req.file, req.user, overrideUic);
 
     res.status(201).json({ message: 'Upload successful.' });
   } catch (err) {
@@ -39,12 +31,10 @@ exports.ingestEndItems = async (req, res) => {
   }
 
   const isAdmin = req.user.role?.includes('admin');
-  const uicId = isAdmin
-    ? (req.params.uic_id ?? req.user.uic_id)
-    : req.user.uic_id;
+  const overrideUic = isAdmin ? (req.query.uic ?? null) : null;
 
   try {
-    await ingestServices.ingestEndItems(req.file, req.user, uicId);
+    await ingestServices.ingestEndItems(req.file, req.user, overrideUic);
 
     res.status(201).json({ message: 'Upload successful.' });
   } catch (err) {
