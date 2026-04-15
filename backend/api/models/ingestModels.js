@@ -27,7 +27,6 @@ exports.insertSerializedItem = async (obj, userId, uicId) => {
           auth_qty: obj.auth_qty || 1,
           cost: (Math.random() * 10000).toFixed(2),
           image: obj.image,
-          image: obj.image,
         })
         .returning(['id', 'cost']);
     }
@@ -36,7 +35,6 @@ exports.insertSerializedItem = async (obj, userId, uicId) => {
       end_item_id: endItem.id,
       serial_number: obj.serial_number,
       user_id: userId,
-      uic_id: uicId ?? null,
       uic_id: uicId ?? null,
       status: 'serviceable',
     });
@@ -78,7 +76,6 @@ exports.insertComponent = async (obj, userId, uicId) => {
         component_id: component.id,
         serial_number: obj.serial_number,
         user_id: userId,
-        uic_id: uicId ?? null,
         uic_id: uicId ?? null,
         status: 'serviceable',
       });

@@ -46,7 +46,6 @@ exports.ingestComponents = async (file, user, uic) => {
     }
 
     await ingestModels.insertComponent(obj, user.id, uicId);
-    await ingestModels.insertComponent(obj, user.id, uicId);
   }
 
   if (objects.length > 0 && errors.length === objects.length) {
