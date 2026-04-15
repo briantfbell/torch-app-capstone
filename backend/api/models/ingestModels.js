@@ -2,12 +2,16 @@ const db = require('../../db/knex');
 const endItemsModels = require('../models/endItemsModels');
 
 exports.insertSerializedItem = async (obj, userId, uicId) => {
+  const duplicates = [];
+
   const match = await db('serial_end_items')
-    .where({ serial_number: obj.serial_number, uic_id: uicId ?? null })
-    .select('id')
+    .where({ serial_number: obj.serial_number })
+    .select('serial_number')
     .first();
 
   if (match) {
+    duplicates.push(match);
+    console.log(match, duplicates);
     return;
   }
 
@@ -46,32 +50,37 @@ exports.insertComponent = async (obj, userId, uicId) => {
 
   if (!end_item) {
     const error = new Error(
-      `No end item exists for NIIN: ${obj.niin}. Upload associated end item first.`,
+      `No end item exists for LIN: ${obj.end_item_lin}. Upload associated end item first.`,
     );
     error.status = 400;
     throw error;
   }
 
   await db.transaction(async trx => {
-    let component = await trx('components')
-      .where({ niin: obj.niin })
-      .select('id', 'cost')
-      .first();
+    const duplicates = [];
 
-    if (!component) {
-      [component] = await trx('components')
-        .insert({
-          niin: obj.niin,
-          description: obj.description,
-          ui: obj.ui,
-          auth_qty: obj.auth_qty || 1,
-          end_item_id: end_item.id,
-          cost: (Math.random() * 1000).toFixed(2),
-        })
-        .returning(['id', 'cost']);
-    }
+    const [component] = await trx('components')
+      .insert({
+        niin: obj.niin,
+        description: obj.description,
+        ui: obj.ui,
+        auth_qty: obj.auth_qty || 1,
+        end_item_id: end_item.id,
+        cost: (Math.random() * 1000).toFixed(2),
+      })
+      .returning(['id', 'cost']);
 
     if (obj.serial_number) {
+      const match = await db('serial_component_items')
+        .where({ serial_number: obj.serial_number })
+        .select('serial_number')
+        .first();
+
+      if (match) {
+        duplicates.push(match);
+        return;
+      }
+
       await trx('serial_component_items').insert({
         component_id: component.id,
         serial_number: obj.serial_number,
@@ -79,6 +88,14 @@ exports.insertComponent = async (obj, userId, uicId) => {
         uic_id: uicId ?? null,
         status: 'serviceable',
       });
+    }
+
+    if (duplicates.length > 0) {
+      const error = new Error(
+        `The following SNs are assigned to another UIC: ${duplicates}`,
+      );
+      error.status = 400;
+      throw error;
     }
   });
 };

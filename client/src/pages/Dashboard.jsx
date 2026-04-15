@@ -3,6 +3,7 @@ import {
   Card,
   CardContent,
   Chip,
+  Divider,
   Stack,
   Tab,
   Tabs,
@@ -417,210 +418,145 @@ const Dashboard = () => {
     shortageTab === 0 ? endItemStatusRows : componentStatusRows;
   const shortageColumns = shortageTab === 0 ? undefined : componentColumns;
 
+  const cardSx = { elevation: 0, borderRadius: 4, border: "1px solid", borderColor: "divider" };
+
   return (
     <Box sx={{ mx: "auto", width: "100%" }}>
       <Stack spacing={3}>
-        <Card
-          elevation={0}
-          sx={{ borderRadius: 4, border: "1px solid", borderColor: "divider" }}
-        >
+
+        <Card elevation={0} sx={{ borderRadius: 4, border: "1px solid", borderColor: "divider" }}>
           <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-            <Stack spacing={2}>
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                justifyContent="space-between"
-                alignItems={{ xs: "flex-start", sm: "stretch" }}
-                spacing={2}
-                sx={{ width: "100%" }}
-              >
-                <Stack spacing={1} sx={{ width: "100%" }}>
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                  >
-                    <Typography
-                      variant="overline"
-                      color="primary"
-                      fontWeight={700}
-                    >
-                      Inventory Dashboard
-                    </Typography>
-                    <Box>
-                      <Chip
-                        label={`Last updated: ${lastUpdatedLabel}`}
-                        size="small"
-                        variant="outlined"
-                        color="primary"
-                      />
-                    </Box>
-                  </Stack>
-                  <Stack direction={"row"} spacing={2} sx={{ width: "100%" }}>
-                    <Card sx={{ flex: 1 }}>
-                      <CardContent>
-                        <Typography variant={"h3"} color={"primary"}>
-                          {completedPercent}%
-                        </Typography>
-                        <Typography>Inventory Completed</Typography>
-                      </CardContent>
-                    </Card>
-                    <Card sx={{ flex: 1 }}>
-                      <CardContent>
-                        <Typography variant={"h3"} color={"primary"}>
-                          {endItems.length}
-                        </Typography>
-                        <Typography>No. End Items</Typography>
-                      </CardContent>
-                    </Card>
-                    <Card sx={{ flex: 1 }}>
-                      <CardContent>
-                        <Typography variant={"h3"} color={"error"}>
-                          {shortEndItems.length}
-                        </Typography>
-                        <Typography>No. End Items w/ Shortages</Typography>
-                      </CardContent>
-                    </Card>
-                    <Card sx={{ flex: 1 }}>
-                      <CardContent>
-                        <Typography variant={"h3"} color={"info"}>
-                          {overEndItems.length}
-                        </Typography>
-                        <Typography>No. End Items Over Auth Qty</Typography>
-                      </CardContent>
-                    </Card>
-                  </Stack>
+            <Stack spacing={3}>
+              <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                <Stack spacing={0.5}>
+                  <Typography variant="overline" color="primary" fontWeight={700}>
+                    Inventory Dashboard
+                  </Typography>
+                  <Typography variant="h4" fontWeight={800}>
+                    Unit Readiness Overview
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Live inventory status across all end items and components.
+                  </Typography>
                 </Stack>
+                <Chip
+                  label={`Updated: ${lastUpdatedLabel}`}
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                />
+              </Stack>
+
+              <Divider />
+
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                {[
+                  { value: `${completedPercent}%`, label: "Inventory Completed", color: "primary" },
+                  { value: endItems.length, label: "Total End Items", color: "primary" },
+                  { value: shortEndItems.length, label: "End Items w/ Shortages", color: "error" },
+                  { value: overEndItems.length, label: "End Items Over Auth Qty", color: "info" },
+                ].map(({ value, label, color }) => (
+                  <Card key={label} elevation={0} sx={{ flex: 1, borderRadius: 3, border: "1px solid", borderColor: "divider" }}>
+                    <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+                      <Typography variant="h3" color={color} fontWeight={700}>
+                        {value}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {label}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                ))}
               </Stack>
             </Stack>
           </CardContent>
         </Card>
 
-        <Stack direction={{ xs: "column", lg: "row" }} spacing={2}>
-          <Card
-            elevation={0}
-            sx={{
-              borderRadius: 4,
-              border: "1px solid",
-              borderColor: "divider",
-              flexGrow: 2,
-            }}
-          >
+        <Stack direction={{ xs: "column", lg: "row" }} spacing={3}>
+          <Card elevation={0} sx={{ borderRadius: 4, border: "1px solid", borderColor: "divider", flexGrow: 2 }}>
             <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-              <Stack spacing={2}>
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  justifyContent="space-between"
-                  alignItems={{ xs: "flex-start", sm: "center" }}
-                  spacing={2}
-                >
-                  <Stack spacing={5}>
-                    <Stack>
-                      <Typography
-                        variant="overline"
-                        color="primary"
-                        fontWeight={700}
-                      >
-                        Inventory completion rate per End Item
-                      </Typography>
-                      <Typography variant={"overline"}>
-                        A lower percentage may indicate shortages, incomplete
-                        inventory, or both.
-                      </Typography>
-                    </Stack>
-                    <Stack direction={"column"} spacing={2}>
-                      <Typography variant={"overline"}>
-                        End Item Status
-                      </Typography>
-                      <PieChart
-                        series={[{ data: pieCompletedData, innerRadius: 90 }]}
-                        {...pieChartSize}
-                      >
-                        <PieCenterLabel>{completedPercent}</PieCenterLabel>
-                      </PieChart>
-                      <BarChart
-                        dataset={shortageDataset}
-                        yAxis={[
-                          { scaleType: "band", dataKey: "name", width: 150 },
-                        ]}
-                        series={[
-                          {
-                            dataKey: "percent",
-                            valueFormatter: (value) => `${value}%`,
-                            barLabel: (v) => `${v.value}%`,
-                          },
-                        ]}
-                        layout="horizontal"
-                        {...barChartSettings}
-                      />
-                    </Stack>
-                  </Stack>
+              <Stack spacing={3}>
+                <Stack spacing={0.75}>
+                  <Typography variant="h6" fontWeight={700}>
+                    Completion Rate
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Inventory completion per end item. A lower percentage may indicate shortages or incomplete inventory.
+                  </Typography>
+                </Stack>
+
+                <Divider />
+
+                <Stack spacing={2}>
+                  <Typography variant="overline" color="primary" fontWeight={700}>
+                    End Item Status
+                  </Typography>
+                  <PieChart
+                    colors={["#59b600", "#ff4e4e"]}
+                    series={[{ data: pieCompletedData, innerRadius: 90 }]}
+                    {...pieChartSize}
+                  >
+                    <PieCenterLabel>{completedPercent}</PieCenterLabel>
+                  </PieChart>
+                  <BarChart
+                    dataset={shortageDataset}
+                    yAxis={[{ scaleType: "band", dataKey: "name", width: 150 }]}
+                    series={[
+                      {
+                        dataKey: "percent",
+                        valueFormatter: (value) => `${value}%`,
+                        barLabel: (v) => `${v.value}%`,
+                      },
+                    ]}
+                    layout="horizontal"
+                    {...barChartSettings}
+                  />
                 </Stack>
               </Stack>
             </CardContent>
           </Card>
-          <Card
-            elevation={0}
-            sx={{
-              borderRadius: 4,
-              border: "1px solid",
-              borderColor: "divider",
-              flexGrow: 1,
-            }}
-          >
+
+          <Card elevation={0} sx={{ borderRadius: 4, border: "1px solid", borderColor: "divider", flexGrow: 1 }}>
             <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-              <Stack spacing={2}>
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  justifyContent="space-between"
-                  alignItems={{ xs: "flex-start", sm: "center" }}
-                  spacing={2}
-                >
-                  <Stack spacing={2} width={"100%"} height={"100%"}>
-                    <Stack>
-                      <Typography
-                        variant="overline"
-                        color="primary"
-                        fontWeight={700}
-                      >
-                        Shortage Summary
-                      </Typography>
-                      <Typography variant={"overline"}>
-                        Items and components below authorized quantity
-                      </Typography>
-                    </Stack>
-                    <Tabs
-                      value={shortageTab}
-                      onChange={(_, v) => setShortageTab(v)}
-                      variant="fullWidth"
-                      sx={{ borderBottom: 1, borderColor: "divider" }}
-                    >
-                      <Tab label="End Items" />
-                      <Tab label="Components" />
-                    </Tabs>
-                    <Stack
-                      direction={"column"}
-                      borderLeft={3}
-                      borderColor={"red"}
-                      paddingLeft={2}
-                      borderRadius={2}
-                    >
-                      <Typography variant={"overline"}>
-                        Total Shortage Value
-                      </Typography>
-                      <Typography variant={"h3"} color={"error"}>
-                        {shortageValue}
-                      </Typography>
-                    </Stack>
-                    <ShortageDataGrid
-                      rows={shortageRows}
-                      columns={shortageColumns}
-                    />
-                  </Stack>
+              <Stack spacing={3} height="100%">
+                <Stack spacing={0.75}>
+                  <Typography variant="h6" fontWeight={700}>
+                    Shortage Summary
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Items and components below authorized quantity.
+                  </Typography>
                 </Stack>
+
+                <Divider />
+
+                <Tabs
+                  value={shortageTab}
+                  onChange={(_, v) => setShortageTab(v)}
+                  variant="fullWidth"
+                  sx={{ borderBottom: 1, borderColor: "divider" }}
+                >
+                  <Tab label="End Items" />
+                  <Tab label="Components" />
+                </Tabs>
+
+                <Card elevation={0} sx={{ borderRadius: 3, border: "1px solid", borderColor: "error.main" }}>
+                  <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+                    <Typography variant="body2" color="text.secondary">
+                      Total Shortage Value
+                    </Typography>
+                    <Typography variant="h4" fontWeight={800} color="error">
+                      {shortageValue}
+                    </Typography>
+                  </CardContent>
+                </Card>
+
+                <ShortageDataGrid rows={shortageRows} columns={shortageColumns} />
               </Stack>
             </CardContent>
           </Card>
         </Stack>
+
       </Stack>
     </Box>
   );

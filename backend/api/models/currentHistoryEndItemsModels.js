@@ -42,6 +42,12 @@ exports.updateCurrentHistory = async (currentHistoryId, currentHistoryData) => {
       .select('id')
       .first();
 
+    if (!serial_end_item) {
+      const error = new Error(`Serial number ${currentHistoryData.serial_number} not found.`);
+      error.status = 404;
+      throw error;
+    }
+
     currentHistoryData.serial_number = serial_end_item.id;
   }
 

@@ -5,6 +5,7 @@ const hrhAuth = require('../middleware/hrhAuth');
 const router = express.Router();
 
 const {
+  getByEndItemId,
   getAll,
   getById,
   create,
@@ -12,6 +13,7 @@ const {
   del,
 } = require('../controllers/currentHistoryComponentsControllers');
 
+router.get('/end-item/:id', auth, getByEndItemId);
 router.get('/:id', auth, getById);
 router.get('/', auth, getAll);
 router.post('/', hrhAuth, create);

@@ -32,6 +32,9 @@ GET http://localhost:8080/current-history/components
 ### GET current history for component by id
 GET http://localhost:8080/current-history/components/6
 
+### GET current history for component by end item id
+GET http://localhost:8080/current-history/components/end-item/1
+
 ### Create current history for component (with serial number)
 POST http://localhost:8080/current-history/components
 Content-Type: application/json
@@ -42,7 +45,7 @@ Content-Type: application/json
   "seen": true,
   "location": "test",
   "last_seen": "2019-12-01",
-  "serial_number": "817338633"
+  "serial_number": "SN125"
 }
 
 ### Create current history for component (without serial number)

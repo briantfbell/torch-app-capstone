@@ -21,6 +21,6 @@ router.post('/', hrhAuth, createEndItem);
 router.patch('/:id/complete', hrhAuth, markEndItemComplete);
 router.patch('/:id', hrhAuth, updateEndItem);
 router.delete('/:id', hrhAuth, deleteEndItem);
-router.put('/:id', hrhAuth, updateEndItem);
+
 
 module.exports = router;

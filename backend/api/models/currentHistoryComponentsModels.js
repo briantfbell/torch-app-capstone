@@ -11,6 +11,19 @@ exports.getComponentCurrentHistoryById = async id => {
   return await baseQuery().where('history_component_current.id', id).first();
 };
 
+exports.getComponentsCurrentHistoryByEndItemId = async id => {
+  return await db('history_component_current')
+    .join(
+      'components',
+      'history_component_current.component_id',
+      'components.id',
+    )
+    .join('end_items', 'components.end_item_id', 'end_items.id')
+    .join('serial_end_items', 'end_items.id', 'serial_end_items.end_item_id')
+    .where('serial_end_items.id', id)
+    .select('history_component_current.*', 'components.*');
+};
+
 exports.getComponentCurrentHistoryBySn = async serial_number => {
   const serial_component_item = await db('serial_component_items')
     .where('serial_component_items.serial_number', serial_number)
