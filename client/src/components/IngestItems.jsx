@@ -360,9 +360,13 @@ export default function IngestItems({ uic }) {
       {file && previewData && (
         <Stack spacing={1} alignItems="center">
           <Typography variant="body2" color="text.secondary">
-            Selected file:{' '}
+            Uploading{' '}
             <Typography component="span" variant="body2" fontWeight={600}>
-              {file.name}
+              {`"${file.name}" `}
+            </Typography>
+            as {itemType === 'components' ? 'COMPONENTS' : 'END ITEMS'} for{' '}
+            <Typography component="span" variant="body2" fontWeight={600}>
+              {uic.uicName}
             </Typography>
           </Typography>
           <ButtonGroup variant="outlined" aria-label="upload-button-group">
