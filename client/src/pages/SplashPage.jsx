@@ -105,15 +105,6 @@ export default function SplashPage() {
       <Button variant="contained" onClick={() => handleLoginState()}>
         Return to Login
       </Button>
-    <Dialog open={registerOk} onClose={() => setRegisterOk(false)}>
-          <Box sx={{ p: 4, textAlign: "center" }}>
-            <h2>Registration Successful!</h2>
-            <p>You can now log in with your new account.</p>
-            <Button variant="contained" onClick={() => setRegisterOk(false)}>
-              Close
-            </Button>
-          </Box>
-        </Dialog>
       </Stack>
   );
 
@@ -154,6 +145,15 @@ export default function SplashPage() {
         alt="Dev Team"
         sx={{ maxWidth: "100%", maxHeight: "8vh", objectFit: "contain" }}
       />
+      <Dialog open={registerOk} onClose={() => setRegisterOk(false)}>
+          <Box sx={{ p: 4, textAlign: "center" }}>
+            <h2>Registration Successful!</h2>
+            <p>You can now log in with your new account.</p>
+            <Button variant="contained" onClick={() => setRegisterOk(false)}>
+              Close
+            </Button>
+          </Box>
+      </Dialog>
     </Stack>
   );
 }
