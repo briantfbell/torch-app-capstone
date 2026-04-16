@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import Button from '@mui/material/Button'
-import { Stepper, Step, StepLabel, Checkbox, FormGroup, RadioGroup, FormControlLabel, FormLabel, FormControl, Stack, TextField, Radio, InputLabel, Select, MenuItem, Menu } from "@mui/material"
+import { Stepper, Step, StepLabel, Checkbox, FormGroup, RadioGroup, FormControlLabel, FormLabel, FormControl, Stack, TextField, Radio, InputLabel, Select, MenuItem, Menu, Tooltip } from "@mui/material"
 
 export default function RegisterForm({onSubmit, error}){
     //Form for form data (trying something new)
@@ -61,12 +61,34 @@ export default function RegisterForm({onSubmit, error}){
                 setIsValid(false);
                 return false;
             }
+
+            if(form.dodid.length !== 10){
+                setLocalError('DoDID must be 10 digits')
+                setIsValid(false);
+                return false;
+            }
+
+            if(form.phone.length < 10 || form.phone.length > 15){
+                setLocalError('Phone number must be between 10 and 15 digits')
+                setIsValid(false);
+                return false;
+            }
         }
 
         //validate assignment
         if(activeStep === 2){
             if(!form.rank || !form.uic){
                 setLocalError('All fields are required!')
+                setIsValid(false);
+                return false;
+            }
+            if(roles.length === 0){
+                setLocalError('At least one role must be selected!')
+                setIsValid(false);
+                return false;
+            }
+            if(accountType === 'user' && !roles.includes('hrh') && !roles.includes('sub-hrh') && !roles.includes('t-hrh')){
+                setLocalError('Users must have at least one HRH role!')
                 setIsValid(false);
                 return false;
             }
@@ -79,13 +101,13 @@ export default function RegisterForm({onSubmit, error}){
     }
 
     const handleNext = () => {
-        validateStep();
         if(validateStep()) setActiveStep((prev) => prev + 1)
     };
     const handleBack = () => {
         setIsValid(true);
         setActiveStep((prev) => prev - 1);
     };
+
 
     //role modification
     const [accountType, setAccountType] = useState('user'); 
@@ -101,6 +123,10 @@ export default function RegisterForm({onSubmit, error}){
             setRoles(['user'])
         }
     }
+    //Need this to check for updates
+    useEffect(() => {
+        validateStep();
+    }, [form, roles, activeStep]);
 
     const handleRoleChange = (e) => {
         const {value, checked} = e.target;
@@ -121,7 +147,6 @@ export default function RegisterForm({onSubmit, error}){
 
     //Handle regular change (not uic and role)
     const handleChange = (e) => {
-        validateStep();
         const {name, value} = e.target;
 
         setForm({
@@ -144,7 +169,7 @@ export default function RegisterForm({onSubmit, error}){
         }
 
         //Validate matching pass
-        if(form.password != form.confirmPass){
+        if(form.password !== form.confirmPass){
             return setLocalError('Passwords must match!')
         }
 
@@ -294,18 +319,26 @@ export default function RegisterForm({onSubmit, error}){
                 </Button>
 
                 {activeStep < steps.length - 1 ? (
-                <Button disabled={!isValid} variant="contained" onClick={handleNext}>
-                    Next
-                </Button>
+                    <Tooltip title={!isValid ? localError : ''}>
+                        <span>
+                            <Button disabled={!isValid} variant="contained" onClick={handleNext}>
+                                Next
+                            </Button>
+                        </span>
+                    </Tooltip>
                 ) : (
-                <Button type="submit" variant="contained">
-                    Register
-                </Button>
+                    <Tooltip title={!isValid ? localError : ''}>
+                        <span>
+                            <Button disabled={!isValid} type="submit" variant="contained">
+                                Register
+                            </Button>
+                        </span>
+                    </Tooltip>
                 )}
             </Stack>
 
-            {/*errors*/}
-            {(localError || error) && <p><strong>Error: {localError || error}</strong></p>}
+            {/* errors
+            {(localError || error) && <p><strong>Error: {localError || error}</strong></p>} */}
             </Stack>
         </form>
     )
