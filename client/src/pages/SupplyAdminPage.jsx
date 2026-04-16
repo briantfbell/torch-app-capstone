@@ -21,11 +21,6 @@ export default function SupplyAdminPage() {
   const [uics, setUics] = useState([]);
   const isAdmin = user?.role?.includes('admin');
   const [adminSelectedUic, setAdminSelectedUic] = useState(null);
-  const selectedUic = isAdmin
-    ? adminSelectedUic
-    : user?.uic_id
-      ? { uicId: user.uic_id, uicName: user.uic }
-      : null;
 
   useEffect(() => {
     if (user?.uic_id && adminSelectedUic === null) {
@@ -45,9 +40,15 @@ export default function SupplyAdminPage() {
       .catch(err => console.error('Failed to get UICs:', err));
   }, [isAdmin]);
 
+  const selectedUic = isAdmin
+    ? adminSelectedUic
+    : user?.uic_id
+      ? { uicId: user.uic_id, uicName: user.uic }
+      : null;
+
   if (authLoading) {
     return (
-      <Box sx={{ mx: 'auto', width: '100%', py: 4 }}>
+      <Box sx={{ maxWidth: 1500, mx: 'auto', width: '100%', py: 4 }}>
         <Stack spacing={2} alignItems="center" justifyContent="center" sx={{ minHeight: '60vh' }}>
           <CircularProgress />
           <Typography>Loading Admin Console...</Typography>
@@ -57,7 +58,7 @@ export default function SupplyAdminPage() {
   }
 
   return (
-    <Box sx={{ mx: 'auto', width: '100%' }}>
+    <Box sx={{ maxWidth: 1500, mx: 'auto', width: '100%' }}>
       <Stack spacing={3}>
         <Card elevation={0} sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider' }}>
           <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
@@ -68,14 +69,14 @@ export default function SupplyAdminPage() {
                 alignItems={{ xs: 'flex-start', sm: 'center' }}
                 spacing={2}
               >
-                <Stack spacing={0.5}>
+                <Stack spacing={1}>
                   <Typography variant="overline" color="primary" fontWeight={700}>
                     Admin Console
                   </Typography>
                   <Typography variant="h4" fontWeight={800}>
                     Supply Admin Dashboard
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body1" color="text.secondary">
                     Upload CSV, XLSX, or XLS files to ingest end items or components.
                   </Typography>
                 </Stack>

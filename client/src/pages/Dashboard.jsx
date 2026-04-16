@@ -9,7 +9,8 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { BarChart, PieChart, useDrawingArea } from "@mui/x-charts";
 import ShortageDataGrid from "../components/dashboard/ShortageDataGrid.jsx";
 import { useQuery } from "@tanstack/react-query";
@@ -23,33 +24,23 @@ import {
 } from "../api/data.js";
 import { useState } from "react";
 
-const barChartSettings = {
-  xAxis: [
-    {
-      label: "% On Hand",
-      max: 100,
-      colorMap: {
-        type: "piecewise",
-        thresholds: [50, 85],
-        colors: ["#ff4e4e", "#ffaf00", "#59b600"],
-      },
-    },
-  ],
-  height: 300,
-  width: 700,
-};
-
-const pieChartSize = {
-  width: 250,
-  height: 250,
-};
-
 const StyledText = styled("text")(({ theme }) => ({
   fill: theme.palette.text.primary,
   textAnchor: "middle",
   dominantBaseline: "central",
   fontSize: 16,
 }));
+
+const SectionHeader = ({ title, description }) => (
+  <Stack spacing={0.75}>
+    <Typography variant="h6" fontWeight={700}>
+      {title}
+    </Typography>
+    <Typography variant="body2" color="text.secondary">
+      {description}
+    </Typography>
+  </Stack>
+);
 
 function PieCenterLabel({ children }) {
   const { width, height, left, top } = useDrawingArea();
@@ -144,6 +135,9 @@ const componentColumns = [
 ];
 
 const Dashboard = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
   const [shortageTab, setShortageTab] = useState(0);
 
   const { data: endItemsData, dataUpdatedAt: endItemsUpdatedAt } = useQuery({
@@ -417,25 +411,71 @@ const Dashboard = () => {
   const shortageRows =
     shortageTab === 0 ? endItemStatusRows : componentStatusRows;
   const shortageColumns = shortageTab === 0 ? undefined : componentColumns;
-
-  const cardSx = { elevation: 0, borderRadius: 4, border: "1px solid", borderColor: "divider" };
+  const chartHeight = isTablet ? 360 : 300;
+  const pieChartSize = {
+    width: isTablet ? 220 : 250,
+    height: isTablet ? 220 : 250,
+  };
+  const barChartSettings = {
+    xAxis: [
+      {
+        label: "% On Hand",
+        max: 100,
+        colorMap: {
+          type: "piecewise",
+          thresholds: [50, 85],
+          colors: ["#ff4e4e", "#ffaf00", "#59b600"],
+        },
+      },
+    ],
+    height: chartHeight,
+  };
+  const summaryCards = [
+    {
+      value: `${completedPercent}%`,
+      label: "Inventory Completed",
+      color: "primary",
+    },
+    {
+      value: endItems.length,
+      label: "Total End Items",
+      color: "primary",
+    },
+    {
+      value: shortEndItems.length,
+      label: "End Items w/ Shortages",
+      color: "error",
+    },
+    {
+      value: overEndItems.length,
+      label: "End Items Over Auth Qty",
+      color: "info",
+    },
+  ];
 
   return (
-    <Box sx={{ mx: "auto", width: "100%" }}>
+    <Box sx={{ maxWidth: 1500, mx: "auto", width: "100%" }}>
       <Stack spacing={3}>
-
-        <Card elevation={0} sx={{ borderRadius: 4, border: "1px solid", borderColor: "divider" }}>
+        <Card
+          elevation={0}
+          sx={{ borderRadius: 4, border: "1px solid", borderColor: "divider" }}
+        >
           <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
             <Stack spacing={3}>
-              <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-                <Stack spacing={0.5}>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                justifyContent="space-between"
+                alignItems={{ xs: "flex-start", sm: "center" }}
+                spacing={2}
+              >
+                <Stack spacing={1}>
                   <Typography variant="overline" color="primary" fontWeight={700}>
                     Inventory Dashboard
                   </Typography>
                   <Typography variant="h4" fontWeight={800}>
                     Unit Readiness Overview
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body1" color="text.secondary">
                     Live inventory status across all end items and components.
                   </Typography>
                 </Stack>
@@ -444,19 +484,34 @@ const Dashboard = () => {
                   size="small"
                   variant="outlined"
                   color="primary"
+                  sx={{ alignSelf: { xs: "flex-start", sm: "center" } }}
                 />
               </Stack>
 
               <Divider />
 
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                {[
-                  { value: `${completedPercent}%`, label: "Inventory Completed", color: "primary" },
-                  { value: endItems.length, label: "Total End Items", color: "primary" },
-                  { value: shortEndItems.length, label: "End Items w/ Shortages", color: "error" },
-                  { value: overEndItems.length, label: "End Items Over Auth Qty", color: "info" },
-                ].map(({ value, label, color }) => (
-                  <Card key={label} elevation={0} sx={{ flex: 1, borderRadius: 3, border: "1px solid", borderColor: "divider" }}>
+              <Box
+                sx={{
+                  display: "grid",
+                  gap: 2,
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    sm: "repeat(2, minmax(0, 1fr))",
+                    lg: "repeat(4, minmax(0, 1fr))",
+                  },
+                }}
+              >
+                {summaryCards.map(({ value, label, color }) => (
+                  <Card
+                    key={label}
+                    elevation={0}
+                    sx={{
+                      minWidth: 0,
+                      borderRadius: 3,
+                      border: "1px solid",
+                      borderColor: "divider",
+                    }}
+                  >
                     <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
                       <Typography variant="h3" color={color} fontWeight={700}>
                         {value}
@@ -467,30 +522,39 @@ const Dashboard = () => {
                     </CardContent>
                   </Card>
                 ))}
-              </Stack>
+              </Box>
             </Stack>
           </CardContent>
         </Card>
 
-        <Stack direction={{ xs: "column", lg: "row" }} spacing={3}>
-          <Card elevation={0} sx={{ borderRadius: 4, border: "1px solid", borderColor: "divider", flexGrow: 2 }}>
-            <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-              <Stack spacing={3}>
-                <Stack spacing={0.75}>
-                  <Typography variant="h6" fontWeight={700}>
-                    Completion Rate
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Inventory completion per end item. A lower percentage may indicate shortages or incomplete inventory.
-                  </Typography>
-                </Stack>
+        <Card
+          elevation={0}
+          sx={{ borderRadius: 4, border: "1px solid", borderColor: "divider" }}
+        >
+          <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+            <Stack spacing={3}>
+              <SectionHeader
+                title="Completion Rate"
+                description="Inventory completion per end item. A lower percentage may indicate shortages or incomplete inventory."
+              />
 
-                <Divider />
+              <Divider />
 
-                <Stack spacing={2}>
-                  <Typography variant="overline" color="primary" fontWeight={700}>
-                    End Item Status
-                  </Typography>
+              <Stack
+                direction={{ xs: "column", lg: "row" }}
+                spacing={3}
+                alignItems={{ xs: "stretch", lg: "flex-start" }}
+              >
+                <Stack
+                  alignItems="center"
+                  justifyContent="center"
+                  sx={{
+                    width: { xs: "100%", lg: "auto" },
+                    minWidth: 0,
+                    overflow: "hidden",
+                    py: { xs: 1, lg: 0 },
+                  }}
+                >
                   <PieChart
                     colors={["#59b600", "#ff4e4e"]}
                     series={[{ data: pieCompletedData, innerRadius: 90 }]}
@@ -498,9 +562,18 @@ const Dashboard = () => {
                   >
                     <PieCenterLabel>{completedPercent}</PieCenterLabel>
                   </PieChart>
+                </Stack>
+                <Box sx={{ flex: 1, minWidth: 0, width: "100%", overflow: "hidden" }}>
                   <BarChart
+                    width={undefined}
                     dataset={shortageDataset}
-                    yAxis={[{ scaleType: "band", dataKey: "name", width: 150 }]}
+                    yAxis={[
+                      {
+                        scaleType: "band",
+                        dataKey: "name",
+                        width: isTablet ? 110 : 150,
+                      },
+                    ]}
                     series={[
                       {
                         dataKey: "percent",
@@ -511,52 +584,57 @@ const Dashboard = () => {
                     layout="horizontal"
                     {...barChartSettings}
                   />
-                </Stack>
+                </Box>
               </Stack>
-            </CardContent>
-          </Card>
+            </Stack>
+          </CardContent>
+        </Card>
 
-          <Card elevation={0} sx={{ borderRadius: 4, border: "1px solid", borderColor: "divider", flexGrow: 1 }}>
-            <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-              <Stack spacing={3} height="100%">
-                <Stack spacing={0.75}>
-                  <Typography variant="h6" fontWeight={700}>
-                    Shortage Summary
-                  </Typography>
+        <Card
+          elevation={0}
+          sx={{ borderRadius: 4, border: "1px solid", borderColor: "divider" }}
+        >
+          <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+            <Stack spacing={3}>
+              <SectionHeader
+                title="Shortage Summary"
+                description="Items and components below authorized quantity."
+              />
+
+              <Divider />
+
+              <Tabs
+                value={shortageTab}
+                onChange={(_, v) => setShortageTab(v)}
+                variant="fullWidth"
+                sx={{ borderBottom: 1, borderColor: "divider" }}
+              >
+                <Tab label="End Items" />
+                <Tab label="Components" />
+              </Tabs>
+
+              <Card
+                elevation={0}
+                sx={{
+                  borderRadius: 3,
+                  border: "1px solid",
+                  borderColor: "error.main",
+                }}
+              >
+                <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
                   <Typography variant="body2" color="text.secondary">
-                    Items and components below authorized quantity.
+                    Total Shortage Value
                   </Typography>
-                </Stack>
+                  <Typography variant="h4" fontWeight={800} color="error">
+                    {shortageValue}
+                  </Typography>
+                </CardContent>
+              </Card>
 
-                <Divider />
-
-                <Tabs
-                  value={shortageTab}
-                  onChange={(_, v) => setShortageTab(v)}
-                  variant="fullWidth"
-                  sx={{ borderBottom: 1, borderColor: "divider" }}
-                >
-                  <Tab label="End Items" />
-                  <Tab label="Components" />
-                </Tabs>
-
-                <Card elevation={0} sx={{ borderRadius: 3, border: "1px solid", borderColor: "error.main" }}>
-                  <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-                    <Typography variant="body2" color="text.secondary">
-                      Total Shortage Value
-                    </Typography>
-                    <Typography variant="h4" fontWeight={800} color="error">
-                      {shortageValue}
-                    </Typography>
-                  </CardContent>
-                </Card>
-
-                <ShortageDataGrid rows={shortageRows} columns={shortageColumns} />
-              </Stack>
-            </CardContent>
-          </Card>
-        </Stack>
-
+              <ShortageDataGrid rows={shortageRows} columns={shortageColumns} />
+            </Stack>
+          </CardContent>
+        </Card>
       </Stack>
     </Box>
   );

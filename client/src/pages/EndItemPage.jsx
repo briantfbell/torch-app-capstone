@@ -27,7 +27,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import PdfModalViewer from "../components/PdfModalViewer";
 import {getEndItemById, getEndItemCurrentHistory, updateEndItemNotes} from "../api/endItems";
 import PdfGenerator from "../components/PdfGenerator";
-import {getPdfsByEndItem, deletePdf, savePdf} from "../utils/pdfStorage";
+import {deletePdf, getPdfsByEndItem, savePdf} from "../utils/pdfStorage";
 import PdfFillModal from "../components/PdfFillModal";
 import {useQuery} from "@tanstack/react-query";
 import {tryGetSerialItems} from "../api/data.js";
@@ -363,9 +363,8 @@ export default function EndItemPage() {
                           <Chip
                               key={label}
                               label={label}
-                              variant="outlined"
                               color={color}
-                              sx={{ width: "100%" }}
+                              sx={{ width: "100%", fontWeight: "600" }}
                           />
                       ))}
                     </Box>
@@ -565,7 +564,8 @@ export default function EndItemPage() {
                                 <Button
                                     variant="text"
                                     sx={{ flex: 1, justifyContent: "flex-start" }}
-                                    onClick={() => {
+                                    fullWidth
+                                  onClick={() => {
                                     setPdfUrl(pdf.url);
                                     setOpenPdf(true);
                                     }}
@@ -583,7 +583,7 @@ export default function EndItemPage() {
                                 >
                                     <DeleteIcon />
                                 </IconButton>
-                                </Box>                                                       
+                                </Box>
                             ))}
                         </Stack>
                     )}

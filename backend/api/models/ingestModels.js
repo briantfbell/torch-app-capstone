@@ -11,7 +11,6 @@ exports.insertSerializedItem = async (obj, userId, uicId) => {
 
   if (match) {
     duplicates.push(match);
-    console.log(match, duplicates);
     return;
   }
 
@@ -29,7 +28,7 @@ exports.insertSerializedItem = async (obj, userId, uicId) => {
           niin: obj.niin,
           description: obj.description,
           auth_qty: obj.auth_qty || 1,
-          cost: (Math.random() * 10000).toFixed(2),
+          cost: obj.cost,
           image: obj.image,
         })
         .returning(['id', 'cost']);
@@ -50,7 +49,7 @@ exports.insertComponent = async (obj, userId, uicId) => {
 
   if (!end_item) {
     const error = new Error(
-      `No end item exists for LIN: ${obj.end_item_lin}. Upload associated end item first.`,
+      `No end item exists with LIN: ${obj.end_item_lin}. Upload associated end item first.`,
     );
     error.status = 400;
     throw error;
@@ -59,16 +58,24 @@ exports.insertComponent = async (obj, userId, uicId) => {
   await db.transaction(async trx => {
     const duplicates = [];
 
-    const [component] = await trx('components')
-      .insert({
-        niin: obj.niin,
-        description: obj.description,
-        ui: obj.ui,
-        auth_qty: obj.auth_qty || 1,
-        end_item_id: end_item.id,
-        cost: (Math.random() * 1000).toFixed(2),
-      })
-      .returning(['id', 'cost']);
+    // Files need to be updated with unique NIINs per end item
+    let component = await trx('components')
+      .where({ niin: obj.niin, end_item_id: end_item.id })
+      .select('id', 'cost')
+      .first();
+
+    if (!component) {
+      const [component] = await trx('components')
+        .insert({
+          niin: obj.niin,
+          description: obj.description,
+          ui: obj.ui,
+          auth_qty: obj.auth_qty || 1,
+          end_item_id: end_item.id,
+          cost: obj.cost,
+        })
+        .returning(['id', 'cost']);
+    }
 
     if (obj.serial_number) {
       const match = await db('serial_component_items')
@@ -92,7 +99,7 @@ exports.insertComponent = async (obj, userId, uicId) => {
 
     if (duplicates.length > 0) {
       const error = new Error(
-        `The following SNs are assigned to another UIC: ${duplicates}`,
+        `The following SNs are assigned to another UIC:\n\n${duplicates}`,
       );
       error.status = 400;
       throw error;

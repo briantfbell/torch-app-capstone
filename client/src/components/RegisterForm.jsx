@@ -340,7 +340,7 @@ export default function RegisterForm({onSubmit, error}){
                         <FormControl>
                             <FormLabel>Account Type</FormLabel>
                             <RadioGroup required value={accountType} onChange={handleAccountTypeChange}>
-                            <FormControlLabel value="admin" control={<Radio />} label="Admin" />
+                            <FormControlLabel value="admin" control={<Radio />} label="Supply NCO" />
                             <FormControlLabel value="user" control={<Radio />} label="User" />
                             </RadioGroup>
 

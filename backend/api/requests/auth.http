@@ -6,10 +6,10 @@ POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
-  "username": "test",
+  "username": "test1",
   "name_first": "2",
   "name_last": "3",
-  "email": "1",
+  "email": "2",
   "password": "5",
   "phone": "6",
   "rank": "E-7",

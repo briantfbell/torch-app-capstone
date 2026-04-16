@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import {useEffect, useMemo, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import {
   Accordion,
-  AccordionSummary,
   AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
   Card,
@@ -33,14 +33,14 @@ const str = (val) => (val == null ? "" : String(val));
 function SerialChip({ serial, index, isSeen, onClick }) {
   return (
     <Chip
-      label={`#${index + 1} — ${serial.serial_number}`}
+      label={`S/N #${index + 1} - ${serial.serial_number}`}
       onClick={(e) => {
         e.stopPropagation();
         onClick(serial);
       }}
+      color={isSeen ? "success" : "error"}
       sx={{
-        border: "2px solid",
-        borderColor: isSeen ? "success.main" : "error.main",
+        width: "100%",
         fontWeight: 600,
         fontSize: "0.8rem",
         height: 36,
@@ -56,12 +56,7 @@ function SerialChip({ serial, index, isSeen, onClick }) {
   );
 }
 
-function GroupedEndItemCard({
-  group,
-  onSerialClick,
-  selected,
-  seenBySerialId,
-}) {
+function GroupedEndItemCard({ group, onSerialClick, selected, seenBySerialId }) {
   const [expanded, setExpanded] = useState(false);
   const { representative, serials } = group;
 
@@ -69,63 +64,41 @@ function GroupedEndItemCard({
   const needsVerifyCount = serials.length - verifiedCount;
   const allVerified = serials.length > 0 && verifiedCount === serials.length;
 
+  const cardBorderColor = selected ? "primary.main" : "divider";
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <Card
-        variant="outlined"
+        elevation={0}
         sx={{
-          borderColor: selected ? "primary.main" : "grey.500",
-          borderWidth: 1.5,
-          borderBottomLeftRadius: serials.length > 0 ? 0 : undefined,
-          borderBottomRightRadius: serials.length > 0 ? 0 : undefined,
+          borderRadius: serials.length > 0 ? "8px 8px 0 0" : 2,
+          border: "1px solid",
+          borderColor: cardBorderColor,
           borderBottom: serials.length > 0 ? "none" : undefined,
-          backgroundColor: "background.paper",
-          boxShadow: 3,
+          backgroundColor: "action.hover",
         }}
       >
         <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
           <Stack spacing={1.5} alignItems="center" textAlign="center">
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="flex-start"
-              width="100%"
-            >
+            <Stack direction="row" justifyContent="space-between" alignItems="flex-start" width="100%">
               <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                 {allVerified ? (
-                  <CheckCircleOutlineIcon
-                    sx={{ fontSize: 16, color: "success.main" }}
-                  />
+                  <CheckCircleOutlineIcon sx={{ fontSize: 16, color: "success.main" }} />
                 ) : (
-                  <ErrorOutlineIcon
-                    sx={{ fontSize: 16, color: "error.main" }}
-                  />
+                  <ErrorOutlineIcon sx={{ fontSize: 16, color: "error.main" }} />
                 )}
                 <Typography
                   variant="caption"
                   color={allVerified ? "success.main" : "error.main"}
                   fontWeight={700}
                 >
-                  {allVerified ? "Verified" : "Needs Verification"}
+                  {allVerified ? "COMPLETED" : "NEEDS INVENTORY"}
                 </Typography>
               </Box>
-              <Chip
-                label={`Qty: ${serials.length}`}
-                size="small"
-                variant="outlined"
-                sx={{ flexShrink: 0 }}
-              />
+              <Chip label={`Qty: ${serials.length}`} size="small" variant="outlined" sx={{ flexShrink: 0 }} />
             </Stack>
 
-            <Box
-              sx={{
-                width: "100%",
-                minHeight: 64,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            <Box sx={{ width: "100%", minHeight: 64, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <Typography
                 variant="subtitle1"
                 fontWeight={700}
@@ -144,24 +117,14 @@ function GroupedEndItemCard({
 
             <Divider flexItem />
 
-            <Stack
-              direction="row"
-              spacing={3}
-              justifyContent="center"
-              flexWrap="wrap"
-              sx={{ minHeight: 44, alignItems: "center" }}
-            >
+            <Stack direction="row" spacing={3} justifyContent="center" flexWrap="wrap" sx={{ minHeight: 44, alignItems: "center" }}>
               {[
                 { label: "LIN", value: representative.lin },
                 { label: "FSC", value: representative.fsc },
                 { label: "NIIN", value: representative.niin },
               ].map(({ label, value }) => (
                 <Box key={label} textAlign="center">
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    fontWeight={600}
-                  >
+                  <Typography variant="caption" color="text.secondary" fontWeight={600}>
                     {label}
                   </Typography>
                   <Typography variant="body2" fontWeight={700}>
@@ -182,17 +145,16 @@ function GroupedEndItemCard({
           elevation={0}
           TransitionProps={{ unmountOnExit: true }}
           sx={{
-            border: "1.5px solid",
-            borderColor: selected ? "primary.main" : "grey.500",
+            border: "1px solid",
+            borderColor: cardBorderColor,
             borderTop: "1px solid",
-            borderTopColor: "grey.300",
-            borderBottomLeftRadius: "4px !important",
-            borderBottomRightRadius: "4px !important",
+            borderTopColor: "divider",
+            borderBottomLeftRadius: "8px !important",
+            borderBottomRightRadius: "8px !important",
             borderTopLeftRadius: "0 !important",
             borderTopRightRadius: "0 !important",
             "&:before": { display: "none" },
-            backgroundColor: "background.paper",
-            boxShadow: 3,
+            backgroundColor: "action.hover",
           }}
         >
           <AccordionSummary
@@ -201,49 +163,45 @@ function GroupedEndItemCard({
               px: 2,
               py: 0.5,
               minHeight: 44,
-              backgroundColor: expanded ? "action.hover" : "transparent",
+              backgroundColor: expanded ? "action.selected" : "transparent",
               transition: "background-color 0.2s",
             }}
           >
-            <Stack
-              direction="row"
-              spacing={1}
-              alignItems="center"
-              flexWrap="wrap"
-            >
+            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
               <Typography variant="caption" fontWeight={700}>
                 Verify Serial Numbers:
               </Typography>
               {verifiedCount > 0 && (
                 <Chip
-                  label={`${verifiedCount} Verified`}
+                  label={`${verifiedCount} COMPLETED`}
                   size="small"
                   color="success"
-                  variant="outlined"
-                  sx={{ height: 18, fontSize: "0.65rem" }}
+                  sx={{ height: 18, fontSize: "0.65rem", fontWeight: "600" }}
                 />
               )}
               {needsVerifyCount > 0 && (
                 <Chip
-                  label={`${needsVerifyCount} Verify`}
+                  label={`${needsVerifyCount} NEEDS INVENTORY`}
                   size="small"
                   color="error"
-                  variant="outlined"
-                  sx={{ height: 18, fontSize: "0.65rem" }}
+                  sx={{ height: 18, fontSize: "0.65rem", fontWeight: "600" }}
                 />
               )}
             </Stack>
           </AccordionSummary>
 
           <AccordionDetails sx={{ px: 2, pb: 2 }}>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ display: "block", mb: 1 }}
-            >
+            <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>
               Tap a serial number to view its details
             </Typography>
-            <Stack direction="row" flexWrap="wrap" gap={1.5}>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+                gap: 1.5,
+                width: "100%",
+              }}
+            >
               {serials.map((serial, index) => (
                 <SerialChip
                   key={serial.id}
@@ -253,7 +211,7 @@ function GroupedEndItemCard({
                   onClick={() => onSerialClick(serial)}
                 />
               ))}
-            </Stack>
+            </Box>
           </AccordionDetails>
         </Accordion>
       )}
@@ -278,8 +236,7 @@ export default function EquipmentPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [verificationFilter, setVerificationFilter] =
-    useState(VERIFICATION_ALL);
+  const [verificationFilter, setVerificationFilter] = useState(VERIFICATION_ALL);
   const [linFilter, setLinFilter] = useState(ALL);
   const [niinFilter, setNiinFilter] = useState(ALL);
   const [fscFilter, setFscFilter] = useState(ALL);
@@ -294,15 +251,9 @@ export default function EquipmentPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:8080/end-items", { credentials: "include" }).then(
-        (r) => r.json(),
-      ),
-      fetch("http://localhost:8080/serial-items", {
-        credentials: "include",
-      }).then((r) => r.json()),
-      fetch("http://localhost:8080/current-history/end-items", {
-        credentials: "include",
-      }).then((r) => r.json()),
+      fetch("http://localhost:8080/end-items", { credentials: "include" }).then((r) => r.json()),
+      fetch("http://localhost:8080/serial-items", { credentials: "include" }).then((r) => r.json()),
+      fetch("http://localhost:8080/current-history/end-items", { credentials: "include" }).then((r) => r.json()),
     ])
       .then(([endData, serialData, historyData]) => {
         setEndItems(endData.allEndItems ?? []);
@@ -319,9 +270,7 @@ export default function EquipmentPage() {
   const seenBySerialId = useMemo(() => {
     const map = {};
     historyItems.forEach((h) => {
-      if (h.serial_number != null) {
-        map[h.serial_number] = h.seen === true;
-      }
+      if (h.serial_number != null) map[h.serial_number] = h.seen === true;
     });
     return map;
   }, [historyItems]);
@@ -340,12 +289,7 @@ export default function EquipmentPage() {
     endItems.forEach((item) => {
       const key = `${str(item.lin)}||${str(item.niin)}||${str(item.fsc)}||${str(item.description)}`;
       if (!groupMap[key]) {
-        groupMap[key] = {
-          key,
-          representative: item,
-          endItemIds: [],
-          serials: [],
-        };
+        groupMap[key] = { key, representative: item, endItemIds: [], serials: [] };
       }
       groupMap[key].endItemIds.push(item.id);
       const serials = serialByEndItemId[item.id];
@@ -368,55 +312,29 @@ export default function EquipmentPage() {
       const matchesLin = linFilter === ALL || str(r.lin) === linFilter;
       const matchesNiin = niinFilter === ALL || str(r.niin) === niinFilter;
       const matchesFsc = fscFilter === ALL || str(r.fsc) === fscFilter;
-      const matchesDesc =
-        descFilter === ALL || str(r.description) === descFilter;
+      const matchesDesc = descFilter === ALL || str(r.description) === descFilter;
 
-      const verifiedCount = group.serials.filter(
-        (s) => seenBySerialId[s.id],
-      ).length;
+      const verifiedCount = group.serials.filter((s) => seenBySerialId[s.id]).length;
       const needsVerify = verifiedCount < group.serials.length;
-      const allVerified =
-        group.serials.length > 0 && verifiedCount === group.serials.length;
+      const allVerified = group.serials.length > 0 && verifiedCount === group.serials.length;
 
       const matchesVerification =
         verificationFilter === VERIFICATION_ALL ||
         (verificationFilter === VERIFICATION_NEEDED && needsVerify) ||
         (verificationFilter === VERIFICATION_COMPLETE && allVerified);
 
-      return (
-        matchesSearch &&
-        matchesLin &&
-        matchesNiin &&
-        matchesFsc &&
-        matchesDesc &&
-        matchesVerification
-      );
+      return matchesSearch && matchesLin && matchesNiin && matchesFsc && matchesDesc && matchesVerification;
     });
-  }, [
-    groupedItems,
-    searchQuery,
-    linFilter,
-    niinFilter,
-    fscFilter,
-    descFilter,
-    verificationFilter,
-    seenBySerialId,
-  ]);
+  }, [groupedItems, searchQuery, linFilter, niinFilter, fscFilter, descFilter, verificationFilter, seenBySerialId]);
 
   const linOptions = useMemo(() => {
     const base = groupedItems.filter(
       (g) =>
         (niinFilter === ALL || str(g.representative.niin) === niinFilter) &&
         (fscFilter === ALL || str(g.representative.fsc) === fscFilter) &&
-        (descFilter === ALL ||
-          str(g.representative.description) === descFilter),
+        (descFilter === ALL || str(g.representative.description) === descFilter),
     );
-    return [
-      ALL,
-      ...[
-        ...new Set(base.map((g) => str(g.representative.lin)).filter(Boolean)),
-      ].sort(),
-    ];
+    return [ALL, ...[...new Set(base.map((g) => str(g.representative.lin)).filter(Boolean))].sort()];
   }, [groupedItems, niinFilter, fscFilter, descFilter]);
 
   const fscOptions = useMemo(() => {
@@ -424,15 +342,9 @@ export default function EquipmentPage() {
       (g) =>
         (linFilter === ALL || str(g.representative.lin) === linFilter) &&
         (niinFilter === ALL || str(g.representative.niin) === niinFilter) &&
-        (descFilter === ALL ||
-          str(g.representative.description) === descFilter),
+        (descFilter === ALL || str(g.representative.description) === descFilter),
     );
-    return [
-      ALL,
-      ...[
-        ...new Set(base.map((g) => str(g.representative.fsc)).filter(Boolean)),
-      ].sort(),
-    ];
+    return [ALL, ...[...new Set(base.map((g) => str(g.representative.fsc)).filter(Boolean))].sort()];
   }, [groupedItems, linFilter, niinFilter, descFilter]);
 
   const niinOptions = useMemo(() => {
@@ -440,15 +352,9 @@ export default function EquipmentPage() {
       (g) =>
         (linFilter === ALL || str(g.representative.lin) === linFilter) &&
         (fscFilter === ALL || str(g.representative.fsc) === fscFilter) &&
-        (descFilter === ALL ||
-          str(g.representative.description) === descFilter),
+        (descFilter === ALL || str(g.representative.description) === descFilter),
     );
-    return [
-      ALL,
-      ...[
-        ...new Set(base.map((g) => str(g.representative.niin)).filter(Boolean)),
-      ].sort(),
-    ];
+    return [ALL, ...[...new Set(base.map((g) => str(g.representative.niin)).filter(Boolean))].sort()];
   }, [groupedItems, linFilter, fscFilter, descFilter]);
 
   const descOptions = useMemo(() => {
@@ -458,14 +364,7 @@ export default function EquipmentPage() {
         (fscFilter === ALL || str(g.representative.fsc) === fscFilter) &&
         (niinFilter === ALL || str(g.representative.niin) === niinFilter),
     );
-    return [
-      ALL,
-      ...[
-        ...new Set(
-          base.map((g) => str(g.representative.description)).filter(Boolean),
-        ),
-      ].sort(),
-    ];
+    return [ALL, ...[...new Set(base.map((g) => str(g.representative.description)).filter(Boolean))].sort()];
   }, [groupedItems, linFilter, fscFilter, niinFilter]);
 
   const handleLinChange = (val) => {
@@ -474,26 +373,11 @@ export default function EquipmentPage() {
       (g) =>
         (val === ALL || str(g.representative.lin) === val) &&
         (fscFilter === ALL || str(g.representative.fsc) === fscFilter) &&
-        (descFilter === ALL ||
-          str(g.representative.description) === descFilter),
+        (descFilter === ALL || str(g.representative.description) === descFilter),
     );
-    if (
-      niinFilter !== ALL &&
-      !new Set(remaining.map((g) => str(g.representative.niin))).has(niinFilter)
-    )
-      setNiinFilter(ALL);
-    if (
-      fscFilter !== ALL &&
-      !new Set(remaining.map((g) => str(g.representative.fsc))).has(fscFilter)
-    )
-      setFscFilter(ALL);
-    if (
-      descFilter !== ALL &&
-      !new Set(remaining.map((g) => str(g.representative.description))).has(
-        descFilter,
-      )
-    )
-      setDescFilter(ALL);
+    if (niinFilter !== ALL && !new Set(remaining.map((g) => str(g.representative.niin))).has(niinFilter)) setNiinFilter(ALL);
+    if (fscFilter !== ALL && !new Set(remaining.map((g) => str(g.representative.fsc))).has(fscFilter)) setFscFilter(ALL);
+    if (descFilter !== ALL && !new Set(remaining.map((g) => str(g.representative.description))).has(descFilter)) setDescFilter(ALL);
   };
 
   const handleFscChange = (val) => {
@@ -503,26 +387,11 @@ export default function EquipmentPage() {
         (linFilter === ALL || str(g.representative.lin) === linFilter) &&
         (val === ALL || str(g.representative.fsc) === val) &&
         (niinFilter === ALL || str(g.representative.niin) === niinFilter) &&
-        (descFilter === ALL ||
-          str(g.representative.description) === descFilter),
+        (descFilter === ALL || str(g.representative.description) === descFilter),
     );
-    if (
-      linFilter !== ALL &&
-      !new Set(remaining.map((g) => str(g.representative.lin))).has(linFilter)
-    )
-      setLinFilter(ALL);
-    if (
-      niinFilter !== ALL &&
-      !new Set(remaining.map((g) => str(g.representative.niin))).has(niinFilter)
-    )
-      setNiinFilter(ALL);
-    if (
-      descFilter !== ALL &&
-      !new Set(remaining.map((g) => str(g.representative.description))).has(
-        descFilter,
-      )
-    )
-      setDescFilter(ALL);
+    if (linFilter !== ALL && !new Set(remaining.map((g) => str(g.representative.lin))).has(linFilter)) setLinFilter(ALL);
+    if (niinFilter !== ALL && !new Set(remaining.map((g) => str(g.representative.niin))).has(niinFilter)) setNiinFilter(ALL);
+    if (descFilter !== ALL && !new Set(remaining.map((g) => str(g.representative.description))).has(descFilter)) setDescFilter(ALL);
   };
 
   const handleNiinChange = (val) => {
@@ -532,26 +401,11 @@ export default function EquipmentPage() {
         (linFilter === ALL || str(g.representative.lin) === linFilter) &&
         (fscFilter === ALL || str(g.representative.fsc) === fscFilter) &&
         (val === ALL || str(g.representative.niin) === val) &&
-        (descFilter === ALL ||
-          str(g.representative.description) === descFilter),
+        (descFilter === ALL || str(g.representative.description) === descFilter),
     );
-    if (
-      linFilter !== ALL &&
-      !new Set(remaining.map((g) => str(g.representative.lin))).has(linFilter)
-    )
-      setLinFilter(ALL);
-    if (
-      fscFilter !== ALL &&
-      !new Set(remaining.map((g) => str(g.representative.fsc))).has(fscFilter)
-    )
-      setFscFilter(ALL);
-    if (
-      descFilter !== ALL &&
-      !new Set(remaining.map((g) => str(g.representative.description))).has(
-        descFilter,
-      )
-    )
-      setDescFilter(ALL);
+    if (linFilter !== ALL && !new Set(remaining.map((g) => str(g.representative.lin))).has(linFilter)) setLinFilter(ALL);
+    if (fscFilter !== ALL && !new Set(remaining.map((g) => str(g.representative.fsc))).has(fscFilter)) setFscFilter(ALL);
+    if (descFilter !== ALL && !new Set(remaining.map((g) => str(g.representative.description))).has(descFilter)) setDescFilter(ALL);
   };
 
   const handleDescChange = (val) => {
@@ -563,33 +417,13 @@ export default function EquipmentPage() {
         (niinFilter === ALL || str(g.representative.niin) === niinFilter) &&
         (val === ALL || str(g.representative.description) === val),
     );
-    if (
-      linFilter !== ALL &&
-      !new Set(remaining.map((g) => str(g.representative.lin))).has(linFilter)
-    )
-      setLinFilter(ALL);
-    if (
-      fscFilter !== ALL &&
-      !new Set(remaining.map((g) => str(g.representative.fsc))).has(fscFilter)
-    )
-      setFscFilter(ALL);
-    if (
-      niinFilter !== ALL &&
-      !new Set(remaining.map((g) => str(g.representative.niin))).has(niinFilter)
-    )
-      setNiinFilter(ALL);
+    if (linFilter !== ALL && !new Set(remaining.map((g) => str(g.representative.lin))).has(linFilter)) setLinFilter(ALL);
+    if (fscFilter !== ALL && !new Set(remaining.map((g) => str(g.representative.fsc))).has(fscFilter)) setFscFilter(ALL);
+    if (niinFilter !== ALL && !new Set(remaining.map((g) => str(g.representative.niin))).has(niinFilter)) setNiinFilter(ALL);
   };
 
-  const dropdownsActive =
-    linFilter !== ALL ||
-    niinFilter !== ALL ||
-    fscFilter !== ALL ||
-    descFilter !== ALL;
-
-  const isFiltered =
-    searchQuery.trim() !== "" ||
-    dropdownsActive ||
-    verificationFilter !== VERIFICATION_ALL;
+  const dropdownsActive = linFilter !== ALL || niinFilter !== ALL || fscFilter !== ALL || descFilter !== ALL;
+  const isFiltered = searchQuery.trim() !== "" || dropdownsActive || verificationFilter !== VERIFICATION_ALL;
 
   const handleClearFilters = () => {
     setSearchQuery("");
@@ -606,13 +440,8 @@ export default function EquipmentPage() {
 
   if (loading) {
     return (
-      <Box sx={{ mx: "auto", width: "100%", py: 4, minHeight: "100vh" }}>
-        <Stack
-          spacing={2}
-          alignItems="center"
-          justifyContent="center"
-          sx={{ minHeight: "60vh" }}
-        >
+      <Box sx={{ maxWidth: 1500, mx: "auto", width: "100%" }}>
+        <Stack spacing={2} alignItems="center" justifyContent="center" sx={{ minHeight: "60vh" }}>
           <CircularProgress />
           <Typography>Loading equipment...</Typography>
         </Stack>
@@ -621,198 +450,119 @@ export default function EquipmentPage() {
   }
 
   return (
-    <Box sx={{ mx: "auto", width: "100%", py: 4, minHeight: "100vh" }}>
-      <Stack spacing={3} sx={{ px: { xs: 2, sm: 3 } }}>
-        {/* Header */}
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          width="100%"
-        >
-          <Box sx={{ minWidth: 120 }} />
-          <Stack alignItems="center" spacing={0.5}>
-            <Typography variant="h4" fontWeight={700}>
-              Equipment
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Unit property and end item list
-            </Typography>
-          </Stack>
-          <Chip
-            label={uic ? `UIC: ${uic}` : "Loading..."}
-            variant="outlined"
-            color="primary"
-            sx={{ minWidth: 120 }}
-          />
-        </Stack>
+    <Box sx={{ maxWidth: 1500, mx: "auto", width: "100%" }}>
+      <PdfModalViewer
+        open={openPdf}
+        onClose={() => setOpenPdf(false)}
+        pdfUrl="/pdfs/WJQ1D0_Sub_Hand_Receipt_GOSPEL.pdf"
+      />
 
-        <Divider />
-
-        {/* Sub Hand Receipt */}
-        <Stack alignItems="center">
-          <Button
-            variant="contained"
-            startIcon={<PictureAsPdfIcon />}
-            onClick={() => setOpenPdf(true)}
-            sx={{
-              minWidth: { xs: "100%", sm: 400 },
-              py: 1.5,
-              fontSize: "1rem",
-            }}
-          >
-            Sub Hand Receipt PDF
-          </Button>
-        </Stack>
-
-        <PdfModalViewer
-          open={openPdf}
-          onClose={() => setOpenPdf(false)}
-          pdfUrl="/pdfs/WJQ1D0_Sub_Hand_Receipt_GOSPEL.pdf"
-        />
-
-        {/* End Items card */}
-        <Card
-          variant="outlined"
-          sx={{
-            backgroundColor: "background.paper",
-            boxShadow: 3,
-            borderColor: "grey.500",
-            borderWidth: 1.5,
-          }}
-        >
-          <CardContent>
-            {/* Title + count */}
+      <Stack spacing={3}>
+        <Card elevation={0} sx={{ borderRadius: 4, border: "1px solid", borderColor: "divider" }}>
+          <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
             <Stack
-              direction="row"
+              direction={{ xs: "column", sm: "row" }}
               justifyContent="space-between"
-              alignItems="center"
-              mb={2}
+              alignItems={{ xs: "flex-start", sm: "center" }}
+              spacing={2}
             >
-              <Typography
-                variant="subtitle1"
-                fontWeight={700}
-                letterSpacing={1}
-              >
-                END ITEMS
-              </Typography>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                fontWeight={600}
-              >
-                {filteredGroups.length} of {groupedItems.length} items
-              </Typography>
+              <Stack spacing={1}>
+                <Typography variant="overline" color="primary" fontWeight={700}>
+                  Equipment
+                </Typography>
+                <Typography variant="h4" fontWeight={800}>
+                  Unit Property and End Items
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  View and verify serial numbers for all unit end items.
+                </Typography>
+              </Stack>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems={{ xs: "flex-start", sm: "center" }}>
+                <Chip
+                  label={uic ? `UIC: ${uic}` : "Loading..."}
+                  variant="outlined"
+                  color="primary"
+                  sx={{ height: 36, fontSize: "0.85rem" }}
+                />
+                <Button
+                  variant="contained"
+                  startIcon={<PictureAsPdfIcon />}
+                  onClick={() => setOpenPdf(true)}
+                >
+                  Sub Hand Receipt
+                </Button>
+              </Stack>
             </Stack>
+          </CardContent>
+        </Card>
 
-            {/* Search + Filter toggle */}
-            <Stack direction="row" spacing={1} mb={2} alignItems="center">
-              <TextField
-                fullWidth
-                placeholder="Search by description, LIN, NIIN, FSC…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                inputProps={{
-                  id: "equipment-search",
-                  name: "equipment-search",
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": { borderColor: "grey.500" },
-                    "&:hover fieldset": { borderColor: "grey.700" },
-                    "&.Mui-focused fieldset": { borderColor: "primary.main" },
-                  },
-                }}
-              />
-              <Button
-                variant={dropdownsActive ? "contained" : "outlined"}
-                startIcon={<FilterListIcon />}
-                onClick={() => setShowFilters((prev) => !prev)}
-                sx={{
-                  whiteSpace: "nowrap",
-                  minWidth: 130,
-                  py: 1.85,
-                }}
-              >
-                {dropdownsActive ? "Filtered" : "Filters"}
-                {dropdownsActive && (
-                  <Box
-                    component="span"
-                    sx={{
-                      ml: 0.5,
-                      width: 18,
-                      height: 18,
-                      borderRadius: "50%",
-                      backgroundColor: "white",
-                      color: "primary.main",
-                      fontSize: "0.7rem",
-                      fontWeight: 700,
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {
-                      [linFilter, fscFilter, niinFilter, descFilter].filter(
-                        (v) => v !== ALL,
-                      ).length
-                    }
-                  </Box>
-                )}
-              </Button>
-            </Stack>
+        <Card elevation={0} sx={{ borderRadius: 4, border: "1px solid", borderColor: "divider" }}>
+          <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+            <Stack spacing={3}>
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Typography variant="h6" fontWeight={700}>
+                  End Items
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {filteredGroups.length} of {groupedItems.length} items
+                </Typography>
+              </Stack>
 
-            {/* Collapsible dropdown filters */}
-            <Collapse in={showFilters}>
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                spacing={2}
-                flexWrap="wrap"
-                mb={2}
-              >
-                {[
-                  {
-                    label: "LIN",
-                    id: "filter-lin",
-                    value: linFilter,
-                    options: linOptions,
-                    onChange: handleLinChange,
-                    minWidth: 140,
-                  },
-                  {
-                    label: "FSC",
-                    id: "filter-fsc",
-                    value: fscFilter,
-                    options: fscOptions,
-                    onChange: handleFscChange,
-                    minWidth: 140,
-                  },
-                  {
-                    label: "NIIN",
-                    id: "filter-niin",
-                    value: niinFilter,
-                    options: niinOptions,
-                    onChange: handleNiinChange,
-                    minWidth: 180,
-                  },
-                  {
-                    label: "Description",
-                    id: "filter-desc",
-                    value: descFilter,
-                    options: descOptions,
-                    onChange: handleDescChange,
-                    minWidth: 220,
-                    flex: 1,
-                  },
-                ].map(
-                  ({ label, id, value, options, onChange, minWidth, flex }) => (
+              <Divider />
+
+              <Stack direction="row" spacing={1} alignItems="center">
+                <TextField
+                  fullWidth
+                  placeholder="Search by description, LIN, NIIN, FSC…"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  inputProps={{ id: "equipment-search", name: "equipment-search" }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon fontSize="small" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <Button
+                  variant={dropdownsActive ? "contained" : "outlined"}
+                  startIcon={<FilterListIcon />}
+                  onClick={() => setShowFilters((prev) => !prev)}
+                  sx={{ whiteSpace: "nowrap", minWidth: 130, py: 1.85 }}
+                >
+                  {dropdownsActive ? "Filtered" : "Filters"}
+                  {dropdownsActive && (
+                    <Box
+                      component="span"
+                      sx={{
+                        ml: 0.5,
+                        width: 18,
+                        height: 18,
+                        borderRadius: "50%",
+                        backgroundColor: "white",
+                        color: "primary.main",
+                        fontSize: "0.7rem",
+                        fontWeight: 700,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {[linFilter, fscFilter, niinFilter, descFilter].filter((v) => v !== ALL).length}
+                    </Box>
+                  )}
+                </Button>
+              </Stack>
+
+              <Collapse in={showFilters}>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2} flexWrap="wrap">
+                  {[
+                    { label: "LIN", id: "filter-lin", value: linFilter, options: linOptions, onChange: handleLinChange, minWidth: 140 },
+                    { label: "FSC", id: "filter-fsc", value: fscFilter, options: fscOptions, onChange: handleFscChange, minWidth: 140 },
+                    { label: "NIIN", id: "filter-niin", value: niinFilter, options: niinOptions, onChange: handleNiinChange, minWidth: 180 },
+                    { label: "Description", id: "filter-desc", value: descFilter, options: descOptions, onChange: handleDescChange, minWidth: 220, flex: 1 },
+                  ].map(({ label, id, value, options, onChange, minWidth, flex }) => (
                     <TextField
                       key={label}
                       select
@@ -821,176 +571,120 @@ export default function EquipmentPage() {
                       onChange={(e) => onChange(e.target.value)}
                       size="small"
                       inputProps={{ id, name: id }}
-                      sx={{
-                        minWidth: { xs: "100%", sm: minWidth },
-                        ...(flex ? { flex } : {}),
-                        "& .MuiSelect-select": { color: "text.primary" },
-                        "& .MuiInputLabel-root": { color: "text.secondary" },
-                        "& .MuiOutlinedInput-root": {
-                          "& fieldset": { borderColor: "grey.500" },
-                          "&:hover fieldset": { borderColor: "grey.700" },
-                          "&.Mui-focused fieldset": {
-                            borderColor: "primary.main",
-                          },
-                        },
-                      }}
-                      SelectProps={{
-                        MenuProps: {
-                          PaperProps: {
-                            sx: {
-                              bgcolor: "background.paper",
-                              "& .MuiMenuItem-root": { color: "text.primary" },
-                            },
-                          },
-                        },
-                      }}
+                      sx={{ minWidth: { xs: "100%", sm: minWidth }, ...(flex ? { flex } : {}) }}
                     >
                       {options.map((v) => (
-                        <MenuItem
-                          key={v}
-                          value={v}
-                          sx={{ color: "text.primary" }}
-                        >
+                        <MenuItem key={v} value={v}>
                           {v}
                         </MenuItem>
                       ))}
                     </TextField>
-                  ),
-                )}
-              </Stack>
-            </Collapse>
+                  ))}
+                </Stack>
+              </Collapse>
 
-            {/* Verification status toggle + clear */}
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              alignItems={{ xs: "flex-start", sm: "center" }}
-              justifyContent="space-between"
-              spacing={2}
-              mb={3}
-            >
-              <Stack direction="row" alignItems="center" spacing={1.5}>
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  fontWeight={700}
-                >
-                  SHOW
-                </Typography>
-                <ToggleButtonGroup
-                  value={verificationFilter}
-                  exclusive
-                  onChange={(_e, val) => {
-                    if (val !== null) setVerificationFilter(val);
-                  }}
-                  size="small"
-                >
-                  <ToggleButton value={VERIFICATION_ALL} sx={{ px: 2 }}>
-                    All
-                  </ToggleButton>
-                  <ToggleButton
-                    value={VERIFICATION_NEEDED}
-                    sx={{
-                      px: 2,
-                      color: "error.main",
-                      "&:hover": { backgroundColor: "error.50" },
-                      "&.Mui-selected": {
-                        backgroundColor: "error.main",
-                        color: "white",
-                        "&:hover": { backgroundColor: "error.dark" },
-                      },
-                    }}
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                alignItems={{ xs: "flex-start", sm: "center" }}
+                justifyContent="space-between"
+                spacing={2}
+              >
+                <Stack direction="row" alignItems="center" spacing={1.5}>
+                  <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                    SHOW
+                  </Typography>
+                  <ToggleButtonGroup
+                    value={verificationFilter}
+                    exclusive
+                    onChange={(_e, val) => { if (val !== null) setVerificationFilter(val); }}
+                    size="small"
                   >
-                    <ErrorOutlineIcon sx={{ fontSize: 16, mr: 0.5 }} />
-                    Needs Verification
-                  </ToggleButton>
-                  <ToggleButton
-                    value={VERIFICATION_COMPLETE}
-                    sx={{
-                      px: 2,
-                      color: "success.main",
-                      "&:hover": { backgroundColor: "success.50" },
-                      "&.Mui-selected": {
-                        backgroundColor: "success.main",
-                        color: "white",
-                        "&:hover": { backgroundColor: "success.dark" },
-                      },
-                    }}
-                  >
-                    <CheckCircleOutlineIcon sx={{ fontSize: 16, mr: 0.5 }} />
-                    Verified
-                  </ToggleButton>
-                </ToggleButtonGroup>
-              </Stack>
+                    <ToggleButton value={VERIFICATION_ALL} sx={{ px: 2 }}>
+                      All
+                    </ToggleButton>
+                    <ToggleButton
+                      value={VERIFICATION_NEEDED}
+                      sx={{
+                        px: 2,
+                        color: "error.main",
+                        "&.Mui-selected": { backgroundColor: "error.main", color: "white", "&:hover": { backgroundColor: "error.dark" } },
+                      }}
+                    >
+                      <ErrorOutlineIcon sx={{ fontSize: 16, mr: 0.5 }} />
+                      Needs Inventory
+                    </ToggleButton>
+                    <ToggleButton
+                      value={VERIFICATION_COMPLETE}
+                      sx={{
+                        px: 2,
+                        color: "success.main",
+                        "&.Mui-selected": { backgroundColor: "success.main", color: "white", "&:hover": { backgroundColor: "success.dark" } },
+                      }}
+                    >
+                      <CheckCircleOutlineIcon sx={{ fontSize: 16, mr: 0.5 }} />
+                      Completed
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </Stack>
 
-              {isFiltered && (
-                <Button
-                  variant="text"
-                  size="small"
-                  onClick={handleClearFilters}
-                  sx={{ color: "text.secondary", textDecoration: "underline" }}
-                >
-                  Clear all filters
-                </Button>
-              )}
-            </Stack>
-
-            {/* Card grid */}
-            {filteredGroups.length === 0 ? (
-              <Stack alignItems="center" spacing={1} py={6}>
-                <SearchIcon sx={{ fontSize: 48, color: "text.disabled" }} />
-                <Typography
-                  variant="body1"
-                  color="text.secondary"
-                  fontWeight={500}
-                >
-                  No equipment found
-                </Typography>
-                <Typography variant="caption" color="text.disabled">
-                  Try adjusting your search or filters
-                </Typography>
                 {isFiltered && (
-                  <Button size="small" onClick={handleClearFilters}>
-                    Clear filters
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={handleClearFilters}
+                    sx={{ color: "text.secondary", textDecoration: "underline" }}
+                  >
+                    Clear all filters
                   </Button>
                 )}
               </Stack>
-            ) : (
-              <Box
-                sx={{
-                  maxHeight: 800,
-                  overflowY: "auto",
-                  pr: 0.5,
-                  "&::-webkit-scrollbar": { width: 8 },
-                  "&::-webkit-scrollbar-thumb": {
-                    backgroundColor: "grey.400",
-                    borderRadius: 4,
-                  },
-                }}
-              >
+
+              {filteredGroups.length === 0 ? (
+                <Stack alignItems="center" spacing={1} py={6}>
+                  <SearchIcon sx={{ fontSize: 48, color: "text.disabled" }} />
+                  <Typography variant="body1" color="text.secondary" fontWeight={500}>
+                    No equipment found
+                  </Typography>
+                  <Typography variant="caption" color="text.disabled">
+                    Try adjusting your search or filters
+                  </Typography>
+                  {isFiltered && (
+                    <Button size="small" onClick={handleClearFilters}>
+                      Clear filters
+                    </Button>
+                  )}
+                </Stack>
+              ) : (
                 <Box
                   sx={{
-                    display: "grid",
-                    gridTemplateColumns: {
-                      xs: "1fr",
-                      sm: "1fr 1fr",
-                      lg: "1fr 1fr 1fr",
-                    },
-                    gap: 2,
-                    alignItems: "start",
+                    maxHeight: 800,
+                    overflowY: "auto",
+                    pr: 0.5,
+                    "&::-webkit-scrollbar": { width: 8 },
+                    "&::-webkit-scrollbar-thumb": { backgroundColor: "divider", borderRadius: 4 },
                   }}
                 >
-                  {filteredGroups.map((group) => (
-                    <GroupedEndItemCard
-                      key={group.key}
-                      group={group}
-                      onSerialClick={handleSerialClick}
-                      selected={selectedGroup === group.representative.id}
-                      seenBySerialId={seenBySerialId}
-                    />
-                  ))}
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", lg: "1fr 1fr 1fr" },
+                      gap: 2,
+                      alignItems: "start",
+                    }}
+                  >
+                    {filteredGroups.map((group) => (
+                      <GroupedEndItemCard
+                        key={group.key}
+                        group={group}
+                        onSerialClick={handleSerialClick}
+                        selected={selectedGroup === group.representative.id}
+                        seenBySerialId={seenBySerialId}
+                      />
+                    ))}
+                  </Box>
                 </Box>
-              </Box>
-            )}
+              )}
+            </Stack>
           </CardContent>
         </Card>
       </Stack>

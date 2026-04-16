@@ -25,29 +25,35 @@ export default function IngestItems({ uic }) {
     const [itemType, setItemType] = useState(null);
     const [status, setStatus] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
-    const [previewData, setPreviewData] = useState(null);
+    const [warnings, setWarnings] = useState([]);
+  const [previewData, setPreviewData] = useState(null);
     const [schemaColumns, setSchemaColumns] = useState(null);
     const fileInputRef = useRef(null);
 
     const setFailureStates = body => {
         setStatus('fail');
         setErrorMessage(body.message || 'Upload failed.');
-        setFile(null);
+        setWarnings([]);setFile(null);
         setItemType(null);
         setPreviewData(null);
     };
 
-    const setSuccessStates = () => {
+    const setSuccessStates = (body = {}) => {
+    if (body.warnings?.length) {
+      setStatus('partial');
+      setWarnings(body.warnings);
+    } else {
         setStatus('success');
-        setErrorMessage(null);
+        setWarnings([]);
+    }setErrorMessage(null);
         setFile(null);
         setItemType(null);
-        setPreviewData(null);
-    };
+        setPreviewData(null);};
+
 
     const clearAllStates = () => {
         setStatus(null);
-        setErrorMessage(null);
+        setErrorMessage(null);setWarnings([]);
         setFile(null);
         setItemType(null);
         setPreviewData(null);
@@ -132,7 +138,7 @@ export default function IngestItems({ uic }) {
             const body = await response.json();
 
             if (response.ok) {
-                setSuccessStates();
+                setSuccessStates(body);
             } else {
                 setFailureStates(body);
             }
