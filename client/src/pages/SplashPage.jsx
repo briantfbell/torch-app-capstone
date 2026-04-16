@@ -145,7 +145,7 @@ export default function SplashPage() {
           }}
         />
         <Dialog open={registerOk} onClose={() => setRegisterOk(false)}>
-          <Box p={3}>
+          <Box sx={{ p: 4, textAlign: "center" }}>
             <h2>Registration Successful!</h2>
             <p>You can now log in with your new account.</p>
             <Button variant="contained" onClick={() => setRegisterOk(false)}>

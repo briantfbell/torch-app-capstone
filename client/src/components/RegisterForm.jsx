@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import Button from '@mui/material/Button'
-import { Stepper, Step, StepLabel, Checkbox, FormGroup, RadioGroup, FormControlLabel, FormLabel, FormControl, Stack, TextField, Radio, InputLabel, Select, MenuItem, Menu, Tooltip } from "@mui/material"
+import { InputAdornment, IconButton, Stepper, Step, StepLabel, Checkbox, FormGroup, RadioGroup, FormControlLabel, FormLabel, FormControl, Stack, TextField, Radio, InputLabel, Select, MenuItem, Menu, Tooltip } from "@mui/material"
+import { Visibility } from "@mui/icons-material"
+import { VisibilityOff } from "@mui/icons-material"
 
 export default function RegisterForm({onSubmit, error}){
     //Form for form data (trying something new)
@@ -100,6 +102,7 @@ export default function RegisterForm({onSubmit, error}){
         return true;
     }
 
+    //next and back buttons
     const handleNext = () => {
         if(validateStep()) setActiveStep((prev) => prev + 1)
     };
@@ -123,6 +126,7 @@ export default function RegisterForm({onSubmit, error}){
             setRoles(['user'])
         }
     }
+
     //Need this to check for updates
     useEffect(() => {
         validateStep();
@@ -227,6 +231,10 @@ export default function RegisterForm({onSubmit, error}){
         setRankType(value);
     };
 
+    //password visibility stuff
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPass, setShowConfirmPass] = useState(false);
+
 
     return (
         <form className="registerFormContainer" onSubmit={handleSubmit}>
@@ -245,8 +253,52 @@ export default function RegisterForm({onSubmit, error}){
             {activeStep === 0 && (
                 <Stack spacing={2}>
                     <TextField required label="Username" name="username" value={form.username} onChange={handleChange} fullWidth />
-                    <TextField required label="Password" name="password" type="password" value={form.password} onChange={handleChange} fullWidth />
-                    <TextField required label="Confirm Password" name="confirmPass" type="password" value={form.confirmPass} onChange={handleChange} fullWidth />
+                    {/*password*/}
+                    <TextField
+                    required
+                    label="Password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={form.password}
+                    onChange={handleChange}
+                    fullWidth
+                    InputProps={{
+                        endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            onMouseDown={(e) => e.preventDefault()}
+                            edge="end"
+                            >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                        </InputAdornment>
+                        ),
+                    }}
+                    />
+                    {/*confirm password*/}
+                    <TextField
+                    required
+                    label="Confirm Password"
+                    name="confirmPass"
+                    type={showConfirmPass ? "text" : "password"}
+                    value={form.confirmPass}
+                    onChange={handleChange}
+                    fullWidth
+                    InputProps={{
+                        endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton
+                            onClick={() => setShowConfirmPass((prev) => !prev)}
+                            onMouseDown={(e) => e.preventDefault()}
+                            edge="end"
+                            >
+                            {showConfirmPass ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                        </InputAdornment>
+                        ),
+                    }}
+                    />
                     <TextField required label="Email" name="email" value={form.email} onChange={handleChange} fullWidth />
                 </Stack>
             )}
@@ -337,8 +389,8 @@ export default function RegisterForm({onSubmit, error}){
                 )}
             </Stack>
 
-            {/* errors
-            {(localError || error) && <p><strong>Error: {localError || error}</strong></p>} */}
+            
+            {(error) && <p><strong>Error: {error}</strong></p>}
             </Stack>
         </form>
     )
