@@ -59,6 +59,10 @@ exports.findUserByUsername = async username => {
   return await baseQuery().where('username', username).first();
 };
 
+exports.findUserByDodid = async dodid => {
+  return await baseQuery().where('dodid', dodid).first();
+};
+
 exports.findRankById = async id => {
   return await db('ranks').where('id', id).first();
 };

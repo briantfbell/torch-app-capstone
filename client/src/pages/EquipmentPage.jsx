@@ -33,12 +33,14 @@ const str = (val) => (val == null ? "" : String(val));
 function SerialChip({ serial, index, isSeen, onClick }) {
   return (
     <Chip
-      label={`#${index + 1} — ${serial.serial_number}`}
+      label={`S/N #${index + 1} - ${serial.serial_number}`}
       onClick={(e) => {
         e.stopPropagation();
         onClick(serial);
       }}
       sx={{
+        width: "100%",
+        justifyContent: "center",
         border: "2px solid",
         borderColor: isSeen ? "success.main" : "error.main",
         fontWeight: 600,
@@ -106,7 +108,7 @@ function GroupedEndItemCard({
                   color={allVerified ? "success.main" : "error.main"}
                   fontWeight={700}
                 >
-                  {allVerified ? "Verified" : "Needs Verification"}
+                  {allVerified ? "COMPLETED" : "NEEDS INVENTORY"}
                 </Typography>
               </Box>
               <Chip
@@ -216,7 +218,7 @@ function GroupedEndItemCard({
               </Typography>
               {verifiedCount > 0 && (
                 <Chip
-                  label={`${verifiedCount} Verified`}
+                  label={`${verifiedCount} COMPLETED`}
                   size="small"
                   color="success"
                   variant="outlined"
@@ -225,7 +227,7 @@ function GroupedEndItemCard({
               )}
               {needsVerifyCount > 0 && (
                 <Chip
-                  label={`${needsVerifyCount} Verify`}
+                  label={`${needsVerifyCount} NEEDS INVENTORY`}
                   size="small"
                   color="error"
                   variant="outlined"
@@ -243,7 +245,15 @@ function GroupedEndItemCard({
             >
               Tap a serial number to view its details
             </Typography>
-            <Stack direction="row" flexWrap="wrap" gap={1.5}>
+            {/* ── Evenly spaced serial number grid ── */}
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+                gap: 1.5,
+                width: "100%",
+              }}
+            >
               {serials.map((serial, index) => (
                 <SerialChip
                   key={serial.id}
@@ -253,7 +263,7 @@ function GroupedEndItemCard({
                   onClick={() => onSerialClick(serial)}
                 />
               ))}
-            </Stack>
+            </Box>
           </AccordionDetails>
         </Accordion>
       )}
@@ -623,48 +633,6 @@ export default function EquipmentPage() {
   return (
     <Box sx={{ mx: "auto", width: "100%", py: 4, minHeight: "100vh" }}>
       <Stack spacing={3} sx={{ px: { xs: 2, sm: 3 } }}>
-        {/* Header */}
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          width="100%"
-        >
-          <Box sx={{ minWidth: 120 }} />
-          <Stack alignItems="center" spacing={0.5}>
-            <Typography variant="h4" fontWeight={700}>
-              Equipment
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Unit property and end item list
-            </Typography>
-          </Stack>
-          <Chip
-            label={uic ? `UIC: ${uic}` : "Loading..."}
-            variant="outlined"
-            color="primary"
-            sx={{ minWidth: 120 }}
-          />
-        </Stack>
-
-        <Divider />
-
-        {/* Sub Hand Receipt */}
-        <Stack alignItems="center">
-          <Button
-            variant="contained"
-            startIcon={<PictureAsPdfIcon />}
-            onClick={() => setOpenPdf(true)}
-            sx={{
-              minWidth: { xs: "100%", sm: 400 },
-              py: 1.5,
-              fontSize: "1rem",
-            }}
-          >
-            Sub Hand Receipt PDF
-          </Button>
-        </Stack>
-
         <PdfModalViewer
           open={openPdf}
           onClose={() => setOpenPdf(false)}
@@ -682,27 +650,44 @@ export default function EquipmentPage() {
           }}
         >
           <CardContent>
-            {/* Title + count */}
+            {/* Title row: UIC | PDF Button | Item Count */}
             <Stack
               direction="row"
               justifyContent="space-between"
               alignItems="center"
               mb={2}
             >
-              <Typography
-                variant="subtitle1"
-                fontWeight={700}
-                letterSpacing={1}
+              <Chip
+                label={uic ? `UIC: ${uic}` : "Loading..."}
+                variant="outlined"
+                color="primary"
+                sx={{ minWidth: 120, height: 36, fontSize: "0.85rem" }}
+              />
+              <Button
+                variant="contained"
+                startIcon={<PictureAsPdfIcon />}
+                onClick={() => setOpenPdf(true)}
+                sx={{ py: 0.75, fontSize: "0.9rem" }}
               >
-                END ITEMS
-              </Typography>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                fontWeight={600}
-              >
-                {filteredGroups.length} of {groupedItems.length} items
-              </Typography>
+                Sub Hand Receipt PDF
+              </Button>
+              <Stack alignItems="flex-end" spacing={0.25}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  fontWeight={700}
+                  letterSpacing={0.5}
+                >
+                  UNIT PROPERTY AND END ITEMS
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  fontWeight={600}
+                >
+                  {filteredGroups.length} of {groupedItems.length} items
+                </Typography>
+              </Stack>
             </Stack>
 
             {/* Search + Filter toggle */}
@@ -901,7 +886,7 @@ export default function EquipmentPage() {
                     }}
                   >
                     <ErrorOutlineIcon sx={{ fontSize: 16, mr: 0.5 }} />
-                    Needs Verification
+                    Needs Inventory
                   </ToggleButton>
                   <ToggleButton
                     value={VERIFICATION_COMPLETE}
@@ -917,7 +902,7 @@ export default function EquipmentPage() {
                     }}
                   >
                     <CheckCircleOutlineIcon sx={{ fontSize: 16, mr: 0.5 }} />
-                    Verified
+                    Completed
                   </ToggleButton>
                 </ToggleButtonGroup>
               </Stack>

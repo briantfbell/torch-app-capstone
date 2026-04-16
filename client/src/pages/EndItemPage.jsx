@@ -12,6 +12,7 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
+  IconButton,
   Stack,
   TextField,
   Typography,
@@ -26,11 +27,12 @@ import SaveIcon from "@mui/icons-material/Save";
 import PdfModalViewer from "../components/PdfModalViewer";
 import {getEndItemById, getEndItemCurrentHistory, updateEndItemNotes} from "../api/endItems";
 import PdfGenerator from "../components/PdfGenerator";
-import {getPdfsByEndItem, savePdf} from "../utils/pdfStorage";
+import {getPdfsByEndItem, deletePdf, savePdf} from "../utils/pdfStorage";
 import PdfFillModal from "../components/PdfFillModal";
 import {useQuery} from "@tanstack/react-query";
 import {tryGetSerialItems} from "../api/data.js";
 import {postEndItemSeen} from "../api/endItems.js";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function EndItemPage() {
   const { id } = useParams();
@@ -547,19 +549,43 @@ export default function EndItemPage() {
                         </Typography>
                     ) : (
                         <Stack spacing={1}>
-                          {localPdfs.map((pdf) => (
-                              <Button
-                                  key={pdf.id}
-                                  variant="outlined"
-                                  fullWidth
+                            {localPdfs.map((pdf) => (
+                                <Box
+                                    key={pdf.id}
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 1,
+                                        border: "1px solid",
+                                        borderColor: "divider",
+                                        borderRadius: 1,
+                                        p: 1,
+                                    }}
+                                >
+                                <Button
+                                    variant="text"
+                                    sx={{ flex: 1, justifyContent: "flex-start" }}
+                                    fullWidth
                                   onClick={() => {
                                     setPdfUrl(pdf.url);
                                     setOpenPdf(true);
-                                  }}
-                              >
-                                {pdf.name}
-                              </Button>
-                          ))}
+                                    }}
+                                >
+                                    {pdf.name}
+                                </Button>
+                                <IconButton
+                                    color="error"
+                                    size="small"
+                                    onClick={async (e) => {
+                                    e.stopPropagation();
+                                    await deletePdf(pdf.id);
+                                    loadPdfs();
+                                    }}
+                                >
+                                    <DeleteIcon />
+                                </IconButton>
+                                </Box>
+                            ))}
                         </Stack>
                     )}
                   </Stack>

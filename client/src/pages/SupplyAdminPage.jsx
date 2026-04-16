@@ -21,11 +21,6 @@ export default function SupplyAdminPage() {
   const [uics, setUics] = useState([]);
   const isAdmin = user?.role?.includes('admin');
   const [adminSelectedUic, setAdminSelectedUic] = useState(null);
-  const selectedUic = isAdmin
-    ? adminSelectedUic
-    : user?.uic_id
-      ? { uicId: user.uic_id, uicName: user.uic }
-      : null;
 
   useEffect(() => {
     if (user?.uic_id && adminSelectedUic === null) {
@@ -44,6 +39,12 @@ export default function SupplyAdminPage() {
       )
       .catch(err => console.error('Failed to get UICs:', err));
   }, [isAdmin]);
+
+  const selectedUic = isAdmin
+    ? adminSelectedUic
+    : user?.uic_id
+      ? { uicId: user.uic_id, uicName: user.uic }
+      : null;
 
   if (authLoading) {
     return (

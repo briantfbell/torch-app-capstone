@@ -84,6 +84,7 @@ exports.registerUser = async ({
   const normalizedUic = uic.trim().toUpperCase();
   const normalizedRank = rank.trim().toUpperCase();
 
+  const matchDod = await authModels.findUserByDodid(dodid);
   const matchEmail = await authModels.findUserByEmail(normalizedEmail);
   const matchUsername = await authModels.findUserByUsername(username);
   const matchUic = await uicsModels.getUicByUic(normalizedUic);
@@ -97,6 +98,12 @@ exports.registerUser = async ({
 
   if (matchUsername) {
     const error = new Error('This username is already in use.');
+    error.status = 400;
+    throw error;
+  }
+
+  if (matchDod) {
+    const error = new Error('This DoD ID is already in use.');
     error.status = 400;
     throw error;
   }

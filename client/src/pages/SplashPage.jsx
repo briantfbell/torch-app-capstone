@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Stack, Box } from "@mui/material";
+import { Stack, Box, Dialog } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { tryLogin } from "../api/auth.js";
@@ -41,6 +41,7 @@ export default function SplashPage() {
     }
   };
 
+  const [registerOk, setRegisterOk] = useState(false);
   const [registerError, setRegisterError] = useState("");
   const handleRegisterSubmit = async (data) => {
     try {
@@ -61,6 +62,7 @@ export default function SplashPage() {
 
       setRegisterError("");
       setIsLogin(true);
+      setRegisterOk(true);
     } catch (err) {
       setRegisterError("Something went wrong, please try again!");
     }
@@ -103,7 +105,16 @@ export default function SplashPage() {
       <Button variant="contained" onClick={() => handleLoginState()}>
         Return to Login
       </Button>
-    </Stack>
+    <Dialog open={registerOk} onClose={() => setRegisterOk(false)}>
+          <Box sx={{ p: 4, textAlign: "center" }}>
+            <h2>Registration Successful!</h2>
+            <p>You can now log in with your new account.</p>
+            <Button variant="contained" onClick={() => setRegisterOk(false)}>
+              Close
+            </Button>
+          </Box>
+        </Dialog>
+      </Stack>
   );
 
   return (
