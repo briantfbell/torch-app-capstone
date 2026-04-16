@@ -59,23 +59,23 @@ exports.insertComponent = async (obj, userId, uicId) => {
     const duplicates = [];
 
     // Files need to be updated with unique NIINs per end item
-    // let component = await trx('components')
-    //   .where({ niin: obj.niin, end_item_id: obj.end_item_id })
-    //   .select('id', 'cost')
-    //   .first();
+    let component = await trx('components')
+      .where({ niin: obj.niin, end_item_id: end_item.id })
+      .select('id', 'cost')
+      .first();
 
-    // if (!component) {
-    const [component] = await trx('components')
-      .insert({
-        niin: obj.niin,
-        description: obj.description,
-        ui: obj.ui,
-        auth_qty: obj.auth_qty || 1,
-        end_item_id: end_item.id,
-        cost: obj.cost,
-      })
-      .returning(['id', 'cost']);
-    // }
+    if (!component) {
+      const [component] = await trx('components')
+        .insert({
+          niin: obj.niin,
+          description: obj.description,
+          ui: obj.ui,
+          auth_qty: obj.auth_qty || 1,
+          end_item_id: end_item.id,
+          cost: obj.cost,
+        })
+        .returning(['id', 'cost']);
+    }
 
     if (obj.serial_number) {
       const match = await db('serial_component_items')
