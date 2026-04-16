@@ -5,6 +5,7 @@ A web-based military property accountability application designed for use at the
 ## Tech Stack
 
 **Frontend**
+
 - React 19 (Vite) — UI framework
 - Material UI (MUI) v7 — component library with dark/light theme toggle
 - MUI X Charts / MUI X Data Grid — dashboard charts and shortage grids
@@ -14,6 +15,7 @@ A web-based military property accountability application designed for use at the
 - react-router-dom v7 — client-side routing
 
 **Backend**
+
 - Express 5 — API server
 - PostgreSQL — relational database
 - Knex — query builder and migrations
@@ -37,11 +39,11 @@ cp client/.env.example client/.env
 docker compose up --build
 ```
 
-| Service  | URL                     |
-|----------|-------------------------|
-| Client   | http://localhost:5173   |
-| Backend  | http://localhost:8080   |
-| Database | localhost:5432          |
+| Service  | URL                   |
+| -------- | --------------------- |
+| Client   | http://localhost:5173 |
+| Backend  | http://localhost:8080 |
+| Database | localhost:5432        |
 
 ### Option 2 — Manual
 
@@ -64,13 +66,12 @@ cd client && npm run dev
 
 **Database scripts (backend/):**
 
-| Command         | Description                        |
-|-----------------|------------------------------------|
-| `npm run migrate` | Run pending migrations             |
-| `npm run rollback`| Roll back the last migration batch |
-| `npm run seed`    | Seed the database                  |
-| `npm run reset`   | Rollback, migrate, and seed        |
-| `npm test`        | Run Jest integration tests         |
+| Command            | Description                        |
+| ------------------ | ---------------------------------- |
+| `npm run migrate`  | Run pending migrations             |
+| `npm run rollback` | Roll back the last migration batch |
+| `npm run seed`     | Seed the database                  |
+| `npm run reset`    | Rollback, migrate, and seed        |
 
 ---
 
@@ -78,17 +79,17 @@ cd client && npm run dev
 
 All routes except `/` are protected and require a valid login session.
 
-| Route | Page | Description |
-|-------|------|-------------|
-| `/` | SplashPage | Login and registration forms |
-| `/dashboard` | Dashboard | Unit readiness overview — pie/bar charts, KPI cards, shortage summary grid with live polling |
-| `/equipment` | EquipmentPage | Searchable, filterable list of all end item types with completion status and serial chip cards |
-| `/equipment/:id` | EndItemPage | Detail view for a single end item serial — mark seen/not seen, save notes, generate/view PDFs |
-| `/equipment/:endItemId/inventory` | InventoryTable | Component inventory table for an end item — count on-hand vs authorized |
-| `/equipment/shr-viewer` | SHRViewPage | Sub Hand Receipt PDF viewer with page navigation |
-| `/shortages` | ShortageTrackerPage | Shortage tracker table (work in progress — currently displays mock data) |
-| `/user-settings` | UserSettings | Update username, email, and password |
-| `/SupplyAdmin` | SupplyAdminPage | Admin console for bulk-importing end items and components via Excel upload |
+| Route                             | Page                | Description                                                                                    |
+| --------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------- |
+| `/`                               | SplashPage          | Login and registration forms                                                                   |
+| `/dashboard`                      | Dashboard           | Unit readiness overview — pie/bar charts, KPI cards, shortage summary grid with live polling   |
+| `/equipment`                      | EquipmentPage       | Searchable, filterable list of all end item types with completion status and serial chip cards |
+| `/equipment/:id`                  | EndItemPage         | Detail view for a single end item serial — mark seen/not seen, save notes, generate/view PDFs  |
+| `/equipment/:endItemId/inventory` | InventoryTable      | Component inventory table for an end item — count on-hand vs authorized                        |
+| `/equipment/shr-viewer`           | SHRViewPage         | Sub Hand Receipt PDF viewer with page navigation                                               |
+| `/shortages`                      | ShortageTrackerPage | Shortage tracker table (work in progress — currently displays mock data)                       |
+| `/user-settings`                  | UserSettings        | Update username, email, and password                                                           |
+| `/SupplyAdmin`                    | SupplyAdminPage     | Admin console for bulk-importing end items and components via Excel upload                     |
 
 ---
 
@@ -245,7 +246,7 @@ after 7 days, and is named `token`.
 ### Role Permissions
 
 | Role    | Access Level                                             |
-|---------|----------------------------------------------------------|
+| ------- | -------------------------------------------------------- |
 | `user`  | Read access to most resources                            |
 | `hrh`   | Can create resources (POST endpoints)                    |
 | `admin` | Can update and delete resources (PATCH/DELETE endpoints) |
@@ -265,7 +266,7 @@ All errors return:
 ```
 
 | Status | Meaning                                 |
-|--------|-----------------------------------------|
+| ------ | --------------------------------------- |
 | `400`  | Bad request / missing fields            |
 | `401`  | Missing or invalid token                |
 | `403`  | Insufficient role                       |
@@ -1712,7 +1713,7 @@ Upload an Excel file to bulk-import end items and their serial numbers.
 **Request:** Form field `file` containing an `.xlsx` file with these columns:
 
 | Excel Column           | Required | Type   | Maps To                |
-|------------------------|----------|--------|------------------------|
+| ---------------------- | -------- | ------ | ---------------------- |
 | `LIN Number / DODIC`   | Yes      | String | LIN                    |
 | `FSC`                  | Yes      | Number | FSC                    |
 | `Material`             | Yes      | String | NIIN                   |
@@ -1763,7 +1764,7 @@ Upload an Excel file to bulk-import components.
 The dashboard pulls from 6 backend endpoints on a 5-second polling interval using `react-query`:
 
 | Data                   | Endpoint                      | Purpose                                                                      |
-|------------------------|-------------------------------|------------------------------------------------------------------------------|
+| ---------------------- | ----------------------------- | ---------------------------------------------------------------------------- |
 | End Items              | `/end-items`                  | Master list of equipment types (laptops, vehicles, etc.)                     |
 | Components             | `/components`                 | Sub-items belonging to end items, each with an `auth_qty` per parent         |
 | Serial End Items       | `/serial-items`               | Registered physical units of each end item (one row = one serial number)     |
