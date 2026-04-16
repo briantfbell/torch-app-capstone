@@ -237,19 +237,31 @@ export default function IngestItems({ uic }) {
       )}
 
       {status === 'success' && (
-        <Alert severity="success" onClose={clearAllStates}>
+        <Alert
+          severity="success"
+          onClose={clearAllStates}
+          style={{ whiteSpace: 'pre-line' }}
+        >
           Upload successful!
         </Alert>
       )}
 
       {status === 'fail' && (
-        <Alert severity="error" onClose={clearAllStates}>
+        <Alert
+          severity="error"
+          onClose={clearAllStates}
+          style={{ whiteSpace: 'pre-line' }}
+        >
           {errorMessage}
         </Alert>
       )}
 
       {status === 'partial' && (
-        <Alert severity="warning" onClose={clearAllStates}>
+        <Alert
+          severity="warning"
+          onClose={clearAllStates}
+          style={{ whiteSpace: 'pre-line' }}
+        >
           <strong>Upload partially successful.</strong>
           <div style={{ margin: '4px 0 0', paddingLeft: 20 }}>
             {warnings.map((w, i) => (

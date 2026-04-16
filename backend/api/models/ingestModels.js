@@ -49,7 +49,7 @@ exports.insertComponent = async (obj, userId, uicId) => {
 
   if (!end_item) {
     const error = new Error(
-      `No end item exists for LIN: ${obj.end_item_lin}.\nUpload associated end item first.`,
+      `No end item exists with LIN: ${obj.end_item_lin}. Upload associated end item first.`,
     );
     error.status = 400;
     throw error;
@@ -99,7 +99,7 @@ exports.insertComponent = async (obj, userId, uicId) => {
 
     if (duplicates.length > 0) {
       const error = new Error(
-        `The following SNs are assigned to another UIC:\n${duplicates}`,
+        `The following SNs are assigned to another UIC:\n\n${duplicates}`,
       );
       error.status = 400;
       throw error;
