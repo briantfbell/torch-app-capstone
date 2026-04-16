@@ -36,7 +36,6 @@ const barChartSettings = {
     },
   ],
   height: 300,
-  width: 700,
 };
 
 const pieChartSize = {
@@ -498,19 +497,21 @@ const Dashboard = () => {
                   >
                     <PieCenterLabel>{completedPercent}</PieCenterLabel>
                   </PieChart>
-                  <BarChart
-                    dataset={shortageDataset}
-                    yAxis={[{ scaleType: "band", dataKey: "name", width: 150 }]}
-                    series={[
-                      {
-                        dataKey: "percent",
-                        valueFormatter: (value) => `${value}%`,
-                        barLabel: (v) => `${v.value}%`,
-                      },
-                    ]}
-                    layout="horizontal"
-                    {...barChartSettings}
-                  />
+                  <Box sx={{ width: "100%", maxWidth: 700 }}>
+                    <BarChart
+                      dataset={shortageDataset}
+                      yAxis={[{ scaleType: "band", dataKey: "name", width: 150 }]}
+                      series={[
+                        {
+                          dataKey: "percent",
+                          valueFormatter: (value) => `${value}%`,
+                          barLabel: (v) => `${v.value}%`,
+                        },
+                      ]}
+                      layout="horizontal"
+                      {...barChartSettings}
+                    />
+                  </Box>
                 </Stack>
               </Stack>
             </CardContent>
