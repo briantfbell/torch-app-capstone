@@ -10,28 +10,24 @@ import { useAuth } from "../hooks/useAuth";
 export default function SplashPage() {
   const url = "http://localhost:8080/";
 
-  //Navigation
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
 
-  //Login state
   const [isLogin, setIsLogin] = useState(true);
   const handleLoginState = () => {
     setIsLogin(!isLogin);
   };
 
-  //Username input
   const [email, setEmail] = useState("");
   const handleEmailInput = (e) => {
     setEmail(e.target.value);
   };
-  //Password input
+
   const [password, setPassword] = useState("");
   const handlePasswordInput = (e) => {
     setPassword(e.target.value);
   };
 
-  //Submission handling
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
 
@@ -64,7 +60,6 @@ export default function SplashPage() {
         );
       }
 
-      //If success, go back to login
       setRegisterError("");
       setIsLogin(true);
       setRegisterOk(true);
@@ -73,7 +68,6 @@ export default function SplashPage() {
     }
   };
 
-  //Check if user, if they are a user, kick them to the dashboard
   const { user, loading } = useAuth();
   useEffect(() => {
     if (user) {
@@ -87,64 +81,31 @@ export default function SplashPage() {
     return null;
   }
 
-  if (isLogin) {
-    return (
-      <Stack
-        alignItems="center"
-        justifyContent="center"
-        sx={{
-          minHeight: "100vh",
-          width: "100%",
-          position: "relative",
-          pb: 8,
-        }}
-      >
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="center"
-          //   Spacing between the TORCH logo and registration content
-          spacing={12}
-        >
-          {/* Left side - TORCH logo */}
-          <Box
-            component="img"
-            src="/artwork/splash_torch_logo.png"
-            alt="TORCH"
-            sx={{ maxWidth: 450, width: "100%", objectFit: "contain" }}
-          />
-
-          {/* Right side - Login form */}
-          <Stack sx={{ width: 320 }}>
-            <LoginForm
-              handleLoginSubmit={handleLoginSubmit}
-              handleEmailInput={handleEmailInput}
-              handlePasswordInput={handlePasswordInput}
-              email={email}
-              password={password}
-            />
-            <p>Need an account?</p>
-            <Button variant="contained" onClick={() => handleLoginState()}>
-              Register
-            </Button>
-          </Stack>
-        </Stack>
-
-        {/* Bottom centered - org logos */}
-        <Box
-          component="img"
-          src="/artwork/org_banner.png"
-          alt="Dev Team"
-          sx={{
-            position: "absolute",
-            bottom: 20,
-            left: "50%",
-            transform: "translateX(-50%)",
-            height: 70,
-            objectFit: "contain",
-          }}
-        />
-        <Dialog open={registerOk} onClose={() => setRegisterOk(false)}>
+  const content = isLogin ? (
+    <Stack sx={{ width: { xs: "100%", md: 320 }, maxWidth: 320, px: { xs: 2, md: 0 } }}>
+      <LoginForm
+        handleLoginSubmit={handleLoginSubmit}
+        handleEmailInput={handleEmailInput}
+        handlePasswordInput={handlePasswordInput}
+        email={email}
+        password={password}
+      />
+      <p>Need an account?</p>
+      <Button variant="contained" onClick={() => handleLoginState()}>
+        Register
+      </Button>
+    </Stack>
+  ) : (
+    <Stack sx={{ width: { xs: "100%", md: 320 }, maxWidth: 320, px: { xs: 2, md: 0 } }}>
+      <RegisterForm
+        onSubmit={handleRegisterSubmit}
+        error={registerError}
+      />
+      <p>Already have an account? Click here!</p>
+      <Button variant="contained" onClick={() => handleLoginState()}>
+        Return to Login
+      </Button>
+    <Dialog open={registerOk} onClose={() => setRegisterOk(false)}>
           <Box sx={{ p: 4, textAlign: "center" }}>
             <h2>Registration Successful!</h2>
             <p>You can now log in with your new account.</p>
@@ -154,62 +115,45 @@ export default function SplashPage() {
           </Box>
         </Dialog>
       </Stack>
-    );
-  } else if (!isLogin) {
-    return (
-      <Stack
-        alignItems="center"
-        justifyContent="center"
-        sx={{
-          minHeight: "100vh",
-          width: "100%",
-          position: "relative",
-          pb: 8,
-        }}
-      >
+  );
+
+  return (
+    <Stack
+      sx={{
+        position: "fixed",
+        inset: 0,
+        justifyContent: "space-between",
+        alignItems: "center",
+        py: 3,
+        px: { xs: 2, md: 0 },
+        boxSizing: "border-box",
+        overflow: "hidden",
+      }}
+    >
+      <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", width: "100%", minHeight: 0 }}>
         <Stack
-          direction="row"
+          direction={{ xs: "column", md: "row" }}
           alignItems="center"
           justifyContent="center"
-          spacing={12}
+          spacing={{ xs: 2, md: 12 }}
+          sx={{ width: "100%" }}
         >
-          {/* Left side - TORCH logo */}
           <Box
             component="img"
             src="/artwork/splash_torch_logo.png"
             alt="TORCH"
-            sx={{ maxWidth: 450, width: "100%", objectFit: "contain" }}
+            sx={{ maxWidth: { xs: 160, md: 450 }, maxHeight: "25vh", width: "100%", objectFit: "contain" }}
           />
-
-          {/* Right side - Register form */}
-          <Stack sx={{ width: 320 }}>
-            <RegisterForm
-              onSubmit={handleRegisterSubmit}
-              error={registerError}
-            />
-            <p>Already have an account? Click here!</p>
-            <Button variant="contained" onClick={() => handleLoginState()}>
-              Return to Login
-            </Button>
-          </Stack>
+          {content}
         </Stack>
+      </Box>
 
-        {/* Bottom centered - org logos */}
-        <Box
-          component="img"
-          src="/artwork/org_banner.png"
-          alt="Dev Team"
-          sx={{
-            position: "absolute",
-            bottom: 20,
-            left: "50%",
-            transform: "translateX(-50%)",
-            height: 70,
-            objectFit: "contain",
-          }}
-        />
-      </Stack>
-
-    );
-  }
+      <Box
+        component="img"
+        src="/artwork/org_banner.png"
+        alt="Dev Team"
+        sx={{ maxWidth: "100%", maxHeight: "8vh", objectFit: "contain" }}
+      />
+    </Stack>
+  );
 }
