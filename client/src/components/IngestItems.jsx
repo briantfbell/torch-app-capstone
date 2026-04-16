@@ -357,7 +357,7 @@ export default function IngestItems({ uic }) {
         </Stack>
       )}
 
-      {file && (
+      {file && previewData && (
         <Stack spacing={1} alignItems="center">
           <Typography variant="body2" color="text.secondary">
             Selected file:{' '}
