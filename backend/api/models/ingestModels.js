@@ -58,9 +58,9 @@ exports.insertComponent = async (obj, userId, uicId) => {
   await db.transaction(async trx => {
     const duplicates = [];
 
-    // Files need to be updated with unique NIINs
+    // Files need to be updated with unique NIINs per end item
     // let component = await trx('components')
-    //   .where({ niin: obj.niin })
+    //   .where({ niin: obj.niin, end_item_id: obj.end_item_id })
     //   .select('id', 'cost')
     //   .first();
 
