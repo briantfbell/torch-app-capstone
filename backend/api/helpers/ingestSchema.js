@@ -39,10 +39,10 @@ const schema = {
     column: 'img',
     type: String,
   },
-  // cost: {
-  //   column: 'Cost',
-  //   type: Number
-  // }
+  cost: {
+    column: 'Cost',
+    type: Number,
+  },
 };
 
 // Strips spaces, underscores, and lowercases for fuzzy header matching

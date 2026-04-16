@@ -79,7 +79,7 @@ exports.ingestComponents = async (file, user, uic) => {
 
   if (missingEndItemLins.size > 0) {
     warnings.push(
-      `Components were skipped because their end items have not been uploaded yet. Upload end items with these LINs first:\n\n${[...missingEndItemLins].join(', ')}.`,
+      `Some components were skipped because their end items have not been uploaded yet.\nUpload end items with these LINs first:\n\n${[...missingEndItemLins].join(', ')}.`,
     );
   }
 
@@ -151,7 +151,7 @@ exports.ingestEndItems = async (file, user, uic) => {
   if (crossUicSns.length > 0) {
     return {
       warnings: [
-        `The following SNs are assigned to another UIC and were skipped:\n\n${crossUicSns.join(', ')}.`,
+        `The following SNs are assigned to another UIC and were skipped:\n${crossUicSns.join(', ')}.`,
       ],
     };
   }
