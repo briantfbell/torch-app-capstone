@@ -388,7 +388,7 @@ export default function MiniDrawer({children, mode, onToggleTheme}) {
                 </List>
                 <Divider/>
             </Drawer>
-            <Box component="main" sx={{flexGrow: 1, p: 3}}>
+            <Box component="main" sx={{flexGrow: 1, minWidth: 0, p: 3}}>
                 <DrawerHeader/>
                 {!isDashboard && (() => {
                     const crumbs = buildBreadcrumbs(location.pathname);

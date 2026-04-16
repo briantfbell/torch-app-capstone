@@ -1,6 +1,9 @@
+import {useEffect, useMemo} from 'react';
 import Box from '@mui/material/Box';
-import {DataGrid} from '@mui/x-data-grid';
+import {DataGrid, useGridApiRef} from '@mui/x-data-grid';
 import {Stack, Typography} from '@mui/material';
+
+const DEFAULT_COLUMN_WIDTH = 140;
 
 const columns = [
     {
@@ -89,12 +92,41 @@ const columns = [
 ];
 
 export default function ShortageDataGrid({rows = [], columns: columnsProp}) {
-    const resolvedColumns = columnsProp ?? columns;
+    const apiRef = useGridApiRef();
+    const resolvedColumns = useMemo(() => {
+        const sourceColumns = columnsProp ?? columns;
+
+        return sourceColumns.map((column) => ({
+            ...column,
+            flex: undefined,
+            width: column.width ?? DEFAULT_COLUMN_WIDTH,
+        }));
+    }, [columnsProp]);
+
+    useEffect(() => {
+        const frameId = requestAnimationFrame(() => {
+            apiRef.current.autosizeColumns({
+                includeHeaders: true,
+                includeOutliers: true,
+                expand: false,
+            });
+        });
+
+        return () => cancelAnimationFrame(frameId);
+    }, [apiRef, resolvedColumns, rows]);
+
     return (
-        <Box sx={{height: 400, width: '100%'}}>
+        <Box sx={{height: 400, width: '100%', overflowX: 'auto'}}>
             <DataGrid
+                apiRef={apiRef}
                 rows={rows}
                 columns={resolvedColumns}
+                autosizeOnMount
+                autosizeOptions={{
+                    includeHeaders: true,
+                    includeOutliers: true,
+                    expand: false,
+                }}
                 initialState={{
                     pagination: {
                         paginationModel: {
@@ -104,7 +136,7 @@ export default function ShortageDataGrid({rows = [], columns: columnsProp}) {
                 }}
                 pageSizeOptions={[5, 10, 25, 50, 100]}
                 disableRowSelectionOnClick
-                sx={{border: 'none'}}
+                sx={{border: 'none', width: '100%'}}
             />
         </Box>
     );
