@@ -69,7 +69,7 @@ export default function EndItemPage() {
   const selectedSerial = matchingSerialItems.find(
       (serialItem) => String(serialItem.id) === String(selectedSerialId)
   );
-
+  console.table(selectedSerialId)
   const loadPdfs = async () => {
     try {
       const results = await getPdfsByEndItem(id);
@@ -453,9 +453,18 @@ export default function EndItemPage() {
                     </Stack>
                   </Stack>
                 </Stack>
-              </Stack>
-            </CardContent>
-          </Card>
+
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                onClick={() => navigate(`/equipment/${id}/inventory?serialId=${selectedSerialId}`)}
+                >
+                Start / Open Inventory
+              </Button>
+            </Stack>
+          </CardContent>
+        </Card>
 
           <Stack
               direction={{ xs: "column", md: "row" }}

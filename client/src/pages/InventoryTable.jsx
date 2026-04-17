@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import {
   Paper,
   Table,
@@ -29,10 +29,13 @@ function InventoryTable() {
   const [saveStatus, setSaveStatus] = useState(null);
   const [apiError, setApiError] = useState("");
   const [completionWarning, setCompletionWarning] = useState("");
+  const [searchParams] = useSearchParams();
+  const selectedSerialId = searchParams.get("serialId");
+
 
   useEffect(() => {
 
-    fetch(`http://localhost:8080/components?end_item_id=${endItemId}`, {
+    fetch(`http://localhost:8080/inventory/components/${endItemId}?serid=${selectedSerialId}`, {
       credentials: "include",
     })
       .then((res) => {
@@ -42,21 +45,28 @@ function InventoryTable() {
         return res.json();
       })
       .then((data) => {
-        // console.log(data)
+        console.log(data)
 
-        const components = Array.isArray(data.allComponents)
-          ? data.allComponents
+        const components = Array.isArray(data)
+          ? data
           : [];
 
         const mappedItems = components.map((item) => ({
-          id: item.id,
+          serial_id: selectedSerialId,
+          complete: item.seen || false,
+          component_id: item.id,
           niin: item.niin,
+          location: item.location || "",
+          count: item.count || 0,
           ui: item.ui || "",
+          h_id: item.h_id || null,
           user_id: item.user_id || "",
           displayName: item.description || item.display_name || "",
           authQty: item.auth_qty ?? item.authorized_quantity ?? "",
+
         }));
         setItems(mappedItems);
+
         setApiError("");
       })
       .catch((err) => {
@@ -66,99 +76,56 @@ function InventoryTable() {
       });
   }, [endItemId]);
 
-  useEffect(() => {
-    try {
-      async function checkHistory() {
-        fetch('http://localhost:8080/current-history/components', {
-          credentials: "include",
-        })
-        .then(resp => resp.json())
-        .then(out => console.log(out))
+  const handleQuantityChange = (c_id, value) => {
 
-        // const data = await response();
-        // console.log(data)
-        // return data;
-
-      };
-
-      checkHistory()
-
-    } catch (err) {
-
-      console.log(err)
-
-    } finally {
-    console.log('History check complete.');
-  }
-
-  }, [])
-
-  const handleQuantityChange = (id, value) => {
     const numeric = value.replace(/[^0-9]/g, "");
-    setInventoryData((prev) => ({
-      ...prev,
-      [id]: {
-        ...prev[id],
-        onHandQty: numeric,
-      },
-    }));
-    // console.log(inventoryData)
-    setCompletionWarning("");
+
+    const itemIndex = items.findIndex(item => item.component_id === c_id);
+
+    let tempItems = [...items]
+    tempItems[itemIndex].count = numeric
+
+    setItems(tempItems)
+
   };
 
-  const handleLocationChange = (id, value) => {
-    setInventoryData((prev) => ({
-      ...prev,
-      [id]: {
-        ...prev[id],
-        location: value,
-      },
-    }));
+  const handleLocationChange = (c_id, value) => {
+
+    const itemIndex = items.findIndex(item => item.component_id === c_id);
+
+    let tempItems = [...items]
+    tempItems[itemIndex].location = value
+
+    setItems(tempItems)
+
   };
 
-  const handleSeenChange = (id, value) => {
 
-    setInventoryData((prev) => ({
-      ...prev,
-      [id]: {
-        ...prev[id],
-        seen: value
-      },
-    }));
+  const handleSeenChange = (c_id) => {
+
+    const itemIndex = items.findIndex(item => item.component_id === c_id);
+    if ( items[itemIndex].complete === false ) {
+      let tempItems = [...items]
+      tempItems[itemIndex].complete = true
+
+      setItems(tempItems)
+
+    } else {
+      let tempItems = [...items]
+      tempItems[itemIndex].complete = false
+
+      setItems(tempItems)
+
+    };
   };
-
 
   const handleSave = async () => {
     try {
-      const component_id = items[0].id
-      const stampedInventoryData = Object.fromEntries(
-        Object.entries(inventoryData).map(([id, row]) => [
-          id,
-          {
-            ...row,
-            "seen": row.seen,
-            "component_id": component_id,
-            // "user_id": ,
-            "location": row.location,
-          },
-          // console.log(row)
-        ]),
-      );
-
-      setInventoryData(stampedInventoryData);
-
-      const sData = {
-        "component_id": 2,
-        "user_id": 1,
-        "seen": true,
-        "location": "Arms Room",
-      }
-
-      const response = await fetch(`http://localhost:8080/current-history/components`, {
+      const response = await fetch(`http://localhost:8080/inventory/update`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         credentials: 'include',
-        body: JSON.stringify(stampedInventoryData),
+        body: JSON.stringify(items),
       });
 
       if (!response.ok) {
@@ -167,59 +134,11 @@ function InventoryTable() {
 
       const result = await response.json();
 
-      console.log('Success:', result);
-
     } catch (e) {
       console.error('Error during POST:', e);
 
     } finally {
       setTimeout(() => setSaveStatus(null), 4000);
-    }
-  };
-
-  const handleMarkComplete = async () => {
-    if (apiError || items.length === 0) {
-      setCompletionWarning(
-        "Inventory records are not loaded yet, so this end item cannot be marked complete.",
-      );
-      return;
-    }
-
-    const hasUnfilledRows = items.some((item) => {
-      const value = inventoryData[item.id]?.onHandQty;
-      return value === undefined || value === "";
-    });
-
-    if (hasUnfilledRows) {
-      setCompletionWarning("There are still rows that have not been counted.");
-      return;
-    }
-
-    try {
-      setCompletionWarning("");
-
-      const res = await fetch(
-        `http://localhost:8080/end-items/${endItemId}/complete`,
-        {
-          method: "PATCH",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
-
-      // console.log("End item marked complete.");
-      navigate("/equipment");
-    } catch (err) {
-      console.error("Failed to mark inventory complete:", err);
-      setCompletionWarning(
-        "Unable to mark this end item complete right now. Please try again.",
-      );
     }
   };
 
@@ -246,26 +165,28 @@ function InventoryTable() {
               <TableCell>On Hand Qty</TableCell>
               <TableCell>Variance</TableCell>
               <TableCell>Location</TableCell>
-              <TableCell>Seen</TableCell>
-              {/* <TableCell>Counted By</TableCell> */}
-              {/* <TableCell>Last Counted</TableCell> */}
+              <TableCell>Complete</TableCell>
+              <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
+
             {items.map((item) => (
-              <TableRow key={item.id}>
+
+              <TableRow key={item.component_id}>
                 <TableCell>{item.ui}</TableCell>
                 <TableCell>{item.niin}</TableCell>
                 <TableCell>{item.displayName}</TableCell>
                 <TableCell>{item.authQty}</TableCell>
+
                 <TableCell>
                   <TextField
                     type="number"
                     size="small"
-                    value={inventoryData[item.id]?.onHandQty || ""}
+                    value={item.count}
                     onChange={(e) =>
-                      handleQuantityChange(item.id, e.target.value)
+                      handleQuantityChange(item.component_id, e.target.value)
                     }
                     onKeyDown={(e) => {
                       if (["e", "E", "+", "-", "."].includes(e.key)) {
@@ -275,42 +196,39 @@ function InventoryTable() {
                     inputProps={{ min: 0 }}
                   />
                 </TableCell>
+
                 <TableCell>
-                  {inventoryData[item.id]?.onHandQty === "" ||
-                  inventoryData[item.id]?.onHandQty === undefined
+                  {inventoryData[item.component_id]?.onHandQty === "" ||
+                  inventoryData[item.component_id]?.onHandQty === undefined
                     ? ""
-                    : Number(inventoryData[item.id].onHandQty) -
+                    : Number(inventoryData[item.component_id].onHandQty) -
                       Number(item.authQty || 0)}
                 </TableCell>
+
                 <TableCell>
                   <TextField
                     size="small"
-                    value={inventoryData[item.id]?.location || ""}
+                    value={item.location || ""}
                     onChange={(e) =>
-                      handleLocationChange(item.id, e.target.value)
+                      handleLocationChange(item.component_id, e.target.value)
                     }
                   />
                 </TableCell>
 
                 <TableCell>
-                  <FormControl fullWidth>
-                    <TextField
-                      select
-                      defaultValue={false}
-                      onChange={(e) => handleSeenChange(e, e.target.value)}
-                      sx={{ minWidth: 120 }}
+                  <FormControl >
+                    <Button
+                      variant="contained"
+                      onClick={() => handleSeenChange(item.component_id)}
+                      sx={{ minWidth: 10 }}
                     >
-                      <MenuItem value={true}>Yes</MenuItem>
-                      <MenuItem value={false}>No</MenuItem>
-                    </TextField>
+                      <MenuItem value={true}>o</MenuItem>
+                    </Button>
                   </FormControl>
-
                 </TableCell>
 
-                {/* <TableCell>{inventoryData[item.id]?.countedBy || ""}</TableCell> */}
-                {/* <TableCell>
-                  {inventoryData[item.id]?.lastCounted || ""}
-                </TableCell> */}
+                <TableCell>{JSON.stringify(item.complete)}</TableCell>
+
               </TableRow>
             ))}
 
@@ -329,14 +247,6 @@ function InventoryTable() {
         <Button variant="contained" onClick={handleSave}>
           Save
         </Button>
-
-        {/* <Button
-          variant="contained"
-          color="success"
-          onClick={handleMarkComplete}
-        >
-          Mark Complete
-        </Button> */}
 
         {saveStatus === "success" && (
           <Alert severity="success">Inventory saved successfully.</Alert>

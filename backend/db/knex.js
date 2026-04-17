@@ -7,7 +7,7 @@ if (!config[env]) {
   throw new Error(`Missing knex config for env ${env}`);
 }
 
-console.log(`Using DB env: ${env}`);
+// console.log(`Using DB env: ${env}`);
 
 const db = knex(config[env]);
 

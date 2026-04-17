@@ -28,6 +28,7 @@ exports.getSerialComponentsByUicId = async uic_id => {
 };
 
 exports.getSerialComponentBySn = async (serial_number, uic_id) => {
+  console.log(serial_number)
   const query = baseComponentQuery().where(
     'serial_component_items.serial_number',
     serial_number,

@@ -56,7 +56,7 @@ exports.createComponentCurrentHistory = async ({
   last_seen,
   serial_number,
 }) => {
-  if (!component_id || !user_id || seen == null || !location || !last_seen) {
+  if (!component_id || !user_id || seen == null) {
     const error = new Error('All fields are required.');
     error.status = 400;
     throw error;
@@ -67,12 +67,12 @@ exports.createComponentCurrentHistory = async ({
     const serial_component_item =
       await serialComponentsModels.getSerialComponentBySn(serial_number);
 
-    if (!serial_component_item) {
-      const error = new Error(`Serial number ${serial_number} not found.`);
-      error.status = 404;
-      throw error;
-    }
-    resolved_serial_number = serial_component_item.id;
+    // if (!serial_component_item) {
+    //   const error = new Error(`Serial number ${serial_number} not found.`);
+    //   error.status = 404;
+    //   throw error;
+    // }
+    // resolved_serial_number = serial_component_item.id;
   }
 
   return await currentHistoryComponentsModels.createComponentCurrentHistory({
