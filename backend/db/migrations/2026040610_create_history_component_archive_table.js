@@ -5,6 +5,7 @@ exports.up = function (knex) {
     table.text('location');
     table.timestamp('last_seen');
     table.timestamp('archived_at').defaultTo(knex.fn.now()).notNullable();
+    table.integer('count');
     table.text('note');
     table.integer('user_id').unsigned();
     table.integer('component_id').unsigned();
@@ -22,7 +23,7 @@ exports.up = function (knex) {
     table
       .foreign('serial_number')
       .references('id')
-      .inTable('serial_component_items')
+      .inTable('serial_end_items')
       .onDelete('CASCADE');
   });
 };

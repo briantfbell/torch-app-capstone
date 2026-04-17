@@ -43,6 +43,7 @@ const currentHistoryEndItemsRoutes = require('./routes/currentHistoryEndItemsRou
 const currentHistoryComponentsRoutes = require('./routes/currentHistoryComponentsRoutes');
 const archivedHistoryEndItemsRoutes = require('./routes/archivedHistoryEndItemsRoutes');
 const archivedHistoryComponentsRoutes = require('./routes/archivedHistoryComponentsRoutes');
+const inventoryRoutes = require('./routes/inventoryRoutes.js')
 
 app.use('/auth', authRoutes);
 app.use('/uics', uicsRoutes);
@@ -52,6 +53,7 @@ app.use('/serial-components', auth, serialComponentsRoutes);
 app.use('/components', auth, componentsRoutes);
 app.use('/end-items', auth, endItemsRoutes);
 app.use('/ingest', auth, ingestRoutes);
+app.use('/inventory', auth, inventoryRoutes);
 app.use('/current-history/end-items', auth, currentHistoryEndItemsRoutes);
 app.use('/current-history/components', auth, currentHistoryComponentsRoutes);
 app.use('/archived-history/end-items', auth, archivedHistoryEndItemsRoutes);
