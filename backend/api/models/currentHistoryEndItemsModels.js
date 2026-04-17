@@ -5,15 +5,21 @@ const { applyQueryFilters } = require('../helpers/applyQueryFilters');
 
 const baseQuery = () => db('history_end_current').select('*');
 
-exports.getCurrentHistory = async query => {
+exports.getCurrentHistory = async (query) => {
   return await applyQueryFilters(baseQuery(), query);
 };
 
-exports.getCurrentHistoryById = async id => {
+exports.getCurrentHistoryById = async (end_item_id) => {
+  return await baseQuery()
+    .where('history_end_current.end_item_id', end_item_id)
+    .first();
+};
+
+exports.getCurrentHistoryByPk = async (id) => {
   return await baseQuery().where('history_end_current.id', id).first();
 };
 
-exports.getCurrentHistoryBySn = async sn => {
+exports.getCurrentHistoryBySn = async (sn) => {
   const serial_end_item = await db('serial_end_items')
     .where('serial_end_items.serial_number', sn.serial_number)
     .select('id')
@@ -27,7 +33,14 @@ exports.getCurrentHistoryBySn = async sn => {
     .first();
 };
 
-exports.createCurrentHistory = async currentHistoryData => {
+exports.getCurrentHistoryBySnId = async (sn) => {
+  return await db('history_end_current')
+    .where('history_end_current.serial_number', sn)
+    .select('*')
+    .first() ?? null;
+};
+
+exports.createCurrentHistory = async (currentHistoryData) => {
   const [currentHistory] = await db('history_end_current')
     .insert(currentHistoryData)
     .returning('*');
@@ -43,7 +56,9 @@ exports.updateCurrentHistory = async (currentHistoryId, currentHistoryData) => {
       .first();
 
     if (!serial_end_item) {
-      const error = new Error(`Serial number ${currentHistoryData.serial_number} not found.`);
+      const error = new Error(
+        `Serial number ${currentHistoryData.serial_number} not found.`,
+      );
       error.status = 404;
       throw error;
     }
@@ -59,6 +74,6 @@ exports.updateCurrentHistory = async (currentHistoryId, currentHistoryData) => {
   return currentHistory;
 };
 
-exports.deleteCurrentHistory = async id => {
+exports.deleteCurrentHistory = async (id) => {
   return await baseQuery().where('id', id).del().returning('*');
 };

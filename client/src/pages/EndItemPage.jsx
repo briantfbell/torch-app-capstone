@@ -16,60 +16,71 @@ import {
   Stack,
   TextField,
   Typography,
-} from "@mui/material";
-import {useEffect, useState} from "react";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import SaveIcon from "@mui/icons-material/Save";
-import PdfModalViewer from "../components/PdfModalViewer";
-import {getEndItemById, getEndItemCurrentHistory, updateEndItemNotes} from "../api/endItems";
-import PdfGenerator from "../components/PdfGenerator";
-import {deletePdf, getPdfsByEndItem, savePdf} from "../utils/pdfStorage";
-import PdfFillModal from "../components/PdfFillModal";
-import {useQuery} from "@tanstack/react-query";
-import {tryGetSerialItems} from "../api/data.js";
-import {postEndItemSeen} from "../api/endItems.js";
-import DeleteIcon from "@mui/icons-material/Delete";
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import SaveIcon from '@mui/icons-material/Save';
+import PdfModalViewer from '../components/PdfModalViewer';
+import {
+  getEndItemById,
+  updateEndItemNotes,
+  getEndItemHistoryBySerialId,
+} from '../api/endItems';
+import PdfGenerator from '../components/PdfGenerator';
+import { deletePdf, getPdfsByEndItem, savePdf } from '../utils/pdfStorage';
+import PdfFillModal from '../components/PdfFillModal';
+import { useQuery } from '@tanstack/react-query';
+import { tryGetSerialItems } from '../api/data.js';
+import { postEndItemSeen } from '../api/endItems.js';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function EndItemPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const selectedSerialId = searchParams.get("serialId");
+  const selectedSerialId = searchParams.get('serialId');
 
-  const [uic, setUic] = useState("");
+  const [uic, setUic] = useState('');
   const [item, setItem] = useState(null);
   const [openPdf, setOpenPdf] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [notes, setNotes] = useState("");
+  const [error, setError] = useState('');
+  const [notes, setNotes] = useState('');
   const [savingNotes, setSavingNotes] = useState(false);
-  const [saveMessage, setSaveMessage] = useState("");
+  const [saveMessage, setSaveMessage] = useState('');
   const [pdfUrl, setPdfUrl] = useState(null);
   const [localPdfs, setLocalPdfs] = useState([]);
   const [openFillModal, setOpenFillModal] = useState(false);
-  const [currUser, setCurrUser] = useState(null)
+  const [currUser, setCurrUser] = useState(null);
   const [seen, setSeen] = useState(false);
   const [lastSeen, setLastSeen] = useState(null);
   const [confirmSeenOpen, setConfirmSeenOpen] = useState(false);
   const [confirmNotSeenOpen, setConfirmNotSeenOpen] = useState(false);
+  const [posted, setPosted] = useState(false);
+
+  const [items, setItems] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
 
   const { data: serialEndItemsData = [] } = useQuery({
-    queryKey: ["serialEndItems"],
+    queryKey: ['serialEndItems'],
     queryFn: tryGetSerialItems,
     select: (d) => d.allSerialEndItems ?? [],
   });
 
   const matchingSerialItems = serialEndItemsData.filter(
-      (serialItem) => Number(serialItem.end_item_id) === Number(id)
+    (serialItem) => Number(serialItem.end_item_id) === Number(id),
   );
   const selectedSerial = matchingSerialItems.find(
-      (serialItem) => String(serialItem.id) === String(selectedSerialId)
+    (serialItem) => String(serialItem.id) === String(selectedSerialId),
   );
-  console.table(selectedSerialId)
+
+  useEffect(() => {
+    setNotes(selectedSerial?.note || '');
+  }, [selectedSerial]);
+
   const loadPdfs = async () => {
     try {
       const results = await getPdfsByEndItem(id);
@@ -79,23 +90,23 @@ export default function EndItemPage() {
       }));
       setLocalPdfs(withUrls);
     } catch (err) {
-      console.error("Error loading saved PDFs:", err);
+      console.error('Error loading saved PDFs:', err);
       setLocalPdfs([]);
     }
   };
 
   useEffect(() => {
-    fetch("http://localhost:8080/auth/me", { credentials: "include" })
-        .then((res) => res.json())
-        .then((data) => setUic(data.user?.uic ?? ""))
-        .catch((err) => console.error("Failed to load user:", err));
+    fetch('http://localhost:8080/auth/me', { credentials: 'include' })
+      .then((res) => res.json())
+      .then((data) => setUic(data.user?.uic ?? ''))
+      .catch((err) => console.error('Failed to load user:', err));
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:8080/auth/me", { credentials: "include" })
-        .then((res) => res.json())
-        .then((data) => setCurrUser(data.user ?? null))
-        .catch((err) => console.error("Failed to load user:", err));
+    fetch('http://localhost:8080/auth/me', { credentials: 'include' })
+      .then((res) => res.json())
+      .then((data) => setCurrUser(data.user ?? null))
+      .catch((err) => console.error('Failed to load user:', err));
   }, []);
 
   useEffect(() => {
@@ -103,7 +114,7 @@ export default function EndItemPage() {
 
     const loadPage = async () => {
       setLoading(true);
-      setError("");
+      setError('');
 
       try {
         await loadPdfs();
@@ -112,11 +123,10 @@ export default function EndItemPage() {
         if (!isMounted) return;
 
         setItem(data);
-        setNotes(data?.endItem?.note || "");
       } catch (err) {
-        console.error("Fetch error:", err);
+        console.error('Fetch error:', err);
         if (isMounted) {
-          setError("Error loading item");
+          setError('Error loading item');
         }
       } finally {
         if (isMounted) {
@@ -140,37 +150,25 @@ export default function EndItemPage() {
 
     const currentLin = String(item.endItem.lin).trim().toLowerCase();
 
-    fetch("/pdfs/pdfManifest.json")
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Could not load PDF manifest");
-          }
-          return res.json();
-        })
-        .then((files) => {
-          const match = files.find((file) =>
-              String(file).trim().toLowerCase().includes(currentLin),
-          );
+    fetch('/pdfs/pdfManifest.json')
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Could not load PDF manifest');
+        }
+        return res.json();
+      })
+      .then((files) => {
+        const match = files.find((file) =>
+          String(file).trim().toLowerCase().includes(currentLin),
+        );
 
-          setPdfUrl(match ? `/pdfs/${match}` : null);
-        })
-        .catch((err) => {
-          console.error("PDF manifest error:", err);
-          setPdfUrl(null);
-        });
+        setPdfUrl(match ? `/pdfs/${match}` : null);
+      })
+      .catch((err) => {
+        console.error('PDF manifest error:', err);
+        setPdfUrl(null);
+      });
   }, [item]);
-
-  useEffect(() => {
-    if (!selectedSerialId) return;
-
-    getEndItemCurrentHistory()
-        .then((data) => data.filter((i) => i.serial_number === parseInt(selectedSerialId)))
-        .then((data) => {
-          setSeen(data[0].seen);
-          setLastSeen(data[0].last_seen ?? null);
-        })
-        .catch((err) => console.error("Failed to load seen status:", err));
-  }, [selectedSerialId]);
 
   useEffect(() => {
     return () => {
@@ -184,456 +182,572 @@ export default function EndItemPage() {
 
   const handleSaveNotes = () => {
     setSavingNotes(true);
-    setSaveMessage("");
+    setSaveMessage('');
 
-    updateEndItemNotes(id, notes)
-        .then(() => getEndItemById(id))
-        .then((freshItem) => {
-          setItem(freshItem);
-          setSaveMessage("Notes saved.");
-          setSavingNotes(false);
-        })
-        .catch((err) => {
-          console.error("Save error:", err);
-          setSaveMessage("Could not save notes.");
-          setSavingNotes(false);
-        });
+    updateEndItemNotes(selectedSerialId, notes)
+      .then(() => {
+        setSaveMessage('Notes saved.');
+        setSavingNotes(false);
+      })
+      .catch((err) => {
+        console.error('Save error:', err);
+        setSaveMessage('Could not save notes.');
+        setSavingNotes(false);
+      });
   };
+
+  useEffect(() => {
+    if (!id) {
+      setSeen(false);
+      setLastSeen(null);
+      return;
+    }
+    getEndItemHistoryBySerialId(selectedSerialId)
+      .then((data) => {
+        setSeen(Boolean(data?.seen));
+        setLastSeen(data?.last_seen ?? null);
+      })
+      .catch((err) => console.error('Failed to load seen status:', err));
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+
+    fetch(
+      `http://localhost:8080/inventory/components/${id}?serid=${selectedSerialId}`,
+      {
+        credentials: 'include',
+      },
+    )
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        const components = Array.isArray(data) ? data : [];
+
+        const mappedItems = components.map((item) => ({
+          serial_id: selectedSerialId,
+          complete: item.seen || false,
+          component_id: item.id,
+          niin: item.niin,
+          location: item.location || '',
+          count: item.count || 0,
+          ui: item.ui || '',
+          h_id: item.h_id || null,
+          user_id: item.user_id || '',
+          displayName: item.description || item.display_name || '',
+          authQty: item.auth_qty ?? item.authorized_quantity ?? '',
+        }));
+
+        const filteredMappedItems = mappedItems.filter(
+          (item) => item.complete === false,
+        );
+
+        setFilteredItems(filteredMappedItems);
+        setItems(mappedItems);
+      })
+      .catch((err) => {
+        console.error('Failed to fetch inventory:', err);
+        setItems([]);
+      })
+      .finally(() => setLoading(false));
+  }, [id, selectedSerialId]);
 
   if (loading) {
     return (
-        <Box sx={{ maxWidth: 1500, mx: 'auto', width: '100%', py: 4 }}>
-          <Stack
-              spacing={2}
-              alignItems="center"
-              justifyContent="center"
-              sx={{ minHeight: "60vh" }}
-          >
-            <CircularProgress />
-            <Typography>Loading end item...</Typography>
-          </Stack>
-        </Box>
+      <Box sx={{ maxWidth: 1500, mx: 'auto', width: '100%', py: 4 }}>
+        <Stack
+          spacing={2}
+          alignItems="center"
+          justifyContent="center"
+          sx={{ minHeight: '60vh' }}
+        >
+          <CircularProgress />
+          <Typography>Loading end item...</Typography>
+        </Stack>
+      </Box>
     );
   }
 
   if (error) {
     return (
-        <Box sx={{ maxWidth: 1500, mx: 'auto', width: '100%', py: 4 }}>
-          <Alert severity="error">{error}</Alert>
-        </Box>
+      <Box sx={{ maxWidth: 1500, mx: 'auto', width: '100%', py: 4 }}>
+        <Alert severity="error">{error}</Alert>
+      </Box>
     );
   }
 
   if (!item || !item.endItem) {
     return (
-        <Box sx={{ maxWidth: 1500, mx: 'auto', width: '100%', py: 4 }}>
-          <Alert severity="warning">Item not found</Alert>
-        </Box>
+      <Box sx={{ maxWidth: 1500, mx: 'auto', width: '100%', py: 4 }}>
+        <Alert severity="warning">Item not found</Alert>
+      </Box>
     );
   }
 
   const endItem = item.endItem;
-  const imageUrl = endItem.image || "/no_image_found_placeholder.png";
+  const imageUrl = endItem.image || '/no_image_found_placeholder.png';
 
   const cardSx = {
     elevation: 0,
     borderRadius: 4,
-    border: "1px solid",
-    borderColor: "divider",
+    border: '1px solid',
+    borderColor: 'divider',
   };
 
   return (
-      <Box sx={{ maxWidth: 1500, mx: 'auto', width: '100%', py: 4 }}>
-        <Stack spacing={3}>
-
-          <Box>
-            <Button
-                startIcon={<ArrowBackIcon />}
-                onClick={() => navigate("/equipment")}
-                variant="outlined"
+    <Box sx={{ maxWidth: 1500, mx: 'auto', width: '100%' }}>
+      <Stack spacing={3}>
+        <Card elevation={0} sx={cardSx}>
+          <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              justifyContent="space-between"
+              alignItems={{ xs: 'flex-start', sm: 'center' }}
+              spacing={2}
             >
-              Back to Equipment
-            </Button>
-          </Box>
+              <Stack spacing={0.5}>
+                <Typography variant="overline" color="primary" fontWeight={700}>
+                  End Item
+                </Typography>
+                <Typography variant="h4" fontWeight={800}>
+                  {endItem.description}
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  View/begin this item's inventory.
+                </Typography>
+              </Stack>
 
-          <Card elevation={0} sx={cardSx}>
-            <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+              <Chip
+                label={uic ? `UIC: ${uic}` : 'Loading...'}
+                variant="outlined"
+                color="primary"
+              />
+            </Stack>
+          </CardContent>
+        </Card>
+
+        <Card elevation={0} sx={cardSx}>
+          <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+            <Stack spacing={3}>
+              <Stack spacing={0.75}>
+                <Typography variant="h6" fontWeight={700}>
+                  Overview
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Item identifiers, availability, and quick actions.
+                </Typography>
+              </Stack>
+
+              <Divider />
+
               <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  justifyContent="space-between"
-                  alignItems={{ xs: "flex-start", sm: "center" }}
-                  spacing={2}
+                direction={{ xs: 'column', sm: 'row' }}
+                spacing={3}
+                alignItems="flex-start"
               >
-                <Stack spacing={0.5}>
-                  <Typography variant="overline" color="primary" fontWeight={700}>
-                    End Item
-                  </Typography>
-                  <Typography variant="h4" fontWeight={800}>
-                    {endItem.description}
-                  </Typography>
+                <Stack
+                  spacing={1}
+                  sx={{
+                    width: { xs: '100%', sm: 240, md: 280 },
+                    flexShrink: 0,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: '100%',
+                      aspectRatio: '1 / 1',
+                      overflow: 'hidden',
+                      borderRadius: 2,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      bgcolor: 'grey.50',
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={imageUrl}
+                      alt={endItem.description}
+                      sx={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        display: 'block',
+                      }}
+                    />
+                  </Box>
+
+                  <Button
+                    fullWidth
+                    disabled={
+                      items.length === 0
+                        ? false
+                        : filteredItems.length > 0
+                          ? true
+                          : false
+                    }
+                    variant={seen ? 'contained' : 'outlined'}
+                    color={seen ? 'success' : 'primary'}
+                    startIcon={
+                      seen ? <CheckCircleIcon /> : <RadioButtonUncheckedIcon />
+                    }
+                    onClick={() =>
+                      seen
+                        ? setConfirmNotSeenOpen(true)
+                        : setConfirmSeenOpen(true)
+                    }
+                  >
+                    {seen ? 'Seen' : 'Mark as Seen'}
+                  </Button>
+
+                  {lastSeen && (
+                    <Typography
+                      variant="overline"
+                      color="text.secondary"
+                      textAlign="center"
+                    >
+                      Last seen: {new Date(lastSeen).toLocaleString()}
+                    </Typography>
+                  )}
                 </Stack>
 
-                <Chip
-                    label={uic ? `UIC: ${uic}` : "Loading..."}
-                    variant="outlined"
-                    color="primary"
-                />
-              </Stack>
-            </CardContent>
-          </Card>
+                <Stack spacing={3} sx={{ flex: 1, minWidth: 0 }}>
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: 1,
+                    }}
+                  >
+                    {[
+                      { label: `NIIN: ${endItem.niin}`, color: 'primary' },
+                      { label: `LIN: ${endItem.lin}`, color: 'primary' },
+                      {
+                        label: `Serial: ${selectedSerial?.serial_number ?? 'N/A'}`,
+                        color: 'primary',
+                      },
+                      { label: `Cost: $${endItem.cost}`, color: 'success' },
+                    ].map(({ label, color }) => (
+                      <Chip
+                        key={label}
+                        label={label}
+                        color={color}
+                        sx={{ width: '100%', fontWeight: '600' }}
+                      />
+                    ))}
+                  </Box>
 
-          <Card elevation={0} sx={cardSx}>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Typography variant="body2" color="text.secondary">
+                      Authorized Quantity:
+                    </Typography>
+                    <Typography variant="body1" fontWeight={700}>
+                      {endItem.auth_qty}
+                    </Typography>
+                  </Stack>
+
+                  <Divider />
+
+                  <Stack spacing={1.5}>
+                    {pdfUrl ? (
+                      <Button
+                        variant="outlined"
+                        startIcon={<PictureAsPdfIcon />}
+                        onClick={() => setOpenPdf(true)}
+                        fullWidth
+                      >
+                        Open End Item BOM PDF
+                      </Button>
+                    ) : (
+                      <Typography variant="body2" color="text.secondary">
+                        No BOM PDF available for this item.
+                      </Typography>
+                    )}
+
+                    <Box>
+                      <PdfGenerator
+                        onComplete={async ({ blob, fileName }) => {
+                          await savePdf({
+                            endItemId: id,
+                            name: fileName,
+                            blob,
+                          });
+                          await loadPdfs();
+                        }}
+                      />
+                    </Box>
+
+                    <Dialog
+                      open={confirmSeenOpen}
+                      onClose={() => setConfirmSeenOpen(false)}
+                      fullWidth
+                      maxWidth="xs"
+                    >
+                      <DialogTitle>Mark as seen?</DialogTitle>
+                      <DialogContent>
+                        <DialogContentText>
+                          Confirm that you have physically seen this item during
+                          inventory.
+                        </DialogContentText>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={() => setConfirmSeenOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="contained"
+                          onClick={() => {
+                            setSeen(true);
+                            postEndItemSeen(
+                              true,
+                              'NA',
+                              new Date().toISOString(),
+                              currUser.id,
+                              id,
+                              selectedSerial.serial_number,
+                            );
+                            setConfirmSeenOpen(false);
+                          }}
+                          autoFocus
+                        >
+                          Confirm
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+
+                    <Dialog
+                      open={confirmNotSeenOpen}
+                      onClose={() => setConfirmNotSeenOpen(false)}
+                      fullWidth
+                      maxWidth="xs"
+                    >
+                      <DialogTitle>Mark as not seen?</DialogTitle>
+                      <DialogContent>
+                        <DialogContentText>
+                          This will remove the seen status for this item.
+                        </DialogContentText>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={() => setConfirmNotSeenOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="contained"
+                          onClick={() => {
+                            setSeen(false);
+                            postEndItemSeen(
+                              false,
+                              'NA',
+                              new Date().toISOString(),
+                              currUser.id,
+                              id,
+                              selectedSerial.serial_number,
+                            );
+                            setConfirmNotSeenOpen(false);
+                          }}
+                          autoFocus
+                        >
+                          Confirm
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+                  </Stack>
+                </Stack>
+              </Stack>
+            </Stack>
+          </CardContent>
+        </Card>
+
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          spacing={3}
+          alignItems="stretch"
+        >
+          <Card elevation={0} sx={{ ...cardSx, flex: 2 }}>
             <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
               <Stack spacing={3}>
                 <Stack spacing={0.75}>
                   <Typography variant="h6" fontWeight={700}>
-                    Overview
+                    Notes
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Item identifiers, availability, and quick actions.
+                    Attach operational notes or observations for this item.
                   </Typography>
                 </Stack>
 
                 <Divider />
 
+                <TextField
+                  multiline
+                  minRows={6}
+                  fullWidth
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Add notes for this end item..."
+                />
+
                 <Stack
-                    direction={{ xs: "column", sm: "row" }}
-                    spacing={3}
-                    alignItems="flex-start"
+                  direction="row"
+                  spacing={2}
+                  justifyContent="space-between"
+                  alignItems="center"
                 >
-                  <Stack
-                      spacing={1}
-                      sx={{ width: { xs: "100%", sm: 240, md: 280 }, flexShrink: 0 }}
+                  <Typography variant="body2" color="text.secondary">
+                    {saveMessage}
+                  </Typography>
+
+                  <Button
+                    variant="outlined"
+                    startIcon={<SaveIcon />}
+                    onClick={handleSaveNotes}
+                    disabled={savingNotes}
                   >
-                    <Box
-                        sx={{
-                          width: "100%",
-                          aspectRatio: "1 / 1",
-                          overflow: "hidden",
-                          borderRadius: 2,
-                          border: "1px solid",
-                          borderColor: "divider",
-                          bgcolor: "grey.50",
-                        }}
-                    >
-                      <Box
-                          component="img"
-                          src={imageUrl}
-                          alt={endItem.description}
+                    {savingNotes ? 'Saving...' : 'Save Notes'}
+                  </Button>
+                </Stack>
+              </Stack>
+            </CardContent>
+          </Card>
+
+          <Card elevation={0} sx={{ ...cardSx, flex: 1 }}>
+            <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+              <Stack spacing={3}>
+                <Stack spacing={0.75}>
+                  <Typography variant="h6" fontWeight={700}>
+                    Documents
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Forms and saved PDFs for this item.
+                  </Typography>
+                </Stack>
+
+                <Divider />
+
+                <Stack spacing={1.5}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight={600}
+                    sx={{
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Custom 2062
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    onClick={() => setOpenFillModal(true)}
+                  >
+                    Fill Out 2062 Form
+                  </Button>
+                </Stack>
+
+                <Divider />
+
+                <Stack spacing={1.5}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight={600}
+                    sx={{
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    Saved PDFs
+                  </Typography>
+
+                  {localPdfs.length === 0 ? (
+                    <Typography variant="body2" color="text.secondary">
+                      No saved PDFs for this item.
+                    </Typography>
+                  ) : (
+                    <Stack spacing={1}>
+                      {localPdfs.map((pdf) => (
+                        <Box
+                          key={pdf.id}
                           sx={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                            display: "block",
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            borderRadius: 1,
+                            p: 1,
                           }}
-                      />
-                    </Box>
-
-                    <Button
-                        fullWidth
-                        variant={seen ? "contained" : "outlined"}
-                        color={seen ? "success" : "primary"}
-                        startIcon={seen ? <CheckCircleIcon /> : <RadioButtonUncheckedIcon />}
-                        onClick={() => seen ? setConfirmNotSeenOpen(true) : setConfirmSeenOpen(true)}
-                    >
-                      {seen ? "Seen" : "Mark as Seen"}
-                    </Button>
-
-                    {lastSeen && (
-                      <Typography variant="overline" color="text.secondary" textAlign="center">
-                        Last seen: {new Date(lastSeen).toLocaleString()}
-                      </Typography>
-                    )}
-                  </Stack>
-
-                  <Stack spacing={3} sx={{ flex: 1, minWidth: 0 }}>
-                    <Box
-                        sx={{
-                          display: "grid",
-                          gridTemplateColumns: "1fr 1fr",
-                          gap: 1,
-                        }}
-                    >
-                      {[
-                        { label: `NIIN: ${endItem.niin}`, color: "primary" },
-                        { label: `LIN: ${endItem.lin}`, color: "primary" },
-                        { label: `Serial: ${selectedSerial.serial_number}`, color: "primary" },
-                        { label: `Cost: $${endItem.cost}`, color: "success" },
-                      ].map(({ label, color }) => (
-                          <Chip
-                              key={label}
-                              label={label}
-                              color={color}
-                              sx={{ width: "100%", fontWeight: "600" }}
-                          />
-                      ))}
-                    </Box>
-
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Typography variant="body2" color="text.secondary">
-                        Authorized Quantity:
-                      </Typography>
-                      <Typography variant="body1" fontWeight={700}>
-                        {endItem.auth_qty}
-                      </Typography>
-                    </Stack>
-
-                    <Divider />
-
-                    <Stack spacing={1.5}>
-                      {pdfUrl ? (
+                        >
                           <Button
-                              variant="outlined"
-                              startIcon={<PictureAsPdfIcon />}
-                              onClick={() => setOpenPdf(true)}
-                              fullWidth
-                          >
-                            Open End Item BOM PDF
-                          </Button>
-                      ) : (
-                          <Typography variant="body2" color="text.secondary">
-                            No BOM PDF available for this item.
-                          </Typography>
-                      )}
-
-                      <Box>
-                        <PdfGenerator
-                            onComplete={async ({ blob, fileName }) => {
-                              await savePdf({ endItemId: id, name: fileName, blob });
-                              await loadPdfs();
+                            variant="text"
+                            sx={{ flex: 1, justifyContent: 'flex-start' }}
+                            fullWidth
+                            onClick={() => {
+                              setPdfUrl(pdf.url);
+                              setOpenPdf(true);
                             }}
-                        />
-                      </Box>
-
-                      <Dialog open={confirmSeenOpen} onClose={() => setConfirmSeenOpen(false)} fullWidth maxWidth="xs">
-                        <DialogTitle>Mark as seen?</DialogTitle>
-                        <DialogContent>
-                          <DialogContentText>
-                            Confirm that you have physically seen this item during inventory.
-                          </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={() => setConfirmSeenOpen(false)}>Cancel</Button>
-                          <Button
-                              variant="contained"
-                              onClick={() => {
-                                setSeen(true);
-                                postEndItemSeen(true, "NA", new Date().toISOString(), "NA", currUser.id, id, selectedSerial?.serial_number);
-                                setConfirmSeenOpen(false);
-                              }}
-                              autoFocus
                           >
-                            Confirm
+                            {pdf.name}
                           </Button>
-                        </DialogActions>
-                      </Dialog>
-
-                      <Dialog open={confirmNotSeenOpen} onClose={() => setConfirmNotSeenOpen(false)} fullWidth maxWidth="xs">
-                        <DialogTitle>Mark as not seen?</DialogTitle>
-                        <DialogContent>
-                          <DialogContentText>
-                            This will remove the seen status for this item.
-                          </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={() => setConfirmNotSeenOpen(false)}>Cancel</Button>
-                          <Button
-                              variant="contained"
-                              onClick={() => {
-                                setSeen(false);
-                                postEndItemSeen(false, "NA", new Date().toISOString(), "NA", currUser.id, id, selectedSerial?.serial_number);
-                                setConfirmNotSeenOpen(false);
-                              }}
-                              autoFocus
+                          <IconButton
+                            color="error"
+                            size="small"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              await deletePdf(pdf.id);
+                              loadPdfs();
+                            }}
                           >
-                            Confirm
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      ))}
                     </Stack>
-                  </Stack>
+                  )}
                 </Stack>
-
-              <Button
-                variant="contained"
-                size="large"
-                fullWidth
-                onClick={() => navigate(`/equipment/${id}/inventory?serialId=${selectedSerialId}`)}
-                >
-                Start / Open Inventory
-              </Button>
-            </Stack>
-          </CardContent>
-        </Card>
-
-          <Stack
-              direction={{ xs: "column", md: "row" }}
-              spacing={3}
-              alignItems="stretch"
-          >
-            <Card elevation={0} sx={{ ...cardSx, flex: 2 }}>
-              <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-                <Stack spacing={3}>
-                  <Stack spacing={0.75}>
-                    <Typography variant="h6" fontWeight={700}>
-                      Notes
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Attach operational notes or observations for this item.
-                    </Typography>
-                  </Stack>
-
-                  <Divider />
-
-                  <TextField
-                      multiline
-                      minRows={6}
-                      fullWidth
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      placeholder="Add notes for this end item..."
-                  />
-
-                  <Stack
-                      direction="row"
-                      spacing={2}
-                      justifyContent="space-between"
-                      alignItems="center"
-                  >
-                    <Typography variant="body2" color="text.secondary">
-                      {saveMessage}
-                    </Typography>
-
-                    <Button
-                        variant="outlined"
-                        startIcon={<SaveIcon />}
-                        onClick={handleSaveNotes}
-                        disabled={savingNotes}
-                    >
-                      {savingNotes ? "Saving..." : "Save Notes"}
-                    </Button>
-                  </Stack>
-                </Stack>
-              </CardContent>
-            </Card>
-
-            <Card elevation={0} sx={{ ...cardSx, flex: 1 }}>
-              <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-                <Stack spacing={3}>
-                  <Stack spacing={0.75}>
-                    <Typography variant="h6" fontWeight={700}>
-                      Documents
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Forms and saved PDFs for this item.
-                    </Typography>
-                  </Stack>
-
-                  <Divider />
-
-                  <Stack spacing={1.5}>
-                    <Typography variant="body2" color="text.secondary" fontWeight={600} sx={{ textTransform: "uppercase", letterSpacing: "0.05em", fontSize: "0.7rem" }}>
-                      Custom 2062
-                    </Typography>
-                    <Button
-                        variant="outlined"
-                        fullWidth
-                        onClick={() => setOpenFillModal(true)}
-                    >
-                      Fill Out 2062 Form
-                    </Button>
-                  </Stack>
-
-                  <Divider />
-
-                  <Stack spacing={1.5}>
-                    <Typography variant="body2" color="text.secondary" fontWeight={600} sx={{ textTransform: "uppercase", letterSpacing: "0.05em", fontSize: "0.7rem" }}>
-                      Saved PDFs
-                    </Typography>
-
-                    {localPdfs.length === 0 ? (
-                        <Typography variant="body2" color="text.secondary">
-                          No saved PDFs for this item.
-                        </Typography>
-                    ) : (
-                        <Stack spacing={1}>
-                            {localPdfs.map((pdf) => (
-                                <Box
-                                    key={pdf.id}
-                                    sx={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: 1,
-                                        border: "1px solid",
-                                        borderColor: "divider",
-                                        borderRadius: 1,
-                                        p: 1,
-                                    }}
-                                >
-                                <Button
-                                    variant="text"
-                                    sx={{ flex: 1, justifyContent: "flex-start" }}
-                                    fullWidth
-                                  onClick={() => {
-                                    setPdfUrl(pdf.url);
-                                    setOpenPdf(true);
-                                    }}
-                                >
-                                    {pdf.name}
-                                </Button>
-                                <IconButton
-                                    color="error"
-                                    size="small"
-                                    onClick={async (e) => {
-                                    e.stopPropagation();
-                                    await deletePdf(pdf.id);
-                                    loadPdfs();
-                                    }}
-                                >
-                                    <DeleteIcon />
-                                </IconButton>
-                                </Box>
-                            ))}
-                        </Stack>
-                    )}
-                  </Stack>
-                </Stack>
-              </CardContent>
-            </Card>
-          </Stack>
-
-          <Button
-              variant="contained"
-              size="large"
-              fullWidth
-              onClick={() => navigate(`/equipment/${id}/inventory`)}
-          >
-            Start / Open Inventory
-          </Button>
-
+              </Stack>
+            </CardContent>
+          </Card>
         </Stack>
 
-        {pdfUrl && (
-            <PdfModalViewer
-                open={openPdf}
-                onClose={() => setOpenPdf(false)}
-                pdfUrl={pdfUrl}
-            />
-        )}
+        <Button
+          variant="contained"
+          size="large"
+          fullWidth
+          onClick={() =>
+            navigate(`/equipment/${id}/inventory?serialId=${selectedSerialId}`)
+          }
+        >
+          Start / Open Inventory
+        </Button>
+      </Stack>
 
-        <PdfFillModal
-            open={openFillModal}
-            onClose={() => setOpenFillModal(false)}
-            templateUrl="/templates/2062MainTemplate.pdf"
-            onUpload={async (pdf) => {
-              await savePdf({
-                endItemId: id,
-                name: pdf.name,
-                blob: pdf.file,
-              });
-              await loadPdfs();
-            }}
+      {pdfUrl && (
+        <PdfModalViewer
+          open={openPdf}
+          onClose={() => setOpenPdf(false)}
+          pdfUrl={pdfUrl}
         />
-      </Box>
+      )}
+
+      <PdfFillModal
+        open={openFillModal}
+        onClose={() => setOpenFillModal(false)}
+        templateUrl="/templates/2062MainTemplate.pdf"
+        onUpload={async (pdf) => {
+          await savePdf({
+            endItemId: id,
+            name: pdf.name,
+            blob: pdf.file,
+          });
+          await loadPdfs();
+        }}
+      />
+    </Box>
   );
 }

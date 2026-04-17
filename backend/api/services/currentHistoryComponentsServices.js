@@ -2,23 +2,23 @@ const currentHistoryComponentsModels = require('../models/currentHistoryComponen
 const serialComponentsModels = require('../models/serialComponentsModels');
 const endItemsModels = require('../models/endItemsModels');
 
-exports.getComponentCurrentHistory = async query => {
+exports.getComponentCurrentHistory = async (query) => {
   return await currentHistoryComponentsModels.getComponentCurrentHistory(query);
 };
 
-exports.getComponentCurrentHistoryBySn = async serial_number => {
+exports.getComponentCurrentHistoryBySn = async (serial_number) => {
   return await currentHistoryComponentsModels.getComponentCurrentHistoryBySn(
     serial_number,
   );
 };
 
-exports.getUnserializedComponentCurrentHistory = async component_id => {
+exports.getUnserializedComponentCurrentHistory = async (component_id) => {
   return await currentHistoryComponentsModels.getUnserializedComponentCurrentHistory(
     component_id,
   );
 };
 
-exports.getComponentCurrentHistoryById = async id => {
+exports.getComponentCurrentHistoryById = async (id) => {
   const record =
     await currentHistoryComponentsModels.getComponentCurrentHistoryById(id);
 
@@ -31,7 +31,7 @@ exports.getComponentCurrentHistoryById = async id => {
   return record;
 };
 
-exports.getComponentsCurrentHistoryByEndItemId = async id => {
+exports.getComponentsCurrentHistoryByEndItemId = async (id) => {
   const endItem = await endItemsModels.getEndItemById(id);
 
   if (!endItem) {
@@ -115,7 +115,7 @@ exports.updateComponentCurrentHistory = async (id, currentHistoryData) => {
   );
 };
 
-exports.deleteComponentCurrentHistory = async id => {
+exports.deleteComponentCurrentHistory = async (id) => {
   const existing =
     await currentHistoryComponentsModels.getComponentCurrentHistoryById(id);
 

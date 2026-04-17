@@ -1,6 +1,6 @@
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import MiniDrawer from '../components/ui/MiniDrawer.jsx';
-import { AuthProvider } from '../contexts/AuthContext.jsx';
+import {AuthProvider} from '../contexts/AuthContext.jsx';
 import Dashboard from '../pages/Dashboard.jsx';
 import EndItemPage from '../pages/EndItemPage.jsx';
 import EquipmentPage from '../pages/EquipmentPage.jsx';
@@ -11,6 +11,7 @@ import SplashPage from '../pages/SplashPage';
 import SupplyAdminPage from '../pages/SupplyAdminPage.jsx';
 import UserSettings from '../pages/UserSettings.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
+
 
 export default function MainRouter({ mode, onToggleTheme }) {
   return (

@@ -5,17 +5,17 @@ const { applyQueryFilters } = require('../helpers/applyQueryFilters');
 
 const baseComponentQuery = () => db('serial_component_items').select('*');
 
-exports.getAllSerialComponents = async query => {
+exports.getAllSerialComponents = async (query) => {
   return await applyQueryFilters(baseComponentQuery(), query);
 };
 
-exports.getSerialComponentById = async id => {
+exports.getSerialComponentById = async (id) => {
   return await baseComponentQuery()
     .where('serial_component_items.id', id)
     .first();
 };
 
-exports.getSerialComponentsByUicId = async uic_id => {
+exports.getSerialComponentsByUicId = async (uic_id) => {
   return await db('uics')
     .where('uics.id', uic_id)
     .join('users', 'uics.id', 'users.uic_id')
@@ -28,7 +28,6 @@ exports.getSerialComponentsByUicId = async uic_id => {
 };
 
 exports.getSerialComponentBySn = async (serial_number, uic_id) => {
-  console.log(serial_number)
   const query = baseComponentQuery().where(
     'serial_component_items.serial_number',
     serial_number,
@@ -58,7 +57,7 @@ exports.updateSerialComponent = async (id, serialComponentData) => {
   return serialComponent;
 };
 
-exports.deleteSerialComponent = async id => {
+exports.deleteSerialComponent = async (id) => {
   return await db('serial_component_items')
     .where('id', id)
     .del()

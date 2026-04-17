@@ -33,7 +33,7 @@ const str = (val) => (val == null ? "" : String(val));
 function SerialChip({ serial, index, isSeen, onClick }) {
   return (
     <Chip
-      label={`S/N #${index + 1} - ${serial.serial_number}`}
+      label={`S/N: ${serial.serial_number}`}
       onClick={(e) => {
         e.stopPropagation();
         onClick(serial);
@@ -76,7 +76,9 @@ function GroupedEndItemCard({ group, onSerialClick, selected, seenBySerialId }) 
           borderColor: cardBorderColor,
           borderBottom: serials.length > 0 ? "none" : undefined,
           backgroundColor: "action.hover",
+          cursor: 'pointer'
         }}
+        onClick={(isExpanded) => setExpanded(isExpanded => !isExpanded)}
       >
         <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
           <Stack spacing={1.5} alignItems="center" textAlign="center">
@@ -478,12 +480,6 @@ export default function EquipmentPage() {
                 </Typography>
               </Stack>
               <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems={{ xs: "flex-start", sm: "center" }}>
-                <Chip
-                  label={uic ? `UIC: ${uic}` : "Loading..."}
-                  variant="outlined"
-                  color="primary"
-                  sx={{ height: 36, fontSize: "0.85rem" }}
-                />
                 <Button
                   variant="contained"
                   startIcon={<PictureAsPdfIcon />}
@@ -491,6 +487,12 @@ export default function EquipmentPage() {
                 >
                   Sub Hand Receipt
                 </Button>
+                <Chip
+                  label={uic ? `UIC: ${uic}` : "Loading..."}
+                  variant="outlined"
+                  color="primary"
+                  sx={{ height: 36, fontSize: "0.85rem" }}
+                />
               </Stack>
             </Stack>
           </CardContent>
@@ -679,6 +681,7 @@ export default function EquipmentPage() {
                         onSerialClick={handleSerialClick}
                         selected={selectedGroup === group.representative.id}
                         seenBySerialId={seenBySerialId}
+
                       />
                     ))}
                   </Box>
