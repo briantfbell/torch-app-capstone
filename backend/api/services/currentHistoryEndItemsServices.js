@@ -1,15 +1,15 @@
-const currentHistoryEndItemsModels = require('../models/currentHistoryEndItemsModels');
-const serialEndItemsModels = require('../models/serialEndItemsModels');
+const currentHistoryEndItemsModels = require("../models/currentHistoryEndItemsModels");
+const serialEndItemsModels = require("../models/serialEndItemsModels");
 
-exports.getCurrentHistory = async query => {
+exports.getCurrentHistory = async (query) => {
   return await currentHistoryEndItemsModels.getCurrentHistory(query);
 };
 
-exports.getCurrentHistoryById = async id => {
+exports.getCurrentHistoryById = async (id) => {
   const record = await currentHistoryEndItemsModels.getCurrentHistoryById(id);
 
   if (!record) {
-    const error = new Error('This current history id does not exist.');
+    const error = new Error("This current history id does not exist.");
     error.status = 404;
     throw error;
   }
@@ -17,8 +17,14 @@ exports.getCurrentHistoryById = async id => {
   return record;
 };
 
-exports.getCurrentHistoryBySn = async sn => {
+exports.getCurrentHistoryBySn = async (sn) => {
   const record = await currentHistoryEndItemsModels.getCurrentHistoryBySn(sn);
+
+  return record;
+};
+
+exports.getCurrentHistoryBySnId = async (sn) => {
+  const record = await currentHistoryEndItemsModels.getCurrentHistoryBySnId(sn);
 
   return record;
 };
@@ -39,7 +45,7 @@ exports.createCurrentHistory = async ({
     !last_seen ||
     !serial_number
   ) {
-    const error = new Error('All fields are required.');
+    const error = new Error("All fields are required.");
     error.status = 400;
     throw error;
   }
@@ -67,7 +73,7 @@ exports.updateCurrentHistory = async (id, currentHistoryData) => {
   const existing = await currentHistoryEndItemsModels.getCurrentHistoryById(id);
 
   if (!existing) {
-    const error = new Error('This current history id does not exist.');
+    const error = new Error("This current history id does not exist.");
     error.status = 404;
     throw error;
   }
@@ -91,11 +97,11 @@ exports.updateCurrentHistory = async (id, currentHistoryData) => {
   );
 };
 
-exports.deleteCurrentHistory = async id => {
-  const existing = await currentHistoryEndItemsModels.getCurrentHistoryById(id);
+exports.deleteCurrentHistory = async (id) => {
+  const existing = await currentHistoryEndItemsModels.getCurrentHistoryByPk(id);
 
   if (!existing) {
-    const error = new Error('This current history id does not exist.');
+    const error = new Error("This current history id does not exist.");
     error.status = 404;
     throw error;
   }

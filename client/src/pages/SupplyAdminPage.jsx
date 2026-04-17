@@ -12,9 +12,9 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import IngestItems from '../components/IngestItems.jsx';
-import { useAuth } from '../hooks/useAuth.jsx';
+import {useAuth} from '../hooks/useAuth.jsx';
 
 export default function SupplyAdminPage() {
   const { user, loading: authLoading } = useAuth();
@@ -62,7 +62,7 @@ export default function SupplyAdminPage() {
   }
 
   return (
-    <Box sx={{ mx: 'auto', width: '100%' }}>
+    <Box sx={{maxWidth: 1500, mx: 'auto', width: '100%'}}>
       <Stack spacing={3}>
         <Card
           elevation={0}
@@ -76,18 +76,16 @@ export default function SupplyAdminPage() {
                 alignItems={{ xs: 'flex-start', sm: 'center' }}
                 spacing={2}
               >
-                <Stack spacing={0.5}>
+                <Stack spacing={1}>
                   <Typography
-                    variant="overline"
-                    color="primary"
-                    fontWeight={700}
+                      variant="overline" color="primary" fontWeight={700}
                   >
                     Admin Console
                   </Typography>
                   <Typography variant="h4" fontWeight={800}>
                     Supply Admin Dashboard
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body1" color="text.secondary">
                     .CSV, .XLSX, or .XLS files only
                   </Typography>
                 </Stack>

@@ -45,7 +45,6 @@ exports.getByEndItemId = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    console.log(req.body)
     let existing;
 
     // if (req.body.serial_number) {

@@ -196,13 +196,21 @@ function resolveLabel(seg, parentSeg) {
     return raw.length > MAX_SEGMENT_LENGTH ? raw.slice(0, MAX_SEGMENT_LENGTH) + "…" : raw;
 }
 
-function buildBreadcrumbs(pathname) {
+function buildBreadcrumbs(pathname, search) {
     const segments = pathname.split("/").filter(Boolean);
     if (segments.length === 0) return [];
 
+    const searchParams = new URLSearchParams(search);
+    const serialId = searchParams.get("serialId");
     const crumbs = [{label: "Home", path: "/dashboard"}];
     segments.forEach((seg, i) => {
-        const path = "/" + segments.slice(0, i + 1).join("/");
+        let path = "/" + segments.slice(0, i + 1).join("/");
+        const isEquipmentDetailCrumb = segments[0] === "equipment" && i >= 1;
+
+        if (isEquipmentDetailCrumb && serialId) {
+            path += `?serialId=${encodeURIComponent(serialId)}`;
+        }
+
         const label = resolveLabel(seg, segments[i - 1]);
         crumbs.push({label, path});
     });
@@ -391,7 +399,7 @@ export default function MiniDrawer({children, mode, onToggleTheme}) {
             <Box component="main" sx={{flexGrow: 1, minWidth: 0, p: 3}}>
                 <DrawerHeader/>
                 {!isDashboard && (() => {
-                    const crumbs = buildBreadcrumbs(location.pathname);
+                    const crumbs = buildBreadcrumbs(location.pathname, location.search);
                     return crumbs.length > 1 ? (
                         <Breadcrumbs
                             separator={<NavigateNextIcon fontSize="small"/>}

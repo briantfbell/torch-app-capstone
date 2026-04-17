@@ -16,7 +16,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import * as XLSX from 'xlsx';
 
 export default function IngestItems({ uic }) {
@@ -161,7 +161,7 @@ export default function IngestItems({ uic }) {
   };
 
   return (
-    <Stack spacing={3}>
+    <Stack spacing={3} >
       <input
         style={{ display: 'none' }}
         type="file"

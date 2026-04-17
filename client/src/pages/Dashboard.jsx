@@ -161,7 +161,7 @@ const Dashboard = () => {
       queryKey: ["serialEndItems"],
       queryFn: tryGetSerialItems,
       refetchInterval: 5_000,
-      select: (d) => d.allSerialItems ?? [],
+      select: (d) => d.allSerialEndItems ?? [],
     });
 
   const { data: historyEndData, dataUpdatedAt: historyEndUpdatedAt } = useQuery(
@@ -190,7 +190,7 @@ const Dashboard = () => {
     queryKey: ["serialComponents"],
     queryFn: tryGetSerialComponents,
     refetchInterval: 5_000,
-    select: (d) => d.allSerialComponentItems ?? [],
+    select: (d) => d.allSerialComponents ?? [],
   });
 
   const endItems = endItemsData ?? [];
@@ -232,7 +232,7 @@ const Dashboard = () => {
   const endItemOnHand = (item) => {
     const registered = registeredEndSerialIds[item.id] ?? new Set();
     const history = historyEndByItem[item.id] ?? [];
-    return history.filter((h) => registered.has(h.serial_number)).length;
+    return history.filter((h) => registered.has(h.serial_number) && h.seen).length;
   };
 
   const componentsByEndItem = components.reduce((acc, comp) => {
@@ -262,22 +262,17 @@ const Dashboard = () => {
   };
 
   const componentOnHand = (comp) => {
-    const registered = registeredComponentSerialIds[comp.id] ?? new Set();
+    const registeredSerials = registeredEndSerialIds[comp.end_item_id] ?? new Set();
     const history = historyByComponent[comp.id] ?? [];
-    return history.filter((h) => registered.has(h.serial_number) && h.seen)
-      .length;
+    const relevant = registeredSerials.size > 0
+      ? history.filter((h) => registeredSerials.has(h.serial_number) && h.seen)
+      : history.filter((h) => h.seen);
+    return relevant.reduce((sum, h) => sum + (Number(h.count) || 0), 0);
   };
 
   const isEndItemComplete = (item) => {
     const auth = registeredEndSerialCount[item.id] ?? item.auth_qty;
-    if (endItemOnHand(item) < auth) return false;
-    const comps = componentsByEndItem[item.id] ?? [];
-    if (comps.length > 0) {
-      return comps.every(
-        (comp) => componentOnHand(comp) >= componentAuthQty(comp),
-      );
-    }
-    return true;
+    return endItemOnHand(item) >= auth;
   };
 
   const completedTotal = endItems.filter(isEndItemComplete).length;
@@ -314,24 +309,8 @@ const Dashboard = () => {
   const shortageDataset = endItems.map((item) => {
     const auth = registeredEndSerialCount[item.id] ?? item.auth_qty;
     const onHand = endItemOnHand(item);
-    const endItemPercent =
+    const percent =
       auth > 0 ? Math.min(Math.floor((onHand / auth) * 100), 100) : 0;
-    const comps = componentsByEndItem[item.id] ?? [];
-    let percent = endItemPercent;
-    if (comps.length > 0 && endItemPercent === 100) {
-      const totalAuth = comps.reduce(
-        (sum, comp) => sum + componentAuthQty(comp),
-        0,
-      );
-      const totalOnHand = comps.reduce(
-        (sum, comp) => sum + componentOnHand(comp),
-        0,
-      );
-      percent =
-        totalAuth > 0
-          ? Math.min(Math.floor((totalOnHand / totalAuth) * 100), 100)
-          : 0;
-    }
     return {
       name: (item.description ?? "").slice(0, 35),
       percent,

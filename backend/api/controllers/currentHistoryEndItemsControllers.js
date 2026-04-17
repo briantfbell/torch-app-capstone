@@ -1,5 +1,5 @@
-const currentHistoryEndItemsServices = require('../services/currentHistoryEndItemsServices');
-const archivedHistoryEndItemsServices = require('../services/archivedHistoryEndItemsServices');
+const currentHistoryEndItemsServices = require("../services/currentHistoryEndItemsServices");
+const archivedHistoryEndItemsServices = require("../services/archivedHistoryEndItemsServices");
 
 exports.getAll = async (req, res) => {
   try {
@@ -9,7 +9,7 @@ exports.getAll = async (req, res) => {
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ message: err.message || 'Internal server error.' });
+      .json({ message: err.message || "Internal server error." });
   }
 };
 
@@ -21,7 +21,33 @@ exports.getById = async (req, res) => {
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ message: err.message || 'Internal server error.' });
+      .json({ message: err.message || "Internal server error." });
+  }
+};
+
+exports.getBySerial = async (req, res) => {
+  try {
+    const currentHistory =
+      await currentHistoryEndItemsServices.getCurrentHistoryBySn(req.params.id);
+    res.status(200).json({ currentHistory });
+  } catch (err) {
+    res
+      .status(err.status || 500)
+      .json({ message: err.message || "Internal server error." });
+  }
+};
+
+exports.getBySerialId = async (req, res) => {
+  try {
+    const currentHistory =
+      await currentHistoryEndItemsServices.getCurrentHistoryBySnId(
+        req.params.id,
+      );
+    res.status(200).json({ currentHistory });
+  } catch (err) {
+    res
+      .status(err.status || 500)
+      .json({ message: err.message || "Internal server error." });
   }
 };
 
@@ -48,7 +74,7 @@ exports.create = async (req, res) => {
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ message: err.message || 'Internal server error.' });
+      .json({ message: err.message || "Internal server error." });
   }
 };
 
@@ -72,7 +98,7 @@ exports.update = async (req, res) => {
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ message: err.message || 'Internal server error.' });
+      .json({ message: err.message || "Internal server error." });
   }
 };
 
@@ -87,6 +113,6 @@ exports.del = async (req, res) => {
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ message: err.message || 'Internal server error.' });
+      .json({ message: err.message || "Internal server error." });
   }
 };
